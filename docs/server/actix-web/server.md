@@ -1,9 +1,9 @@
 # 服务器
 
-该[**HttpServer**](../../actix-web/actix_web/server/struct.HttpServer.html)类型负责服务的HTTP请求。
+该[**HttpServer**](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html)类型负责服务的HTTP请求。
 
 `HttpServer`接受应用程序工厂作为参数，并且应用程序工厂必须具有Send+ Sync边界。p
-要绑定到特定的套接字地址， [`bind()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.bind) 必须使用，并且可能会多次调用它。绑定ssl套接字使用[`bind_ssl()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.bind_ssl)或[`bind_tls()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.bind_tls)。启动http服务器，启动方法之一是：
+要绑定到特定的套接字地址， [`bind()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.bind) 必须使用，并且可能会多次调用它。绑定ssl套接字使用[`bind_ssl()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.bind_ssl)或[`bind_tls()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.bind_tls)。启动http服务器，启动方法之一是：
 
 - use [`start()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.start)
 for a server
@@ -63,7 +63,7 @@ fn main() {
 
 ## 多线程
 
-`HttpServer`自动启动一些http worker，默认情况下这个数量等于系统中逻辑CPU的数量。该数量可以用该[`HttpServer::workers()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.workers)方法覆盖 。
+`HttpServer`自动启动一些http worker，默认情况下这个数量等于系统中逻辑CPU的数量。该数量可以用该[`HttpServer::workers()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.workers)方法覆盖 。
 
 
 ```rust
@@ -174,15 +174,15 @@ fn index(req: HttpRequest) -> HttpResponse {
 
 ## 优雅的关机
 
-`HttpServer`支持优雅的关机。收到停止信号后，workers会有特定的时间完成服务请求。任何在超时后仍然活着的workers（工作线程）都会被迫停止。默认情况下，关机超时设置为30秒。您可以使用[`HttpServer::shutdown_timeout()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.shutdown_timeout)方法更改此参数 。
+`HttpServer`支持优雅的关机。收到停止信号后，workers会有特定的时间完成服务请求。任何在超时后仍然活着的workers（工作线程）都会被迫停止。默认情况下，关机超时设置为30秒。您可以使用[`HttpServer::shutdown_timeout()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.shutdown_timeout)方法更改此参数 。
 
-您可以使用服务器地址向服务器发送停止消息，并指定是否要进行正常关机。[`start()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.start)方法返回服务器的地址。
+您可以使用服务器地址向服务器发送停止消息，并指定是否要进行正常关机。[`start()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.start)方法返回服务器的地址。
 
 `HttpServer`处理几个OS信号。所有操作系统都提供CTRL-C，其他信号在unix系统上可用。
 
 - *SIGINT* - 强制关闭工作线程
 - *SIGTERM* - 优雅的停止工作线程
-- *SIGQUIT* - 制关闭 workers工作线程
+- *SIGQUIT* - 强制制关闭workers/工作线程
 
-> 可以用[`HttpServer::disable_signals()`](../../actix-web/actix_web/server/struct.HttpServer.html#method.disable_signals)
+> 可以用[`HttpServer::disable_signals()`](https://actix.rs/actix-web/actix_web/server/struct.HttpServer.html#method.disable_signals)
 方法禁用信号处理 。

@@ -1,5 +1,6 @@
 let { book } = require ('./category/rust.js')
 let { std } = require ('./category/std.js')
+let { cookbook } = require ('./category/cookbook.js')
 let { tokio } = require ('./category/tokio.js')
 let { awesome } = require ('./category/awesome.js')
 
@@ -33,7 +34,8 @@ module.exports = {
           { text: 'Rust语言', items: [ 
             { text: 'Rust编程', link: '/rust/book/' },
             { text: '标准库', link: '/rust/std/' },
-            { text: '规范', link: '/rust/reference/' },
+            { text: '参考规范', link: '/rust/reference/' },
+            { text: 'Rust食谱', link: '/rust/cookbook/' },
             { text: '资源', link: '/rust/resourse/' }
           ] },
           { text: 'Server', items: [ 
@@ -62,6 +64,7 @@ module.exports = {
         sidebar: {
           '/rust/book/': book('Rust'),
           '/rust/std/': std('Std'),
+          '/rust/cookbook/': cookbook('Cookbook'),
           '/server/tokio/': tokio('Tokio'),
           '/server/actix/': genActix('Actix'),
           '/server/actix-web/': genActixWeb('Actix-Web'),
