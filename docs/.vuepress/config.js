@@ -2,6 +2,7 @@ let { book } = require ('./category/rust.js')
 let { std } = require ('./category/std.js')
 let { cookbook } = require ('./category/cookbook.js')
 let { tokio } = require ('./category/tokio.js')
+let { discovery } = require ('./category/discovery.js')
 let { awesome } = require ('./category/awesome.js')
 
 module.exports = {
@@ -69,6 +70,7 @@ module.exports = {
           '/server/actix/': genActix('Actix'),
           '/server/actix-web/': genActixWeb('Actix-Web'),
           '/server/diesel/': genDiesel('Diesel'),
+          '/iot/discovery/': discovery('Discovery'),
           '/resourse/awesome/': awesome('Awesome')
         }
     }
