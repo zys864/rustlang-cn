@@ -5,8 +5,8 @@ exports.cookbook = (title) => {
             title: 'file',
             collapsable: false,
             children: [
-            'file/dir',
-            'file/read-write'
+            'file/read-write',
+            'file/dir'
             ]
         }
     ]
