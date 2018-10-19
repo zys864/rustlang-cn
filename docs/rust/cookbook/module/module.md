@@ -1,4 +1,6 @@
-﻿在本章中，我们将介绍以下配方：
+﻿# 包和模块
+
+在本章中，我们将介绍以下配方：
 
  - 在Rust中定义一个模块
  - 构建嵌套模块
@@ -9,12 +11,11 @@
  - 在Rust中构建库
  - 调用外部包
 
-
-# 介绍
+## 介绍
 
 本章重点介绍Rust中的模块和包。 它将帮助您开发高度模块化和生产级的Rust应用程序。 有了这个，您将拥有一个出色的文件层次结构，这将以模块化方式补充功能的开发。 本章中的配方还将帮助您在Rust中构建库，并通过外部程序定义，控制和访问功能。
 
-# 在Rust中定义一个模块
+## 在Rust中定义一个模块
 
 所有应用程序必须模块化，以便易于维护和开发。 在Rust中，我们可以为我们的应用程序提供一个功能强大的模块系统，可以将应用程序源代码分层次地拆分为逻辑单元（我们称之为模块），并在整个应用程序中管理它们的可见性（公共/私有）。
 
@@ -23,6 +24,7 @@
 您将学习如何创建示例模块并了解此配方中可见性的概念。
 
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
 ## 怎么做...
@@ -30,7 +32,7 @@
 1.创建一个名为sample_mod.rs的文件，并在文本编辑器中将其打开。
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: To create a sample module to illustrate
 how to use a module in rust
@@ -42,7 +44,7 @@ how to use a module in rust
 
 3.使用mod关键字创建名为sample_mod的模块，并在其中定义名为private_function的函数：
 
-```
+```rust
 // Defined module named `sample_mod`
 mod sample_mod {
 // By default all the items in module have private
@@ -55,7 +57,7 @@ println!("called `sample_mod::private_function()`
 
 4.使用模块中的pub关键字，通过将其可见性标记为public来定义名为sample_function的函数：
 
-```
+```rust
 // Using the `pub` keyword changes it visibility to public
 pub fn sample_function() {
 println!("called `sample_mod::sample_function()` \n");
@@ -64,7 +66,7 @@ println!("called `sample_mod::sample_function()` \n");
 
 5.声明一个公共函数indirect_private_fn，它将调用private_function：
 
-```
+```rust
 // Public items of the module can access the private visible
 items
 pub fn indirect_private_fn() {
@@ -76,7 +78,7 @@ private_function();
 
 6.在sample_mod模块的范围之外定义sample_function：
 
-```
+```rust
 // Created a sample function to illustrate calling of
 fn sample_function() {
 println!("Called the `sample_function()` which is not a part
@@ -87,7 +89,7 @@ mod `sample_mod` \n");
 
 7.声明main函数，我们将在其中调用sample_mod模块的每个项目以了解它们的工作方式并打印输出：
 
-```
+```rust
 // Execution of the program starts from here
 fn main() {
 // Calling the sample_function which is outside module
@@ -119,18 +121,23 @@ this line
 
 >在调用模块的私有项时，它将抛出一个错误，指出特定项是私有的。 例如，在前面的配方中，当我们直接调用sample_mod :: private_function（）时，我们得到了一个错误; 从主要功能。
 
-# 构建嵌套模块
+## 构建嵌套模块
+
 嵌套模块是我们希望模块内部具有模块，执行不同任务的地方。 您将学习如何声明和访问嵌套模块的项目。
 
 嵌套模块是将应用程序中的类似项或功能单元放在一起的好方法，这有助于维护功能和调试崩溃。
+
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
 ## 怎么做...
+
 1.在项目工作区中创建名为sample_nested.rs的文件
+
 2.编写代码头信息，它将提供代码的概述：
 
-```
+```text
 //-- #########################
 //-- Task: To create a sample nested_mod module
 //-- Author: Vigneshwer.D
@@ -141,14 +148,14 @@ this line
 
 3.使用mod关键字创建名为sample_mod的模块：
 
-```
+```rust
 // Defined module named `sample_mod`
-mod sample_mod {
+mod sample_mod {}
 ```
 
 4.在sample_mod模块下创建另一个名为nested_mod的模块，其中包含函数和公共可见性，这使得sample_mod成为嵌套模块：
 
-```
+```rust
 // Defined public Nested module named `nested_mod`
 pub mod nested_mod {
 pub fn function() {
@@ -158,7 +165,7 @@ println!("called `sample_mod::nested_mod::function()`");
 
 5.在nested_mod模块下创建一个名为private_function的函数：
 
-```
+```rust
 #[allow(dead_code)]
 fn private_function() {
 println!("called
@@ -168,7 +175,7 @@ println!("called
 
 6.使用sample_mod中名为function的公共函数定义另一个名为private_nested_mod的模块：
 
-```
+```rust
 // Nested modules follow the same rules for visibility
 mod private_nested_mod {
 #[allow(dead_code)]
@@ -181,7 +188,7 @@ println!("called
 
 7.定义main函数并使用其中声明的不同项调用嵌套模块：
 
-```
+```rust
 // Execution starts
 
 fn main() {
@@ -217,11 +224,12 @@ uncommenting this line
 
 对于驻留在不同模块中的项目/单元，我们可以使用相同的名称。 在前面的配方中，我们有一个名为function的项，它存在于两个嵌套模块中。
 
-
-# 使用struct创建模块
+## 使用struct创建模块
 
 此配方涵盖了对其字段具有额外可见性的结构。 可见性默认为private，可以使用pub修饰符覆盖。 这种可见性仅在从模块外部访问结构时才有意义，在结构中定义结构并且目标是隐藏信息（封装）。
+
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
 ## 怎么做...
@@ -230,7 +238,7 @@ uncommenting this line
 
 2.使用代码的详细信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: To create a sample nested_mod module
 //-- Author: Vigneshwer.D
@@ -241,7 +249,7 @@ uncommenting this line
 
 3.创建一个名为sample_struct的示例模块，您可以在其中声明一个名为WhiteBox的公共结构：
 
-```
+```rust
 // Sample module which has struct item
 mod sample_struct {
 // A public struct with a public field of generic type `T`
@@ -252,7 +260,7 @@ pub information: T,
 
 4.使用私有泛型类型T声明名为BlackBox的公共结构：
 
-```
+```rust
 // A public struct with a private field of generic type `T`
 #[allow(dead_code)]
 pub struct BlackBox<T> {
@@ -262,7 +270,7 @@ information: T,
 
 5.使用impl关键字创建一个名为const_new的公共构造函数，该关键字将泛型T类型作为输入：
 
-```
+```rust
 impl<T> BlackBox<T> {
 // A public constructor method
 pub fn const_new(information: T) -> BlackBox<T> {
@@ -275,7 +283,7 @@ information: information,
 
 6.通过调用thesample_struct模块的结构项来声明main函数，该模块是whitebox结构项：
 
-```
+```rust
 // Execution starts here
 fn main() {
 // Public structs with public fields can be constructed as
@@ -320,11 +328,9 @@ _black_box.information);
 
 >在Rust中，泛型意味着特定单元可以接受一个或多个泛型类型参数<T>。 例如，考虑fn foo <T>（T）{...}。 这里，T是使用<T>指定为泛型类型参数的参数，它允许它接受任何类型的任何参数。
 
-
 在这两个结构中，我们有一个名为information的字段，它与T绑定，这是我们收到的参数。 唯一的区别是我们提到WhiteBox中的信息在结构中是公共的，而BlackBox中的信息默认为私有。
 
 接下来，我们为BlackBox创建了一个实现块，我们在impl块中明确指定了泛型类型T. 在其中，我们创建了一个名为const_new的方法，我们公开显示它，它接受泛型类型T作为参数并返回一个BlackBox结构。 const_new充当BlackBox的公共构造函数，我们想在其中创建数据类型。
-
 
 在主块中，我们首先创建了WhiteBox结构，并通过sample_struct :: WhiteBox {information：“public information \ n”}将其分配给名为white_box的变量。 在这里，我们调用模块，创建一个复杂的数据结构并打印white_box，信息字段，这是在前面的步骤中提供的。 接下来，我们尝试以类似的方式创建一个具有BlackBox数据结构的变量。 这导致错误说字段名称是私有的。 这就是为什么我们创建了一个公共方法const_new，它是BlackBox数据类型的构造函数。 我们通过sample_struct :: BlackBox :: const_new（“分类信息\ n”）执行此步骤并将其分配给_black_box。
 
@@ -332,7 +338,7 @@ _black_box.information);
 
 可以通过模块中的间接方法访问私有成员。 请考虑以下代码段：
 
-```
+```rust
 pub mod root {
 use self::foo::create_foo;
 mod foo {
@@ -369,8 +375,10 @@ b.f.hello_foo();
 
 我们在foo模块中公开了一个公共构造函数create_foo，但模块foo仍然是私有的，我们只用use关键字在root中公开create_foo，这意味着bar现在可以创建一个Foo结构但是create_foo在root之外仍然是私有的。
 
-# 控制模块
+## 控制模块
+
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
 ## 怎么做...

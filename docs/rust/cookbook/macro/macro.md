@@ -1,4 +1,6 @@
-﻿在本章中，我们将介绍以下配方：
+﻿# 黑客宏
+
+在本章中，我们将介绍以下配方：
 
  - 在Rust中构建宏
  - 在宏中实现匹配
@@ -8,24 +10,27 @@
  - 实施重复
  - 实施DRY
 
-
-# 介绍
+## 介绍
 
 到目前为止，我们已经看到Rust中的许多语句以感叹号（！）结尾，例如println！，try！等等。 这些命令执行了强大的操作来执行特定任务。 Rust提供了一个强大的宏系统，允许元编程。 宏看起来像函数，但它们的名字以感叹号结尾（！）。 宏被扩展为源代码，并被编译到程序中。 在本文中，我们将研究宏的各个方面，从定义您自己的特定于应用程序的宏到测试它们。
 
-# 在Rust中构建宏
+## 在Rust中构建宏
+
 在本文中，我们将学习macro_rules！ - 这将有助于我们定义自定义应用程序特定宏的语法，该宏可以根据应用程序术语具有唯一名称。
 
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
 
 按照给定的步骤实现此配方：
+
 1.创建名为sample_macro.rs的文件，并在文本编辑器中将其打开。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Building your first macro in Rust
 //-- Author: Vigneshwer.D
@@ -36,7 +41,7 @@
 
 3.创建一个名为Welcome_RustBook的宏：
 
-```
+```rust
 // This is a simple macro named `say_hello`.
 macro_rules! Welcome_RustBook {
 () => (
@@ -48,7 +53,7 @@ println!("Welcome to Rust Cookbook!");
 
 4.定义main函数并调用Welcome_RustBook宏：
 
-```
+```rust
 fn main() {
 // This call will expand into`println!("Hello");`
 Welcome_RustBook!()
@@ -59,38 +64,35 @@ Welcome_RustBook!()
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180925234640574?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-
-
-
-
 ## 怎么运行的...
+
 我们使用macro_rules！ 用于创建自定义宏的宏; 在这里，我们制作了一个名为Welcome_RustBook的宏！ macro_rules的一般语法！ 如下：
 
-```
+```rust
 macro_rules! macro_name { ... }
-
-
 ```
 
 在macro_rules里面！ 宏，我们匹配参数。 在这个配方的情况下，我们不接受用户的任何参数，所以我们匹配（）=>（一组特定的动作项）。 代码中的空括号（）表示宏不带参数。 宏将在编译时扩展为无参数块的内容，其中我们有println！（“欢迎来到Rust Cookbook！”）;它基本上打印了一个默认语句。
 
 在main函数中，我们调用Welcome_RustBook！ 函数定义中的宏，就像我们调用任何其他宏一样。 我们将在终端中看到打印的默认语句。
 
-
-# 在宏中实现匹配
+## 在宏中实现匹配
 
 让我们继续，通过在宏中添加更多规则使我们的宏更复杂，规则基本上是模式匹配情况。 在这个配方中，关键是要学习如何在宏规则中定义模式匹配案例。
 
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
 
 按照上述步骤实现此配方：
+
 1.创建名为sample_match.rs的文件，并在文本编辑器中将其打开。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implement matching
 //-- Author: Vigneshwer.D
@@ -101,7 +103,7 @@ macro_rules! macro_name { ... }
 
 3.创建一个名为Check_Val的宏：
 
-```
+```rust
 macro_rules! Check_Val {
 (x => $e:expr) => (println!("mode X: {}", $e));
 (y => $e:expr) => (println!("mode Y: {}", $e));
@@ -110,7 +112,7 @@ macro_rules! Check_Val {
 
 4.定义main函数并调用Check_Val宏：
 
-```
+```rust
 fn main() {
 Check_Val!(y => 3);
 }
@@ -120,9 +122,10 @@ Check_Val!(y => 3);
 ![在这里插入图片描述](https://img-blog.csdn.net/20180925234912394?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
 ## 怎么运行的...
+
 在这个配方中，我们创建了一个名为Check_Val！的宏，它基本上扮演匹配表达臂的角色，但是在编译时通过Rust语法树进行匹配。 模式的通用语法如下：
 
-```
+```rust
 ( $( $x:expr ),* ) => { ... };
 ```
 
@@ -134,20 +137,21 @@ $ x：expr匹配器将匹配任何Rust表达式并将其绑定到语法树到元
 
 >如果我们调用Check-Val！（z => 3）; 我们会得到错误：没有规则期望令牌`z`，因为我们没有为令牌z定义规则并用$（...）包围匹配器，*将匹配零个或多个表达式，用逗号分隔。
 
+## 玩常见的Rust宏
 
-# 玩常见的Rust宏
 在本书中，我们已经定义并使用了常用的Rust宏来帮助我们执行基本操作，例如打印等。 Rust默认提供这些宏，因为这些宏很难由用户实现。 在这个配方中，我们将学习一些常见的Rust宏。
-
 
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
 
 按照给定的步骤实现此配方：
+
 1.创建名为sample_common_macros.rs的文件，并在文本编辑器中将其打开。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implementing common macros in rust
 //-- Author: Vigneshwer.D
@@ -158,7 +162,7 @@ $ x：expr匹配器将匹配任何Rust表达式并将其绑定到语法树到元
 
 3.创建我们实现一些内置标准Rust宏的main函数：
 
-```
+```rust
 fn main() {
 // Creating a vector
 let v = vec![1, 2, 3, 4, 5];
@@ -186,24 +190,23 @@ assert_eq!(5, 3 + 2);
 
 在这个食谱中，我们使用了Vec！ 用于创建向量的宏，v。断言内的条件！ 和assert_eq！ 宏传递。 故障情况已被注释掉，因为它们会在运行时引起恐慌。
 
-# 实施指定人
+## 实施指定人
 
 Rust提供了一个指示符列表，它们可以帮助我们创建单元，例如函数，并在宏中执行表达式。
 
-
-
-
-
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
 
 按照上述步骤实现此配方：
+
 1.创建一个名为sample_designator.rs的文件，并在文本编辑器中打开它。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implementing designator
 //-- Author: Vigneshwer.D
@@ -214,7 +217,7 @@ Rust提供了一个指示符列表，它们可以帮助我们创建单元，例�
 
 3.创建一个名为create_function的宏，它接受一个指示符作为参数：
 
-```
+```rust
 macro_rules! create_function {
 ($func_name:ident) => (
 fn $func_name() {
@@ -229,7 +232,7 @@ stringify!($func_name))
 
 4.调用create_function宏来创建两个函数foo和bar：
 
-```
+```rust
 create_function!(foo);
 create_function!(bar);
 te a macro named
@@ -237,7 +240,7 @@ te a macro named
 
 5.创建一个名为print_result的宏：
 
-```
+```rust
 macro_rules! print_result {
 ($expression:expr) => (
 println!("{:?} = {:?}",
@@ -249,7 +252,7 @@ $expression)
 
 6.定义main函数，我们在其中使用我们创建的宏：
 
-```
+```rust
 fn main() {
 foo();
 bar();
@@ -275,12 +278,15 @@ x * x + 2 * x - 1
    func_name，我们有了stringify！ body中的宏，它将$ func_name转换为字符串。
  - print_result：此宏接受expr类型的表达式，并将其作为字符串及其结果打印出来。 expr指示符用于表达式。
    在表达式模式的块中，我们使用stringify！ 宏，它将表达式转换为字符串并执行它。
-   
+
 我们使用create_function（foo）创建名为foo和bar的函数和前面的宏; 和create_function！（bar）;. 在main函数中，我们调用了两个函数，即foo和bar，它们返回字符串。 我们称之为function_name。 接下来，我们使用表达式块作为参数调用print_result !,我们在其中创建一个变量x，并为其赋值1u32，这是一个32位无符号整数类型。 然后我们运行x * x + 2 * x - 1，它给出了2的输出。
 
-# 重载宏
+## 重载宏
+
 在Rust中重载宏是提供类似参数的多个组合的过程，我们期望宏处理它们并根据传递的组合提供自定义结果。
+
 ## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
@@ -289,7 +295,7 @@ x * x + 2 * x - 1
 1.创建名为sample_overloading_macros.rs的文件，并在文本编辑器中将其打开。
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implementing
 //-- Author: Vigneshwer.D
@@ -300,7 +306,7 @@ x * x + 2 * x - 1
 
 3.创建一个名为test的宏，我们将为其实现重载：
 
-```
+```rust
 macro_rules! test {
 ($left:expr; and $right:expr) => (
 println!("{:?} and {:?} is {:?}",
@@ -319,7 +325,7 @@ $left || $right)
 
 4.定义我们将实现宏功能的主要功能：
 
-```
+```rust
 fn main() {
 test!(1i32 + 1 == 2i32; and 2i32 * 2 == 4i32);
 test!(true; or false);
@@ -329,7 +335,6 @@ test!(true; or false);
 我们将在成功执行代码时获得以下输出：
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180926002232809?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
-
 
 ## 怎么运行的...
 
@@ -344,26 +349,27 @@ test!(true; or false);
 >
 在主要功能中，我们称之为测试！ 宏两次使用不同的参数，我们有组合。 测试！（1i32 + 1 == 2i32;和2i32 * 2 == 4i32）; 组合返回表达式的字符串形式以及结果，这是真的; test！（true;或false）; 类似地返回true。
 
+## 实现重复
 
-# 实施重复
 重复是特定宏接受至少重复一次的参数的能力。 在本文中，您将学习在Rust中实现重复的语法。
+
 ## 做好准备
+
+我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
+
+## 做好准备
+
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
 ## 怎么做...
 
-## 怎么运行的...
-
-## 做好准备
-我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
-
-## 怎么做...
-怎么做...
 按照给定的步骤实现此配方：
+
 1.创建名为sample_repeat.rs的文件，并在文本编辑器中将其打开。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implementing repeat
 //-- Author: Vigneshwer.D
@@ -374,7 +380,7 @@ test!(true; or false);
 
 3.创建一个名为find_min的宏，我们在其中实现repeat：
 
-```
+```rust
 macro_rules! find_min {
 // Base case:
 ($x:expr) => ($x);
@@ -388,7 +394,7 @@ std::cmp::min($x, find_min!($($y),+))
 
 4.创建一个main函数，我们将多个参数传递给find_min：
 
-```
+```rust
 fn main() {
 println!("{}", find_min!(1u32));
 println!("{}", find_min!(1u32 + 2 , 2u32));
@@ -407,21 +413,23 @@ println!("{}", find_min!(5u32, 2u32 * 3, 4u32));
  - find_min！（1u32）：这将执行第一个案例并返回1
  - find_min！（1u32 + 2,2u32）：这将转到第二种情况，其中将再次为第二个表达式调用宏，并返回这两个表达式的最小结果，即2
  - find_min！（5u32,2u32 *3,4u32）：这与第二种情况类似，但这里宏将被调用两次，并且将返回所有表达式的最小结果，在这种情况下为4
-# 实施DRY
+
+## 实施DRY
 
 使用Do not Repeat Yourself（DRY），在本文中，我们将为Rust中的一些基本标准算术运算创建一个测试用例。 但问题是，我们将使用宏及其功能来自动化它们，以便我们可以减少冗余代码。
-
 
 ## 做好准备
 我们将要求Rust编译器和任何文本编辑器来开发Rust代码片段。
 
-
 ## 怎么做...
+
 按照给定的步骤实现此配方：
+
 1.创建名为sample_dry.rs的文件，并在文本编辑器中将其打开。
+
 2.使用相关信息编写代码头：
 
-```
+```text
 //-- #########################
 //-- Task: Implementing
 //-- Author: Vigneshwer.D
@@ -432,13 +440,13 @@ println!("{}", find_min!(5u32, 2u32 * 3, 4u32));
 
 3.调用标准操作箱：
 
-```
+```rust
 use std::ops::{Add, Mul, Sub};
 ```
 
 4.创建一个名为assert_equal_len的宏：
 
-```
+```rust
 macro_rules! assert_equal_len {
 ($a:ident, $b: ident, $func:ident, $op:tt) => (
 assert!($a.len() == $b.len(),
@@ -453,7 +461,7 @@ stringify!($op),
 
 5.创建一个名为op的宏：
 
-```
+```rust
 macro_rules! op {
 ($func:ident, $bound:ident, $op:tt, $method:ident) => (
 fn $func<T: $bound<T, Output=T> + Copy>(xs: &mut Vec<T>, ys:
@@ -469,7 +477,7 @@ for (x, y) in xs.iter_mut().zip(ys.iter()) {
 
 6.实现add_assign，mul_assign和sub_assign函数：
 
-```
+```rust
 op!(add_assign, Add, +=, add);
 op!(mul_assign, Mul, *=, mul);
 op!(sub_assign, Sub, -=, sub);
@@ -477,7 +485,7 @@ op!(sub_assign, Sub, -=, sub);
 
 7.创建一个名为test的模块：mod test {：
 
-```
+```rust
 use std::iter;
 macro_rules! test {
 ($func: ident, $x:expr, $y:expr, $z:expr) => {
@@ -504,9 +512,6 @@ test!(sub_assign, 3u32, 2u32, 1u32);
 我们将在成功执行代码时获得以下输出：
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180926205310951?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
-
-
-怎么运行的...
 
 宏允许开发人员通过分解函数和/或测试套件的公共部分来编写DRY代码。 在这个配方中，我们在Vec <T>上实现了对+ =，* =和 - =运算符的测试。 我们在这个配方中使用了一个新的指示符，tt; 它代表标记树，用于运算符和标记。
 
