@@ -2,17 +2,17 @@
 
 在本章中，我们将介绍以下内容：
 
- - 定义表达式
- - 定义常量
- - 执行变量绑定
- - 在Rust中执行类型转换
- - 与Rust的决策
- - 在Rust中循环操作
- - 定义枚举类型
- - 定义闭包
- - 在Rust中执行指针操作
- - 定义第一个用户定义的数据类型向用户定义的数据类型添加功能
- - 不同数据类型的类似功能
+- 定义表达式
+- 定义常量
+- 执行变量绑定
+- 在Rust中执行类型转换
+- 与Rust的决策
+- 在Rust中循环操作
+- 定义枚举类型
+- 定义闭包
+- 在Rust中执行指针操作
+- 定义第一个用户定义的数据类型向用户定义的数据类型添加功能
+- 不同数据类型的类似功能
 
 ## 介绍
 
@@ -26,40 +26,42 @@
 
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
+## 怎么做
 
 按照以下步骤操作：
+
 1.使用下一个代码片段创建名为expression.rs的文件。
+
 2.声明main函数并创建变量x_val，y_val和z_val：
 
 ```rust
 // main point of execution
 fn main() {
-// expression
-let x_val = 5u32;
-// y block
-let y_val = {
-let x_squared = x_val * x_val;
-let x_cube = x_squared * x_val;
-// This expression will be assigned to `y_val`
-x_cube + x_squared + x_val
-};
-// z block
-let z_val = {
-// The semicolon suppresses this expression and `()` is
-assigned to `z`
-2 * x_val;
-};
-// printing the final outcomes
-println!("x is {:?}", x_val);
-println!("y is {:?}", y_val);
-println!("z is {:?}", z_val);
+  // expression
+  let x_val = 5u32;
+  // y block
+  let y_val = {
+  let x_squared = x_val * x_val;
+  let x_cube = x_squared * x_val;
+    // This expression will be assigned to `y_val`
+    x_cube + x_squared + x_val
+  };
+  // z block
+  let z_val = {
+    // The semicolon suppresses this expression and `()` is assigned to `z`
+    2 * x_val;
+  };
+  // printing the final outcomes
+  println!("x is {:?}", x_val);
+  println!("y is {:?}", y_val);
+  println!("z is {:?}", z_val);
 }
 ```
+
 运行代码时应该得到随后的输出。 请参考以下屏幕截图：
 ![在这里插入图片描述](https://img-blog.csdn.net/2018092408021269?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行的.`
 
 所有以分号（;）结尾的语句都是表达式。 块是在{}范围内具有一组语句和变量的语句。 块的最后一个语句是将分配给变量的值。 当我们用分号关闭最后一个语句时，它会返回（）给变量。
 
@@ -73,19 +75,14 @@ println!("z is {:?}", z_val);
 
 Rust提供了在Rust中的代码中分配和维护常量值的功能。 当我们想要维护全局计数时，这些值非常有用，例如计时器阈值。 Rust提供了两个const关键字来执行此活动。 您将学习如何在此配方中全局提供常量值。
 
-## 做好准备
-
-我们将要求Rust编译器和任何文本编辑器进行编码。
-
-## 怎么做...
-
 按着这些次序：
+
 1.使用下一个代码片段创建一个名为constant.rs的文件。
+
 2.使用常量声明全局UPPERLIMIT：
 
 ```rust
-// Global variables are declared outside scopes of other
-function
+// Global variables are declared outside scopes of other function
 const UPPERLIMIT: i32 = 12;
 ```
 
@@ -94,8 +91,8 @@ const UPPERLIMIT: i32 = 12;
 ```rust
 // function to check if bunber
 fn is_big(n: i32) -> bool {
-// Access constant in some function
-n > UPPERLIMIT
+  // Access constant in some function
+  n > UPPERLIMIT
 }
 ```
 
@@ -103,21 +100,21 @@ n > UPPERLIMIT
 
 ```rust
 fn main() {
-let random_number = 15;
-// Access constant in the main thread
-println!("The threshold is {}", UPPERLIMIT);
-println!("{} is {}", random_number, if
-is_big(random_number) { "big" } else { "small"
-});
-// Error! Cannot modify a `const`.
-// UPPERLIMIT = 5;
+  let random_number = 15;
+  // Access constant in the main thread
+  println!("The threshold is {}", UPPERLIMIT);
+  println!("{} is {}", random_number,
+  if is_big(random_number) { "big" }
+  else { "small"});
+  // Error! Cannot modify a `const`.
+  // UPPERLIMIT = 5;
 }
 ```
 
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924080858637?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## 怎么运行的
 
 配方的工作流程非常简单，我们有一个功能来检查整数是否大于固定阈值。 UPPERLIMIT变量定义函数的固定阈值，该函数是一个常量，其值在代码中不会改变，并且可以在整个程序中访问。
 
@@ -131,44 +128,41 @@ is_big(random_number) { "big" } else { "small"
 
 变量绑定是指Rust代码中的变量如何绑定到类型。 我们将在此配方中介绍模式，可变性，范围和阴影概念。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建一个名为binding.rs的文件，并输入一个代码片段，其中包括声明主函数和不同的变量：
 
 ```rust
 fn main() {
-// Simplest variable binding
-let a = 5;
-// pattern
-let (b, c) = (1, 2);
-// type annotation
-let x_val: i32 = 5;
-// shadow example
-let y_val: i32 = 8;
-{
-println!("Value assigned when entering the
-scope : {}", y_val); // Prints "8".
-let y_val = 12;
-println!("Value modified within scope :{}", y_val);
-// Prints "12".
-}p
-rintln!("Value which was assigned first : {}", y_val);
-// Prints "8".
-let y_val = 42;
-println!("New value assigned : {}", y_val);
-//Prints "42".
+  // Simplest variable binding
+  let a = 5;
+  // pattern
+  let (b, c) = (1, 2);
+  // type annotation
+  let x_val: i32 = 5;
+  // shadow example
+  let y_val: i32 = 8;
+  {
+    println!("Value assigned when entering the scope : {}", y_val); 
+  // Prints "8".
+  let y_val = 12;
+  println!("Value modified within scope :{}", y_val);
+  // Prints "12".
+  }
+  println!("Value which was assigned first : {}", y_val);
+  // Prints "8".
+  let y_val = 42;
+  println!("New value assigned : {}", y_val);
+  //Prints "42".
 }
 ```
 
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924081416921?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## 怎么运行的
 
 let语句是创建绑定的最简单方法，我们将变量绑定到一个值，即变量a的情况。 要使用let语句创建模式，我们将模式值分配给相同模式中的b和c值。 Rust是一种静态类型语言。 这意味着我们必须在赋值期间指定我们的类型，并且在编译时，检查它是否兼容。 Rust还具有类型引用功能，可在编译时自动标识变量类型。 variable_name：type是我们用于在Rust中明确提及类型的格式。 我们按以下格式阅读作业：
 
@@ -186,31 +180,21 @@ x_val is a binding with the type i32 and the value 5.
 
 在本文中，您将学习如何在Rust中的不同数据类型之间进行转换。 Rust不提供自动类型转换。 开发人员必须手动拥有它。 使用我们将在Rust中执行安全类型转换。
 
-## 做好准备
-
-我们将要求Rust编译器和任何文本编辑器进行编码。
-
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为typecasting.rs的文件，并在脚本中输入以下代码：
 
 ```rust
 use std::{i32,f32};
-// Sample function for assigning values to
-confusion matrix
+// Sample function for assigning values to confusion matrix
 fn main() {
-// assigning random values to the confusion matrix
-let(true_positive,true_negative,false_positive,
-false_negative)=(100,50,10,5);
-// define a total closure
-let total = true_positive + true_negative +
-false_positive + false_negative;
-println!("The total predictions {}",total);
-// Calculating the accuracy of the model
-println!("Accuracy of the model
-{:.2}",percentage(accuracy(true_positive,
-true_negative,total)));
+  // assigning random values to the confusion matrix
+  let(true_positive,true_negative,false_positive, false_negative)=(100,50,10,5);
+  // define a total closure
+  let total = true_positive + true_negative + false_positive + false_negative;
+  println!("The total predictions {}",total);
+  // Calculating the accuracy of the model
+  println!("Accuracy of the model {:.2}",percentage(accuracy(true_positive, true_negative,total)));
 }
 ```
 
@@ -221,16 +205,15 @@ true_negative,total)));
 4.总变量是所有测量值的总和：
 
 ```rust
-// Accuracy Measures the overall performance of
-the model
+// Accuracy Measures the overall performance of the model
 fn accuracy(tp:i32,tn:i32,total:i32) -> f32 {
-// if semi-colon is not put then that returns
-// No automatic type cast in rust
-(tp as f32 + tn as f32 )/(total as f32)
-} /
-/ Converting to percentage
+  // if semi-colon is not put then that returns
+  // No automatic type cast in rust
+  (tp as f32 + tn as f32 )/(total as f32)
+}
+// Converting to percentage
 fn percentage(value:f32) -> f32 {
-value *100.0
+  value *100.0
 }
 ```
 
@@ -241,7 +224,7 @@ value *100.0
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924082019912?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行的...`
 
 在这个配方中，我们有两个函数，准确性和百分比，它们从main函数接收参数并转换传递给所需类型的类型，因为我们在Rust中使用as关键字的算术运算的性质 在Rust中的类型转换。 在精度函数的情况下，它需要三个类型为i32的输入参数并返回单个f32类型值。
 
@@ -259,17 +242,12 @@ let b = a * 0.2; //Won't compile
 ```rust
 let b = a as f64 * 0.2;
 ```
+
 >请注意，当我们以相同类型的数据类型执行算术运算时，我们不必担心类型转换，因为生成的操作的结果是自动进行类型转换的。
 
 ## Rust的决策(条件)
 
 在本文中，我们将了解Rust中的决策语句。 Rust中的条件检查与其他动态编程语言类似，并且非常易于使用。 使用if ... else语句，我们将在Rust中执行条件检查。
-
-## 做好准备
-
-我们将要求Rust编译器和任何文本编辑器进行编码。
-
-## 怎么做...
 
 执行以下步骤：
 
@@ -278,19 +256,18 @@ let b = a as f64 * 0.2;
 ```rust
 use std::{i32};
 fn main() {
-let age : i32= 10;
-// If else statements
-if age <= 18{
-println!("Go to School");
-} else if (age >18) && (age <= 28){
-println!("Go to college");
-} else {
-println!("Do something with your life");
-} /
-/ if/ else statement in one line
-let can_vote = if (age >= 18) {true} else
-{false};
-println!("Can vote {}",can_vote );
+  let age : i32= 10;
+  // If else statements
+  if age <= 18{
+    println!("Go to School");
+  } else if (age >18) && (age <= 28){
+    println!("Go to college");
+  } else {
+    println!("Do something with your life");
+  }
+  // if/ else statement in one line
+  let can_vote = if (age >= 18) {true} else {false};
+  println!("Can vote {}",can_vote );
 }
 ```
 
@@ -302,8 +279,6 @@ println!("Can vote {}",can_vote );
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924082530933?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
-
 在这个配方中，我们实现了一个if ... else语句来在Rust中执行条件语句。 条件在年龄变量中执行。 在这个配方中，我们分配了一个值为10的不可变变量; 在此之后，我们将其与各种规则进行比较，并根据合格规则执行操作。
 
 这些规则是开发人员以数学运算的形式生成的条件，产生真或假的结果。 根据操作的输出，我们在决策语句的范围内选择一组特定的操作。
@@ -312,8 +287,8 @@ println!("Can vote {}",can_vote );
 
 在前面的案例中，我们检查了以下流程中的三种情况：
 
- - if语句检查age变量是否小于18.如果操作返回true，那么我们继续打印Go to School。
- - 当第一个条件返回false时，在else ... if语句中检查下一个条件;
+- if语句检查age变量是否小于18.如果操作返回true，那么我们继续打印Go to School。
+- 当第一个条件返回false时，在else ... if语句中检查下一个条件;
    在这里我们检查年龄是否在18到28之间，如果这个条件返回true，我们打印去大学。
 
 最后，我们有else语句，它没有条件，只有在前面所有条件都失败时才执行。
@@ -332,21 +307,7 @@ let variable = if (condition 1 ) {true} else {false};
 
 在本文中，您将学习Rust中的循环语句。 我们在Rust中引用的循环语句提供了交互功能。 使用循环，while和关键字，我们可以在Rust中执行迭代操作。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
-
-## 怎么做...
-
-# 怎么运行的...
-
-## 做好准备
-
-我们将要求Rust编译器和任何文本编辑器进行编码。
-
-## 怎么做...
-
-执行以下步骤：
 
 1.创建名为looping.rs的文件，并在脚本中输入以下代码。
 
@@ -356,24 +317,24 @@ let variable = if (condition 1 ) {true} else {false};
 
 ```rust
 fn main() {
-// mutuable variable whose value can be changed
-let mut x =1;
-println!(" Loop even numbers ");
-// Continously loops
-loop {
-// Check if x is an even number or not
-if (x % 2 == 0){
-println!("{}",x);
-x += 1;
-// goes to the loop again
-continue;
-}/
-/ exit if the number is greater than 10
-if (x > 10) {
-break;
-}/
-/ increment the number when not even
-x+=1;
+  // mutuable variable whose value can be changed
+  let mut x =1;
+  println!(" Loop even numbers ");
+  // Continously loops
+  loop {
+    // Check if x is an even number or not
+    if (x % 2 == 0){
+      println!("{}",x);
+      x += 1;
+      // goes to the loop again
+      continue;
+    }
+    // exit if the number is greater than 10
+    if (x > 10) {
+      break;
+    }
+  }
+  // increment the number when not even x+=1;
 }
 ```
 
@@ -384,8 +345,8 @@ let mut y = 1;
 // while loop
 println!("while 1 to 9 ");
 while y < 10 {
-println!("{}",y );
-y +=1;
+  println!("{}",y );
+  y +=1;  
 }
 ```
 
@@ -395,9 +356,9 @@ y +=1;
 let mut z = 1;
 //for loop
 println!(" For 1 to 9");
-for z in 1 .. 10 {
-println!("{}",z );
-}
+  for z in 1 .. 10 {
+    println!("{}",z );
+  }
 }
 ```
 
@@ -405,7 +366,7 @@ println!("{}",z );
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924083438310?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行的.`
 
 loop是Rust中的迭代关键字，其范围内的语句永远运行，即无限期，除非它们被break语句显式停止。 当我们希望进程在应用程序中执行特定任务直到达到特定状态以进行进一步处理时，这非常有用。 考虑一个视频存储应用程序，我想连续保存摄像机源，直到用户发出停止应用程序的命令。
 
@@ -423,26 +384,22 @@ loop是Rust中的迭代关键字，其范围内的语句永远运行，即无限
 
 在本文中，您将学习如何在Rust中使用枚举类型。 在Rust中，枚举类型允许开发人员以多种格式表示数据，并且每种格式都可以选择具有与之关联的特定数据。 使用enum关键字，我们在Rust中执行迭代操作。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为enum.rs的文件，并在脚本中输入以下代码：
 
 ```rust
 fn main() {
-let hulk = Hero::Strong(100);
-let fasty = Hero::Fast;
-//converting from
-let spiderman = Hero::Info
-{name:"spiderman".to_owned(),secret:"peter
-parker".to_owned()};
-get_info(spiderman);
-get_info(hulk);
-get_info(fasty);
+  let hulk = Hero::Strong(100);
+  let fasty = Hero::Fast;
+  //converting from
+  let spiderman = Hero::Info {name:"spiderman".to_owned(),secret:"peter
+  parker".to_owned()};
+  get_info(spiderman);
+  get_info(hulk);
+  get_info(fasty);
 }
 ```
 
@@ -451,9 +408,9 @@ get_info(fasty);
 ```rust
 // declaring the enum
 enum Hero {
-Fast,
-Strong(i32),
-Info {name : String, secret : String}
+  Fast,
+  Strong(i32),
+  Info {name : String, secret : String}
 }
 ```
 
@@ -462,19 +419,18 @@ Info {name : String, secret : String}
 ```rust
 // function to perform for each types
 fn get_info(h:Hero){
-match h {
-Hero::Fast => println!("Fast"),
-Hero::Strong(i) => println!("Lifts {} tons",i ),
-Hero::Info {name,secret} => { println!(" name is: {0} secret is
-: {1}", name,secret);} ,
-}
+  match h {
+    Hero::Fast => println!("Fast"),
+    Hero::Strong(i) => println!("Lifts {} tons",i ),
+    Hero::Info {name,secret} => { println!(" name is: {0} secret is : {1}", name,secret);} ,
+  }
 }
 ```
 
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924091052971?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行..`
 
 枚举是一个非常重要的Rust类型，因为它允许特定数据类型与多个数据变体相关联。 枚举类型的值包含与其关联的数据变体的信息。
 
@@ -495,13 +451,10 @@ get_info（argument：enum type）函数将enum作为数据类型，当我们传
 
 在一个超级级别，闭包类似于函数，调用闭包就像一个函数。 闭包类似于lambda，它们基本上是在闭合范围内对变量进行操作的函数。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为closures.rs的文件，并在脚本中输入以下代码：
 
 ```rust
@@ -531,7 +484,7 @@ println!("3 + 10 ={}", add_ten(3));
 运行上面的代码时，我们应该得到以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924093903459?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行的...`
 
 关闭闭包的一个重要问题是它的绑定或其操作是在定义它的范围内。 它类似于在其操作环境中使用自由变量的函数
 
@@ -543,13 +496,10 @@ println!("3 + 10 ={}", add_ten(3));
 
 Rust提供了不同的智能指针。 这些是Rust在不同用例中使用的不同类型的指针，但是＆mut T是一个可变（独占）引用，它是其中一个操作。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为pointer.rs的文件，并在脚本中输入以下代码：
 
 ```rust
@@ -561,8 +511,7 @@ fn main() {
 
 ```rust
 let vect1 = vec![1,2,3];
-// Error in case you are doing this in case of non primitive
-value
+// Error in case you are doing this in case of non primitive value
 // let vec2 = vec1
 // println!("vec1[0] : {:?}", vec1[0]);
 let prim_val = 1;
@@ -585,16 +534,16 @@ println!("vector 1 {:?}", vect1);
 ```rust
 // Added a reference in the argument
 fn sum_vects (v1: &Vec<i32>) -> i32 {
-// apply a closure and iterator
-let sum = v1.iter().fold(0, |mut sum, &x | {sum += x; sum});
-return sum;
+  // apply a closure and iterator
+  let sum = v1.iter().fold(0, |mut sum, &x | {sum += x; sum});
+  return sum;
 }
 ```
 
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/2018092409500511?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## `怎么运行`
 
 所有权和借用是Rust构建的主要概念，Rust提供的标准API基于这一概念。 在前面的代码片段中，我们创建了一个向量，即vect1，并使用vec为其分配了1,2,3！ 关键词。
 
@@ -607,33 +556,28 @@ return sum;
 
 >fold（）函数有两个参数：初始值和闭包。 闭包再次采用两个参数：累加器和元素。 闭包返回累加器在下一次迭代时应具有的值。
 
-
 这里累加器是sum，元素是x，它在每次迭代中加到sum。 请注意，x在闭包定义中是可变的，可以更改其操作范围内的值。 它存储在sum变量中并返回到main函数。
 
 ## 定义您的第一个用户定义的数据类型
 
 在本文中，您将了解结构，这是一种可以在Rust中创建复杂数据类型的方法。 使用struct，我们将在Rust中定义用户定义的数据类型。
 
-## 做好准备
-
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为struct.rs的文件，并在脚本中输入以下代码：
 
 ```rust
 use std::{f64};
 fn main() {
-// create a struct variable
-let mut circle1 = Circle {
-x:10.0,radius : 10.0
-};
-// print radius and variable x
-println!("x:{},radius : {}", circle1.x,
-circle1.radius );
-println!("Radius : {}", get_radius(&circle1) );
+  // create a struct variable
+  let mut circle1 = Circle {
+    x:10.0,radius : 10.0
+  };
+  // print radius and variable x
+  println!("x:{},radius : {}", circle1.x, circle1.radius );
+  println!("Radius : {}", get_radius(&circle1) );
 }
 ```
 
@@ -642,8 +586,8 @@ println!("Radius : {}", get_radius(&circle1) );
 ```rust
 // define your custom user data type
 struct Circle {
-x : f64,
-radius : f64,
+  x : f64,
+  radius : f64,
 }
 ```
 
@@ -652,7 +596,7 @@ radius : f64,
 ```rust
 // get radius function
 fn get_radius(c1 : &Circle) -> f64{
-c1.radius
+  c1.radius
 }
 ```
 
@@ -660,7 +604,7 @@ c1.radius
 
 ![在这里插入图片描述](https://img-blog.csdn.net/20180924202345859?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## 怎么运行
 
 在产品开发生命周期的某个阶段，开发人员通常需要处理太多变量，而且代码变得非常复杂。 这是结构看起来像一个大救世主的地方。 结构使开发人员能够创建复杂的数据类型，允许在单个名称下统一多种数据类型。
 
@@ -678,11 +622,11 @@ c1.radius
 
 您将学习使用Rust中的impl关键字执行方法调用，这有助于向用户定义的数据类型添加功能。 在这个配方中，impl块帮助我们创建方法。
 
-## 做好准备
+## 准备
 
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
+## 怎么做
 
 执行以下步骤：
 1.创建名为implement.rs的文件，并在脚本中输入以下代码：
@@ -690,13 +634,12 @@ c1.radius
 ```rust
 use std::{f64};
 fn main() {
-// create a struct variable
-let mut circle1 = Circle {
-x:10.0,radius : 10.0
-};
-println!("x:{},radius : {}", circle1.x,
-circle1.radius );
-println!("x : {}", circle1.get_x());
+  // create a struct variable
+  let mut circle1 = Circle {
+    x:10.0,radius : 10.0
+  };
+  println!("x:{},radius : {}", circle1.x, circle1.radius );
+  println!("x : {}", circle1.get_x());
 }
 ```
 
@@ -705,8 +648,8 @@ println!("x : {}", circle1.get_x());
 ```rust
 // define your custom user data type
 struct Circle {
-x : f64,
-radius : f64,
+  x : f64,
+  radius : f64,
 }
 ```
 
@@ -717,16 +660,16 @@ radius : f64,
 impl Circle {
 // pub makes this function public which makes it
 accessible outsite the scope {}
-pub fn get_x(&self) -> f64 {
-self.x
-}
+  pub fn get_x(&self) -> f64 {
+    self.x
+  }
 }
 ```
 
 运行上述代码后，您应该获得以下屏幕截图作为输出：
 ![在这里插入图片描述](https://img-blog.csdn.net/2018092420354725?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3Njk2OTkw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-## 怎么运行的...
+## 怎么运行的
 
 在这个配方中，我们创建了一个名为Circle的自定义数据类型，它有两个标签：半径和类型为f64的x，它是64位浮点类型。 这里的两个参数都与Circle数据类型相关，并且唯一地表达其特征。
 
@@ -742,28 +685,25 @@ self.x
 
 您将了解此配方中Rust的特征功能与impl类似，它有助于开发人员对用户定义的数据类型进行方法调用。 但是，trait提供了许多功能，例如继承和控制，而不是用户定义的数据类型提供的功能。
 
-## 做好准备
+## 做准备
 
 我们将要求Rust编译器和任何文本编辑器进行编码。
 
-## 怎么做...
-
 执行以下步骤：
+
 1.创建名为trait.rs的文件，并在脚本中输入以下代码：
 
 ```rust
 use std::{f64};
 fn main() {
-// variable of circle data type
-let mut circle1 = Circle {
-r : 10.0
-};
-println!("Area of circle {}", circle1.area() );
-// variable of rectangle data type
-let mut rect = Rectangle {
-h:10.0,b : 10.0
-};
-println!("Area of rectangle {}", rect.area() );
+  // variable of circle data type
+  let mut circle1 = Circle { r : 10.0 };
+  println!("Area of circle {}", circle1.area() );
+  // variable of rectangle data type
+  let mut rect = Rectangle {
+    h:10.0,b : 10.0
+  };
+  println!("Area of rectangle {}", rect.area() );
 }
 ```
 
@@ -772,8 +712,8 @@ println!("Area of rectangle {}", rect.area() );
 ```rust
 // userdefined data type rectangle
 struct Rectangle {
-h: f64,
-b: f64,
+  h: f64,
+  b: f64,
 }
 ```
 
@@ -782,7 +722,7 @@ b: f64,
 ```rust
 // userdefined data type circle
 struct Circle {
-r: f64,
+  r: f64,
 }
 ```
 
@@ -791,7 +731,7 @@ r: f64,
 ```rust
 // create a functionality for the data types
 trait HasArea {
-fn area(&self) -> f64;
+  fn area(&self) -> f64;
 }
 ```
 
@@ -800,9 +740,9 @@ fn area(&self) -> f64;
 ```rust
 // implement area for circle
 impl HasArea for Circle {
-fn area(&self) -> f64 {
-3.14 * (self.r *self.r)
-}
+  fn area(&self) -> f64 {
+    3.14 * (self.r *self.r)
+  }
 }
 ```
 
@@ -811,9 +751,9 @@ fn area(&self) -> f64 {
 ```rust
 // implement area for rectangle
 impl HasArea for Rectangle {
-fn area(&self) -> f64 {
-self.h *self.b
-}
+  fn area(&self) -> f64 {
+    self.h *self.b
+  }
 }
 ```
 
