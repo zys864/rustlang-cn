@@ -58,7 +58,8 @@ module.exports = {
           ] },
           { text: '资源', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
-            { text: 'Crates', link: '/resourse/crates/' }
+            { text: 'Crates', link: '/resourse/crates/' },
+            { text: 'Blogs', link: '/resourse/blogs/' }
           ] },
           { text: '论坛', link: 'http://ruster.xyz' }
         ],

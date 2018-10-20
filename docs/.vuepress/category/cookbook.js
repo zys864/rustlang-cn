@@ -2,6 +2,13 @@ exports.cookbook = (title) => {
     return [
         '',
         {
+            title: '正则表达式',
+            collapsable: false,
+            children: [
+            'regex/regex'
+            ]
+        },
+        {
             title: 'Cargo',
             collapsable: false,
             children: [

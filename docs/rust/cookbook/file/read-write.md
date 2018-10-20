@@ -8,7 +8,7 @@
 use std::fs::File;
 use std::io::{Write, BufReader, BufRead};
 
-fn run() -> Result<()> {
+fn main() -> Result<()> {
     let path = "lines.txt";
 
     let mut output = File::create(path)?;
@@ -37,7 +37,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-fn run() -> Result<()> {
+fn main() -> Result<()> {
     let path_to_read = Path::new("new.txt");
 
     let stdout_handle = Handle::stdout()?;
@@ -76,7 +76,8 @@ extern crate memmap;
 
 use memmap::Mmap;
 
-fn run() -> Result<()> {
+fn main() -> Result<()> {
+    write!(File::create("content.txt")?, "My hovercraft is full of eels!")?;
     let file = File::open("content.txt")?;
     let map = unsafe { Mmap::map(&file)? };
 
