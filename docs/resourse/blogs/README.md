@@ -24,3 +24,4 @@
 * [Patrick Walton](https://pcwalton.github.io/)
 * [Yehuda Katz](http://yehudakatz.com/)
 * [Steve Klabnik](http://words.steveklabnik.com/)
+* [beachape](https://beachape.com/)
