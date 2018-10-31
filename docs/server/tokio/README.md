@@ -43,7 +43,7 @@ Rust的所有权模型和类型系统可以实现系统级应用程序，而不�
 ```rust
 use std::sync::Mutex;
 
-# let foo = "".to_string();
+let foo = "".to_string();
 let data = Mutex::new(foo);
 
 let locked = data.lock().unwrap();
