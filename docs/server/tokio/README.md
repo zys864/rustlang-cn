@@ -14,7 +14,7 @@ Tokio是基于Rust编程语言构建的，它本身非常快。使用Tokio构建
 
 #### 零成本抽象
 
-Tokio以`Future`为基础。`Future`不是一个新主意，但Tokio使用它们的方式是独一无二的。与其他语言的`Future`不同，Tokio的`Future`编译成状态机。从未来的实现中常见的同步，分配或其他成本不会增加额外开销。
+Tokio以`Future`为基础。`Future`不是一个新主意，但Tokio使用它们的方式是独一无二的。与其他语言的`Future`不同，Tokio的`Future`编译成状态机。用`Future`实现常见的同步，分配或其他不会增加额外开销成本。
 
 请注意，提供零成本抽象并不意味着Tokio本身没有成本。这意味着使用Tokio导致最终产品具有与不使用Tokio相同的开销。
 
