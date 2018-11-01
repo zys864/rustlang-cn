@@ -3,7 +3,8 @@
  For this one, we're going to have to include the `futures` crate in order to
 get the `FutureObj` type, which is a dynamically-dispatched `Future`, similar
 to `Box<dyn Future<Output = T>>`. `Cargo.toml` should look something like this:
- ```toml
+
+```toml
 [package]
 name = "xyz"
 version = "0.1.0"
@@ -12,8 +13,10 @@ edition = "2018"
  [dependencies]
 futures-preview = "0.3.0-alpha.9"
 ```
- Next, we need the following imports at the top of `src/main.rs`:
- ```rust
+
+Next, we need the following imports at the top of `src/main.rs`:
+
+```rust
 #![feature(arbitrary_self_types, async_await, await_macro, futures_api, pin)]
  use {
     futures::future::FutureObj,
@@ -29,7 +32,8 @@ futures-preview = "0.3.0-alpha.9"
     },
 };
 ```
- Our executor will work by sending tasks to run over a channel. The executor
+
+Our executor will work by sending tasks to run over a channel. The executor
 will pull events off of the channel and run them. When a task is ready to
 do more work (is awoken), it can schedule itself to be polled again by
 putting itself back onto the channel.
@@ -38,7 +42,8 @@ channel. The user will get a sending end so that they can spawn new futures.
 Tasks themselves are just futures that can reschedule themselves, so we'll
 store them as a future paired with a sender that the task can use to requeue
 itself.
- ```rust
+
+```rust
 /// Task executor that receives tasks off of a channel and runs them.
 struct Executor {
     task_receiver: Receiver<Arc<Task>>,
@@ -64,11 +69,13 @@ struct Task {
     (Executor { task_receiver }, Spawner { task_sender})
 }
 ```
- Let's also add a method to spawner to make it easy to spawn new futures.
+
+Let's also add a method to spawner to make it easy to spawn new futures.
 This method will take a future type, box it and put it in a FutureObj,
 and create a new `Arc<Task>` with it inside which can be enqueued onto the
 executor.
- ```rust
+
+```rust
 impl Spawner {
     fn spawn(&self, future: impl Future<Output = ()> + 'static + Send) {
         let future_obj: FutureObj::new(Box::new(future));
@@ -80,14 +87,16 @@ impl Spawner {
     }
 }
 ```
- In order poll futures, we'll also need to create a `LocalWaker` to provide to
+
+In order poll futures, we'll also need to create a `LocalWaker` to provide to
 poll. As discussed in the [task wakeups section], `LocalWaker`s are responsible
 for scheduling a task to be polled again once `wake` is called. The easiest way
 to create a new `LocalWaker` is by implementing the `Wake` trait and then using
 the `local_waker_from_nonlocal` or `local_waker` functions to turn a `Arc<T: Wake>`
 into a `LocalWaker`. Let's implement `Wake` for our tasks to allow them to be
 turned into `LocalWaker`s and awoken:
- ```rust
+
+```rust
 impl Wake for Task {
     fn wake(arc_self: &Arc<Self>) {
         // Implement `wake` by sending this task back onto the task channel
@@ -97,10 +106,12 @@ impl Wake for Task {
     }
 }
 ```
- When a `LocalWaker` is created from an `Arc<Task>`, calling `wake()` on it will
+
+When a `LocalWaker` is created from an `Arc<Task>`, calling `wake()` on it will
 cause a copy of the `Arc` to be sent onto the task channel. Our executor then
 needs to pick up the task and poll it. Let's implement that:
- ```rust
+
+```rust
 impl Executor {
     fn run(&self) {
         while let Ok(task) = self.task_receiver.recv() {
@@ -120,10 +131,12 @@ impl Executor {
     }
 }
 ```
- Congratulations! We now have a working futures executor. We can even use it
+
+Congratulations! We now have a working futures executor. We can even use it
 to run `async/await!` code and custom futures, such as the `TimerFuture` we
 wrote earlier:
- ```rust
+
+```rust
 fn main() {
     let (executor, spawner) = new_executor_and_spawner();
     spawner.spawn(async {

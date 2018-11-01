@@ -30,15 +30,18 @@ tokio = { version = "0.1.11", features = ["async-await-preview"] }
 Now that we've got our dependencies out of the way, let's start writing some
 code. Open up `src/main.rs` and enable the following features at the top of
 the file:
+
  ```rust
 #![feature(async_await, await_macro, futures_api)]
 ```
- - `async_await` adds support for the `async fn` syntax.
+
+- `async_await` adds support for the `async fn` syntax.
 - `await_macro` adds support for the `await!` macro.
 - `futures_api` adds support for the nightly `std::future` and `std::task`
-modules which define the core `Future` trait and dependent types.
- Additionally, we have some imports to add:
- ```rust
+  
+modules which define the core `Future` trait and dependent types. Additionally, we have some imports to add:
+
+```rust
 use {
     hyper::{
         // Miscellaneous types from Hyper for working with HTTP.
@@ -66,13 +69,15 @@ use {
     tokio::await,
 };
 ```
- Once the imports are out of the way, we can start putting together the
+
+Once the imports are out of the way, we can start putting together the
 boilerplate to allow us to serve requests:
- ```rust
+
+```rust
 async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     unimplemented!()
 }
- async fn run_server(addr: SocketAddr) {
+async fn run_server(addr: SocketAddr) {
     println!("Listening on http://{}", addr);
      // Create a server bound on the provided address
     let serve_future = Server::bind(&addr)
@@ -93,7 +98,7 @@ async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
         eprintln!("server error: {}", e);
     }
 }
- fn main() {
+fn main() {
     // Set the address to run our socket on.
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
      // Call our run_server function, which returns a future.
@@ -109,54 +114,65 @@ async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     run(futures_01_future);
 }
 ```
- If you `cargo run` now, you should see the message "Listening on
+
+If you `cargo run` now, you should see the message "Listening on
 http://127.0.0.1:300" printed on your terminal. If you open that URL in your
 browser of choice, you'll see "thread ... panicked at 'not yet implemented'."
 Great! Now we just need to actually handle requests. To start, let's just
 return a static message:
- ```rust
+
+```rust
 async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
     // Always return successfully with a response containing a body with
     // a friendly greeting ;)
     Ok(Response::new(Body::from("hello, world!")))
 }
 ```
- If you `cargo run` again and refresh the page, you should see "hello, world!"
+
+If you `cargo run` again and refresh the page, you should see "hello, world!"
 appear in your browser. Congratulations! You just wrote your first asynchronous
 webserver in Rust.
  You can also inspect the request itself, which contains information such as
 the request URI, HTTP version, headers, and other metadata. For example, we
 can print out the URI of the request like this:
- ```rust
+
+```rust
 println!("Got request at {:?}", req.uri());
 ```
- You may have noticed that our ight now, we're not even doing
+
+You may have noticed that our ight now, we're not even doing
 anything asynchronous when handling the request-- we just respond immediately,
 so we're not taking advantage of the flexibility that `async fn` gives us.
 Rather than just returning a static message, let's try proxying the user's
 request to another website using Hyper's HTTP client.
  We start by parsing out the URL we want to request:
- ```rust
+
+```rust
 let url_str = "http://www.rust-lang.org/en-US/";
 let url = url_str.parse::<Uri>().expect("failed to parse URL");
 ```
- Then we can create a new `hyper::Client` and use it to make a `GET` request,
+
+Then we can create a new `hyper::Client` and use it to make a `GET` request,
 returning the response to the user:
- ```rust
+
+```rust
 let res = await!(Client::new().get(url));
 // Return the result of the request directly to the user
 println!("request finished --returning response");
 res
 ```
- `Client::get` returns a `hyper::client::FutureResponse`, which implements
+
+`Client::get` returns a `hyper::client::FutureResponse`, which implements
 `Future<Output = Result<Response, Error>>`
 (or `Future<Item = Response, Error = Error>` in futures 0.1 terms).
 When we `await!` that future, an HTTP request is sent out, the current task
 is suspended, and the task is queued to be continued once a response has
 become available.
- Now, if you `cargo run` and open `http://127.0.0.1:3000/foo` in your browser,
+
+Now, if you `cargo run` and open `http://127.0.0.1:3000/foo` in your browser,
 you'll see the Rust homepage, and the following terminal output:
- ```
+
+```bash
 Listening on http://127.0.0.1:3000
 Got request at /foo
 making request to http://www.rust-lang.org/en-US/

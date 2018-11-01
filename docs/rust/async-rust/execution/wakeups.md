@@ -1,5 +1,6 @@
 # Task Wakeups with `LocalWaker` and `Waker`
- It's common that futures aren't able to complete the first time they are
+
+It's common that futures aren't able to complete the first time they are
 `poll`ed. When this happens, the future needs to ensure that it is polled
 again once it is ready to make more progress. This is done with the
 `LocalWaker` and `Waker` types.
@@ -17,12 +18,16 @@ allocate at runtime or anything similar, but calling `wake()` on the resulting
 `Waker` may be less performant than calling `wake()` on the original
 `LocalWaker`.
  Let's try implementing a simple timer future using `Waker` and `LocalWaker`.
- ## Applied: Build a Timer
- For the sake of the example, we'll just spin up a new thread when the timer
+
+## Applied: Build a Timer
+
+For the sake of the example, we'll just spin up a new thread when the timer
 is created, sleep for the required time, and then signal the timer future
 when the time window has elapsed.
- Here are the imports we'll need to get started:
- ```rust
+
+Here are the imports we'll need to get started:
+
+```rust
 #![feature(arbitrary_self_types, futures_api, pin)]
  use std::{
     future::Future,
@@ -79,7 +84,8 @@ impl Future for TimerFuture {
     }
 }
 ```
- Pretty simple, right? If the thread has set `shared_state.completed = true`,
+
+Pretty simple, right? If the thread has set `shared_state.completed = true`,
 we're done! Otherwise, we clone the `LocalWaker` for the current task,
 convert it into a `Waker`, and pass it to `shared_state.waker` so that the
 thread can wake the task back up.

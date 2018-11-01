@@ -1,9 +1,11 @@
 # The `Future` Trait
- The `Future` trait is at the center of asynchronous programming in Rust.
+
+The `Future` trait is at the center of asynchronous programming in Rust.
 A `Future` is an asynchronous computation that can produce a value
 (although that value may be empty, e.g. `()`). A *simplified* version of
 the future trait might look something like this:
- ```rust
+
+```rust
 trait SimpleFuture {
     type Output;
     fn poll(&mut self, wake: fn()) -> Poll<Self::Output>;
@@ -13,15 +15,18 @@ trait SimpleFuture {
     Pending,
 }
 ```
- Futures can be advanced by calling the `poll` function, which will drive the
+
+Futures can be advanced by calling the `poll` function, which will drive the
 future as far towards completion as possible. If the future completes, it
 returns `Poll::Ready(result)`. If the future is not able to complete yet, it
 returns `Poll::Pending` and arranges for the `wake()` function to be called
 when the `Future` is ready to make more progress. When `wake()` is called, the
 executor driving the `Future` will call `poll` again so that the `Future` can
 make more progress.
- For example, a simplified `SocketRead` `Future` might look like this:
- ```rust
+
+For example, a simplified `SocketRead` `Future` might look like this:
+
+```rust
 struct SocketRead<'a> {
     socket: &'a Socket,
 }
@@ -43,11 +48,13 @@ struct SocketRead<'a> {
     }
 }
 ```
- This model of `Future`s allows for composing together multiple asynchronous
+
+This model of `Future`s allows for composing together multiple asynchronous
 operations without needing intermediate allocations. Running multiple futures
 at once or chaining futures together can be implemented via allocation-free
 state machines, like this:
- ```rust
+
+```rust
 /// A SimpleFuture that runs two other futures to completion concurrently.
 ///
 /// Concurrency is acheived via the fact that calls to `poll` each future
@@ -94,10 +101,12 @@ struct Join2 {
     }
 }
 ```
- This shows how multiple futures can be run simultaneously without needing
+
+This shows how multiple futures can be run simultaneously without needing
 separately allocated tasks, allowing for more efficient asynchronous programs.
 Similarly, multiple sequential futures can be run one after another, like this:
- ```rust
+
+```rust
 /// A SimpleFuture that runs two futures to completion, one after another.
 //
 // Note: for the purposes of this simple example, `AndThenFut` assumes both
@@ -125,27 +134,29 @@ enum AndThenFut {
     }
 }
 ```
- These examples show how the `Future` trait can be used to express asynchronous
+
+These examples show how the `Future` trait can be used to express asynchronous
 control flow without requiring multiple allocated objects and deeply nested
 callbacks. With the basic control-flow out of the way, let's talk about the
 real `Future` trait and how it is different.
- ```rust
+
+```rust
 trait Future {
     type Output;
     fn poll(
         // note the change from `&mut self` to `Pin<&mut Self>`
-        self: Pin<&mut Self>, 
+        self: Pin<&mut Self>,
         lw: &LocalWaker, // note the change from `wake: fn()`
     ) -> Poll<Self::Output>;
 }
 ```
- The first change you'll notice is that our `self` type is no longer `&mut self`,
-but has changed to `Pin<&mut Self>`. We'll talk more about pinning in [a later 
-section][pinning], but for now know that it allows us to create futures that
+
+The first change you'll notice is that our `self` type is no longer `&mut self`,
+but has changed to `Pin<&mut Self>`. We'll talk more about pinning in [a later section][pinning], but for now know that it allows us to create futures that
 are immovable. Immovable objects can store pointers between their fields,
 e.g. `struct MyFut { a: i32, ptr_to_a: *const i32 }`. This feature is necessary
 in order to enable async/await.
- Secondly, `wake: fn()` has changed to `LocalWaker`. In `SimpleFuture`, we used
+Secondly, `wake: fn()` has changed to `LocalWaker`. In `SimpleFuture`, we used
 a call to a function pointer (`fn()`) to tell the future executor that the
 future in question should be polled. However, since `fn()` is zero-sized, it
 can't store any data about *which* task was awoken, meaning that the number of

@@ -4,7 +4,8 @@
 that look like synchronous code. `async` transforms a block of code into a
 state machine that implements a trait called `Future`. This block can be
 run to completion using an futures executor:
- ```rust
+
+```rust
 use futures::executor::block_on;
  async fn hello_world() {
     println!("hello, world!");
@@ -14,10 +15,12 @@ use futures::executor::block_on;
     block_on(future); // `future` is run and "hello, world!" is printed
 }
 ```
- Inside an `async fn`, you can use `await!` to wait for the completion of
+
+Inside an `async fn`, you can use `await!` to wait for the completion of
 another type that implements the `Future` trait, such as the output of
 another `async fn`:
- ```rust
+
+```rust
 use futures::executor::block_on;
  async fn hello_world() {
     println!("hello, world!");
@@ -32,31 +35,37 @@ use futures::executor::block_on;
     block_on(async_main());
 }
 ```
- Unlike `block_on`, `await!` doesn't block the current thread, but instead
+
+Unlike `block_on`, `await!` doesn't block the current thread, but instead
 asynchronously waits for the future to complete, allowing other tasks to
 run if the future is currently unable to make progress. For example,
 imagine that we have three `async fn`: `learn_song`, `sing_song`, and
 `dance`:
- ```rust
+
+```rust
 async fn learn_song() -> Song { ... }
 async fn sing_song(song: Song) { ... }
 async fn dance() { ... }
 ```
- One way to do learn, sing, and dance would be to block on each of these
+
+One way to do learn, sing, and dance would be to block on each of these
 individually:
- ```rust
+
+```rust
 fn main() {
   let song = block_on(learn_song());
   block_on(sing_song(song));
   block_on(dance);
 }
 ```
- However, we're not giving the best performance possible this way-- we're
+
+However, we're not giving the best performance possible this way-- we're
 only ever doing one thing at once! Clearly we have to learn the song before
 we can sing it, but it's possible to dance at the same time as learning and
 singing the song. To do this, we can create two separate `async fn` which
 can be run concurrently:
- ```rust
+
+```rust
 async fn learn_and_sing() {
     // Wait until the song has been learned before singing it.
     // We use `await!` here rather than `block_on` to prevent blocking the
@@ -65,16 +74,17 @@ async fn learn_and_sing() {
     await!(sing_song(song));
 }
  async fn async_main() {
-    let f1 = learn_and_sing(); 
+    let f1 = learn_and_sing();
     let f2 = dance();
      // `join!` is like `await!` but can wait for multiple futures concurrently
-    join!(f1, f2) 
+    join!(f1, f2)
 }
  fn main() {
     block_on(async_main());
 }
 ```
- In this example, learning the song must happen before singing the song, but
+
+In this example, learning the song must happen before singing the song, but
 both learning and singing can happen at the same time as dancing. If we used
 `block_on(learn_song())` rather than `await!(learn_song())` in `learn_and_sing`,
 the execution would block until learning the song completed, making it

@@ -2,11 +2,12 @@
 
 We all love how Rust allows us to write fast, safe software. But why write
 asynchronous code?
- Asynchonous code allows us to run multiple tasks concurrently on the same OS
+Asynchonous code allows us to run multiple tasks concurrently on the same OS
 thread. In a typical threaded application, if you wanted to download two
 different webpages at the same time, you would spread the work across two
 different threads, like this:
- ```rust
+
+```rust
 fn get_two_sites() {
     // Spawn two threads to do work.
     let thread_one = thread::spawn(|| download("https:://www.foo.com"));
@@ -16,7 +17,8 @@ fn get_two_sites() {
     thread_two.join();
 }
 ```
- This works fine for many applications-- after, all threads were designed
+
+This works fine for many applications-- after, all threads were designed
 to do just this: run multiple different tasks at once. However, they also
 come with some limitations. There's a lot of overhead involved in the
 process of switching between different threads and sharing data between
@@ -25,7 +27,8 @@ system resources. These are the costs that asynchronous code is designed
 to eliminate. We can rewrite the function above using Rust's
 `async`/`await!` notation, which will allow us to run multiple tasks at
 once without creating multiple threads:
- ```rust
+
+```rust
 async fn get_two_sites() {
     // Create a two different "futures" which, when run to completion,
     // will asynchronously download the webpages.
@@ -35,7 +38,8 @@ async fn get_two_sites() {
     join!(future_one, future_two);
 }
 ```
- Overall, asynchronous applications have the potential to be much faster and
+
+Overall, asynchronous applications have the potential to be much faster and
 use fewer resources than a corresponding threaded implementation. However,
 there is a cost. Threads are natively supported by the operating system,
 and using them doesn't require any special programming model-- any function
