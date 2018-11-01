@@ -6,7 +6,7 @@
 - bool ：有两个值true和false。
 - char ：单个Unicode值，存储为4个字节。Rust支持(u8)单字节字符b'H',仅限制于ASCII字符。
 - number ：有符号整数 (i8,i16,i32,i64,i128,isize)、无符号整数 (u8,u16,u32,u64,u128,usize) 浮点数(f32,f64).整形默认为i32，浮点型默认为f64.
-- str：常用&str和堆分配字符串String，&str是静态分配，固定大小，不可变，堆分配字符串是可变的。Rust支持单字节字符串b"Hello"和原始字节字符串使用br#"hello"#，仅限于ASCII字符,不需要对特殊字符进行转义。
+- str：常用&str和堆分配字符串String，&str是静态分配，固定大小，不可变，堆分配字符串是可变的。Rust支持单字节字符串b"Hello"和原始字节字符串使用br#"hello"#，仅限于ASCII字符,和原始字符串r#"hello"#，仅限于Unicode字符,不需要对特殊字符进行转义。
 - slice : slice是以指针和长度表示的内存块的视图。一个动态大小的视图变成一个连续的序列[T],slice是可变的或共享的。共享类型是&[T]可变类型&mut [T]、Box<[T]
 - fn ：具有函数类型的变量实质上是一个函数指针。
 - pointer ：最底层的是裸指针\*const T和\*mut T，但解引用它们是不安全的，必须放到unsafe块里。
