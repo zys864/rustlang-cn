@@ -1,3 +1,3 @@
 # 运行时
 
-[WIP]
+[待翻译](https://tokio.rs/docs/getting-started/runtime/)
