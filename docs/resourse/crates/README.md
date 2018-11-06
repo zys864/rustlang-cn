@@ -4,6 +4,7 @@
 
 * [intrusive-rs](https://crates.io/crates/intrusive-collections) - 用于创建侵入式集合的Rust库。目前支持单链接和双链接列表，以及红黑树。
 * [linked-list](https://crates.io/crates/linked-list) - std :: collections :: LinkedList的替代实现
+* [phf](https://crates.io/crates/phf) - Compile time static maps for Rust
 
 
 * [tokio-rs/tokio](https://github.com/tokio-rs/tokio) A runtime for writing reliable, asynchronous, and slim applications with the Rust programming language
