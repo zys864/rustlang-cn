@@ -167,3 +167,5 @@
   * (https://crates.io/crates/encoding_rs)
   * utf16
   * [utf8](https://crates.io/crates/utf8-ranges)
+
+* [gravatar](https://crates.io/crates/gravatar)
