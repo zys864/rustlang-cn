@@ -5,7 +5,7 @@ exports.discovery = (title) => {
         '02-requirements/',
         {
             title: '设置开发环境',
-            collapsable: false,
+            collapsable: true,
             children: [
             '03-setup/',
             '03-setup/linux',
@@ -17,7 +17,7 @@ exports.discovery = (title) => {
         '04-meet-your-hardware/',
         {
             title: 'LED轮盘灯',
-            collapsable: false,
+            collapsable: true,
             children: [
             '05-led-roulette/',
             '05-led-roulette/build-it',
@@ -30,7 +30,7 @@ exports.discovery = (title) => {
         },
         {
             title: 'Hello-World',
-            collapsable: false,
+            collapsable: true,
             children: [
             '06-hello-world/',
             '06-hello-world/panic'
@@ -38,7 +38,7 @@ exports.discovery = (title) => {
         },
         {
             title: '寄存器',
-            collapsable: false,
+            collapsable: true,
             children: [
             '07-registers/',
             '07-registers/rtrm',
@@ -50,7 +50,7 @@ exports.discovery = (title) => {
         },
         {
             title: '再解LED',
-            collapsable: false,
+            collapsable: true,
             children: [
             '08-leds-again/',
             '08-leds-again/power',
@@ -60,7 +60,7 @@ exports.discovery = (title) => {
         },
         {
             title: '时钟和计时器',
-            collapsable: false,
+            collapsable: true,
             children: [
             '09-clocks-and-timers/',
             '09-clocks-and-timers/for-loop-delays',
@@ -73,7 +73,7 @@ exports.discovery = (title) => {
         },
         {
             title: '串行通信',
-            collapsable: false,
+            collapsable: true,
             children: [
             '10-serial-communication/',
             '10-serial-communication/nix-tooling',
@@ -83,7 +83,7 @@ exports.discovery = (title) => {
         },
         {
             title: 'USART',
-            collapsable: false,
+            collapsable: true,
             children: [
             '11-usart/',
             '11-usart/send-a-single-byte',
@@ -98,7 +98,7 @@ exports.discovery = (title) => {
         },
         {
             title: '蓝牙设置',
-            collapsable: false,
+            collapsable: true,
             children: [
             '12-bluetooth-setup/',
             '12-bluetooth-setup/linux',
@@ -108,7 +108,7 @@ exports.discovery = (title) => {
         '13-serial-over-bluetooth/',
         {
             title: 'I2C',
-            collapsable: false,
+            collapsable: true,
             children: [
             '14-i2c/',
             '14-i2c/the-general-protocol',
@@ -120,7 +120,7 @@ exports.discovery = (title) => {
         },
         {
             title: 'LED开发指南',
-            collapsable: false,
+            collapsable: true,
             children: [
             '15-led-compass/',
             '15-led-compass/take-1',
@@ -133,7 +133,7 @@ exports.discovery = (title) => {
         },
         {
             title: 'punch-o-meter',
-            collapsable: false,
+            collapsable: true,
             children: [
             '16-punch-o-meter/',
             '16-punch-o-meter/gravity-is-up',

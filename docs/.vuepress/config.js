@@ -1,8 +1,13 @@
+let { read } = require ('./category/read.js')
+let { rusteco } = require ('./category/rusteco.js')
 let { book } = require ('./category/rust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
 let { std } = require ('./category/std.js')
 let { cookbook } = require ('./category/cookbook.js')
 let { tokio } = require ('./category/tokio.js')
+let { actix } = require ('./category/actix.js')
+let { actixweb } = require ('./category/actixweb.js')
+let { diesel } = require ('./category/diesel.js')
 let { discovery } = require ('./category/discovery.js')
 let { awesome } = require ('./category/awesome.js')
 
@@ -33,6 +38,10 @@ module.exports = {
         search: true,
         searchMaxSuggestions: 11,
         nav: [
+          { text: '阅读', items: [ 
+            { text: 'Rust文章', link: '/read/rust/' },
+            { text: 'Rust生态', link: '/read/rusteco/' }
+          ] },
           { text: 'Rust语言', items: [ 
             { text: '深入Rust语言', link: '/rust/book/' },
             { text: 'Rust异步编程', link: '/rust/async-rust/' },
@@ -66,112 +75,19 @@ module.exports = {
           { text: '论坛', link: 'http://ruster.xyz' }
         ],
         sidebar: {
+          '/read/rust/': read('Read'),
+          '/read/rusteco/': rusteco('Rusteco'),
           '/rust/book/': book('Rust'),
           '/rust/async-rust/': asyncrust('Async-Rust'),
           '/rust/std/': std('Std'),
           '/rust/cookbook/': cookbook('Cookbook'),
           '/server/tokio/': tokio('Tokio'),
-          '/server/actix/': genActix('Actix'),
-          '/server/actix-web/': genActixWeb('Actix-Web'),
-          '/server/diesel/': genDiesel('Diesel'),
+          '/server/actix/': actix('Actix'),
+          '/server/actix-web/': actixweb('Actix-Web'),
+          '/server/diesel/': diesel('Diesel'),
           '/iot/discovery/': discovery('Discovery'),
           '/resourse/awesome/': awesome('Awesome')
         }
     }
-  }
+}
 
-  function genActix (title) {
-    return [
-      {
-        title,
-        collapsable: false,
-        children: [
-          'overview',
-          'start',
-          'actor',
-          'address',
-          'context',
-          'arbiter',
-          'sync-arbiter',
-          'stream',
-          'IO-helpers',
-          'supervisor',
-          'registry',
-          'helper-actors'
-        ]
-      }
-    ]
-  }
-
-  function genActixWeb (title) {
-    return [
-      '',
-      {
-        title: '介绍',
-        collapsable: false,
-        children: [
-          'whatisactix',
-          'installation'
-        ]
-      },
-      {
-        title: '基本',
-        collapsable: false,
-        children: [
-          'getting-started',
-          'application',
-          'server',
-          'handler',
-          'extractors'
-        ]
-      },
-      {
-        title: '高级',
-        collapsable: false,
-        children: [
-          'error',
-          'URL-Dispatch',
-          'request',
-          'response',
-          'test',
-          'middleare',
-          'staticfile'
-        ]
-      },
-      {
-        title: '协议',
-        collapsable: false,
-        children: [
-          'websocket',
-          'HTTP2'
-        ]
-      },
-      {
-        title: '主题',
-        collapsable: false,
-        children: [
-          'autoreloade',
-          'database',
-          'sentry'
-        ]
-      }
-    ]
-  }
-
-  function genDiesel (title) {
-    return [
-      {
-        title,
-        collapsable: false,
-        children: [
-          'start',
-          'all-about-updates',
-          'all-about-inserts',
-          'composing-applications-with-diesel',
-          'schema-in-depth',
-          'extending-diesel',
-          'configuring-diesel-CLI'
-        ]
-      }
-    ]
-  }

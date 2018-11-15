@@ -3,7 +3,7 @@ exports.asyncrust = (title) => {
         '',
         {
             title: '开始',
-            collapsable: false,
+            collapsable: true,
             children: [
             'getting_started/chapter',
             'getting_started/why_async',
@@ -13,7 +13,7 @@ exports.asyncrust = (title) => {
         },
         {
             title: 'Execution',
-            collapsable: false,
+            collapsable: true,
             children: [
             'execution/chapter',
             'execution/future',
@@ -23,7 +23,7 @@ exports.asyncrust = (title) => {
         },
         {
             title: 'Pinning',
-            collapsable: false,
+            collapsable: true,
             children: [
             'pinning/chapter'
             ]

@@ -3,7 +3,7 @@ exports.tokio = (title) => {
         '',
         {
           title: '开始',
-          collapsable: false,
+          collapsable: true,
           children: [
             'getting-started/hello-world',
             'getting-started/futures',
@@ -13,7 +13,7 @@ exports.tokio = (title) => {
         },
         {
           title: 'Tokio与I/O',
-          collapsable: false,
+          collapsable: true,
           children: [
             'io/overview',
             'io/reading_writing_data',
@@ -25,7 +25,7 @@ exports.tokio = (title) => {
         },
         {
           title: 'Futures-Streams-Sinks',
-          collapsable: false,
+          collapsable: true,
           children: [
             'futures-streams-sinks/overview',
             'futures-streams-sinks/futures',
@@ -36,7 +36,7 @@ exports.tokio = (title) => {
         },
         {
           title: '深入',
-          collapsable: false,
+          collapsable: true,
           children: [
             'going-deeper/futures',
             'going-deeper/tasks',
@@ -52,7 +52,7 @@ exports.tokio = (title) => {
         },
         {
           title: '内部原理',
-          collapsable: false,
+          collapsable: true,
           children: [
             'internals/intro',
             'internals/runtime-model',

@@ -3,28 +3,28 @@ exports.cookbook = (title) => {
         '',
         {
             title: '正则表达式',
-            collapsable: false,
+            collapsable: true,
             children: [
             'regex/regex'
             ]
         },
         {
             title: 'Cargo',
-            collapsable: false,
+            collapsable: true,
             children: [
             'cargo/cargo'
             ]
         },
         {
             title: 'Module',
-            collapsable: false,
+            collapsable: true,
             children: [
             'module/module'
             ]
         },
         {
             title: 'File',
-            collapsable: false,
+            collapsable: true,
             children: [
             'file/read-write',
             'file/dir'
@@ -32,14 +32,14 @@ exports.cookbook = (title) => {
         },
         {
             title: 'Macro',
-            collapsable: false,
+            collapsable: true,
             children: [
             'macro/macro'
             ]
         },
         {
             title: 'Advance',
-            collapsable: false,
+            collapsable: true,
             children: [
             'advance/rust-advance-programming'
             ]

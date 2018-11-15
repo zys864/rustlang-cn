@@ -4,7 +4,7 @@ exports.book = (title) => {
         'start',
         {
             title: '工具链',
-            collapsable: false,
+            collapsable: true,
             children: [
             'toolchain/rustup',
             'toolchain/cargo-base',
@@ -14,7 +14,7 @@ exports.book = (title) => {
         },
         {
             title: '类型',
-            collapsable: false,
+            collapsable: true,
             children: [
             'type/const-and-variable',
             'type/types',
@@ -32,7 +32,7 @@ exports.book = (title) => {
         },
         {
             title: '表达式',
-            collapsable: false,
+            collapsable: true,
             children: [
             'express/express',
             'express/patterns',
@@ -41,7 +41,7 @@ exports.book = (title) => {
         },
         {
             title: '所有权',
-            collapsable: false,
+            collapsable: true,
             children: [
             'ownership/heap-stack',
             'ownership/ownership',
@@ -51,21 +51,21 @@ exports.book = (title) => {
         },
         {
             title: '模块',
-            collapsable: false,
+            collapsable: true,
             children: [
             'module/module'
             ]
         },
         {
             title: '宏',
-            collapsable: false,
+            collapsable: true,
             children: [
             'macro/macro'
             ]
         },
         {
             title: '错误处理',
-            collapsable: false,
+            collapsable: true,
             children: [
             'error-handle/',
             'error-handle/unrecoverable-errors-with-panic',
@@ -75,7 +75,7 @@ exports.book = (title) => {
         },
         {
             title: '测试',
-            collapsable: false,
+            collapsable: true,
             children: [
             'test/',
             'test/writing-tests',
@@ -85,7 +85,7 @@ exports.book = (title) => {
         },
         {
             title: '并发',
-            collapsable: false,
+            collapsable: true,
             children: [
             'concurrent/',
             'concurrent/threads',
@@ -96,7 +96,7 @@ exports.book = (title) => {
         },
         {
             title: 'FFI',
-            collapsable: false,
+            collapsable: true,
             children: [
             'ffi/',
             'ffi/ffi',
@@ -107,14 +107,14 @@ exports.book = (title) => {
         },
         {
             title: 'Unsafe',
-            collapsable: false,
+            collapsable: true,
             children: [
             'unsafe/unsafe'
             ]
         },
         {
             title: '编程风格',
-            collapsable: false,
+            collapsable: true,
             children: [
             'style/',
             'style/doc',
@@ -127,7 +127,7 @@ exports.book = (title) => {
         },
         {
             title: '基础API',
-            collapsable: false,
+            collapsable: true,
             children: [
             'important/',
             'important/fmt',

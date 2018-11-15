@@ -3,14 +3,14 @@ exports.std = (title) => {
         '',
         {
             title: 'any',
-            collapsable: false,
+            collapsable: true,
             children: [
             'any/any'
             ]
         },
         {
             title: 'Collection',
-            collapsable: false,
+            collapsable: true,
             children: [
             'collection/',
             'collection/hashmap',
@@ -19,7 +19,7 @@ exports.std = (title) => {
         },
         {
             title: 'Fs',
-            collapsable: false,
+            collapsable: true,
             children: [
             'fs/',
             'fs/fs'
@@ -27,7 +27,7 @@ exports.std = (title) => {
         },
         {
             title: 'IO',
-            collapsable: false,
+            collapsable: true,
             children: [
             'io/',
             'io/io'
@@ -35,7 +35,7 @@ exports.std = (title) => {
         },
         {
             title: 'Net',
-            collapsable: false,
+            collapsable: true,
             children: [
             'net/',
             'net/net'
