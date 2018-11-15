@@ -1,6 +1,6 @@
 let { read } = require ('./category/read.js')
+let { rusteco } = require ('./category/rusteco.js')
 let { work } = require ('./category/work.js')
-let { book } = require ('./category/rust.js')
 let { book } = require ('./category/rust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
 let { std } = require ('./category/std.js')
