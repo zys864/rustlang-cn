@@ -1,5 +1,6 @@
 let { read } = require ('./category/read.js')
-let { rusteco } = require ('./category/rusteco.js')
+let { work } = require ('./category/work.js')
+let { book } = require ('./category/rust.js')
 let { book } = require ('./category/rust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
 let { std } = require ('./category/std.js')
@@ -40,7 +41,8 @@ module.exports = {
         nav: [
           { text: '阅读', items: [ 
             { text: 'Rust文章', link: '/read/rust/' },
-            { text: 'Rust生态', link: '/read/rusteco/' }
+            { text: 'Rust生态', link: '/read/rusteco/' },
+            { text: 'Rust工作', link: '/read/work/' }
           ] },
           { text: 'Rust语言', items: [ 
             { text: '深入Rust语言', link: '/rust/book/' },
@@ -77,6 +79,7 @@ module.exports = {
         sidebar: {
           '/read/rust/': read('Read'),
           '/read/rusteco/': rusteco('Rusteco'),
+          '/read/work/': work('Work'),
           '/rust/book/': book('Rust'),
           '/rust/async-rust/': asyncrust('Async-Rust'),
           '/rust/std/': std('Std'),
