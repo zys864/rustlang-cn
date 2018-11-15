@@ -74,7 +74,7 @@ module.exports = {
             { text: 'Crates', link: '/resourse/crates/' },
             { text: 'Blogs', link: '/resourse/blogs/' }
           ] },
-          { text: '论坛', link: 'http://ruster.xyz' }
+          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {
           '/read/rust/': read('Read'),
