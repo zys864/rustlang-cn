@@ -1,4 +1,4 @@
-# Rust使用Actix-Web验证Auth Web微服务-1
+# Rust使用Actix-Web验证Auth Web微服务-整教程第1部分
 
 >[本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/rust-use-actix-web-build-auth-micao-serive-1)
 

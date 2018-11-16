@@ -1,20 +1,29 @@
 .front {
     background-image: url("/imgs/sky.jpg");
     background-size: cover;
-    padding-top: 5%;
-    max-height: 663px;
+    padding-top: 2.2%;
+    max-height: 666px;
 }
 
 .home .hero {
-    color: fuchsia !important;
+    color: #7B463D !important;
 }
 .home .description {
-    color: green !important;
+    color: #7B463D !important;
 }
 
-@media (max-width: 419px) {
+@media (max-width: 420px) {
     .front {
-        max-height: 500px;
+        max-height: 560px;
     }
 }
-    
+@media (min-width: 420px) and (max-width: 607px) {
+    .front {
+        max-height: 730px;
+    }
+}  
+@media (min-width: 608px) and (max-width: 768px) {
+    .front {
+        max-height: 700px;
+    }
+}    

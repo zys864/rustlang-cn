@@ -1,6 +1,6 @@
-# 使用ACTIX-WEB验证AUTH WEB微服务-2
+# Rust使用Actix-Web验证Auth Web微服务 - 完整教程第2部分
 
-[本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/)
+> [本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/)
 
 ## 验证用户电子邮件
 

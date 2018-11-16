@@ -2,8 +2,8 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: QQ群:570065685
-actionLink: /
+actionText: 最新阅读：Rust使用Actix-Web验证Auth Web微服务 - 完整教程第2部分
+actionLink: /read/rust/
 features:
 - title: 零开销抽象
   details: 实施高级抽象而没有性能损耗.

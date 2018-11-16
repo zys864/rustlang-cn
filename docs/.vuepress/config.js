@@ -14,7 +14,7 @@ let { awesome } = require ('./category/awesome.js')
 
 module.exports = {
     title: 'Rust中文社区',
-    description: 'Rust语言为中心的中文社区',
+    description: '致力于Rust编程语言中文网络-QQ群:570065685',
     head: [
       ['link', { rel: 'icon', href: `/favicon.ico` }],
       ['link', { rel: 'manifest', href: '/manifest.json' }],
