@@ -2,7 +2,11 @@
 
 > [原文出处](https://bbs.pediy.com/thread-247810.htm)
 
->  欢迎向[Rust中文社区](https://rustlang-cn.github.io)投稿,1-好文将在[Rust中文社区首页](https://rustlang-cn.github.io)和[Rust文章栏目](https://rustlang-cn.github.io/read/rust/)展示,2-同时将在知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)展示，[投稿地址]((https://github.com/rustlang-cn/articles))
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
+
+- 1 [Rust中文社区首页](https://rustlang-cn.github.io)
+- 2 Rust中文社区[Rust文章栏目](https://rustlang-cn.github.io/read/rust/)
+- 3 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
 
 ## 编程语言是如何工作的
 
