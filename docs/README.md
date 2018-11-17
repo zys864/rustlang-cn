@@ -2,7 +2,7 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: 最新阅读：Rust使用Actix-Web验证Auth Web微服务 - 完整教程第2部分
+actionText: 最新文章：深入理解编译器
 actionLink: /read/rust/
 features:
 - title: 零开销抽象

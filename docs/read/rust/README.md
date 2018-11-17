@@ -1,658 +1,201 @@
-# Rust使用Actix-Web验证Auth Web微服务 - 完整教程第2部分
+# 深入理解编译器
 
-> [本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/)
+> [原文出处](https://bbs.pediy.com/thread-247810.htm)
 
-## 验证用户电子邮件
+>  欢迎向[Rust中文社区](https://rustlang-cn.github.io)投稿,1-好文将在[Rust中文社区首页](https://rustlang-cn.github.io)和[Rust文章栏目](https://rustlang-cn.github.io/read/rust/)展示,2-同时将在知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)展示，[投稿地址]((https://github.com/rustlang-cn/articles))
 
-从第一部分开始，我们现在拥有一个服务器，它从请求中获取一个电子邮件地址，并使用`invitation`(邀请)对象发出JSON响应。在第一部分中，我说我们将向用户发送一封电子邮件，经过一番思考和反馈，我们现在将跳过这一部分（请注意第3部分）。我使用的服务是sparkpost，你作为本教程的读者可能没有他们的帐户（免费用于小用途）。
+## 编程语言是如何工作的
 
-**警告：如果没有正确的电子邮件验证，请不要在任何真实应用中使用此解决方法**
+从内部理解编译器会使你更有效的使用它。在这个时间顺序的摘要中，概括了编程语言和编译器是如何工作的。我们排版了大量的链接，示例代码，和图表来帮助你理解。
 
-## 解决方法
+## 作者注
 
-现在我们将使用来自服务器的http响应来验证电子邮件。创建电子邮件验证的最简单方法是让我们的服务器使用通过电子邮件发送到用户电子邮件的某种秘密，并让他们单击带有秘密的链接进行验证。我们可以使用`UUID`邀请对象作为秘密。假设客户在使用uuid输入电子邮件后收到邀请`67a68837-a059-43e6-a0b8-6e57e6260f0d`。
+理解编译器—— 是我的在Medium上第二篇文章的后续，超过了21000的阅读量。我很高兴我能在人们的教育产生积极的影响，我很兴奋能够**根据我从原始文章收到的反馈进行完全的重写**。
 
-我们可以发送请求`UUID`在网址中注册具有上述内容的新用户。我们的服务器可以获取该id并在数据库中找到Invitation对象，然后将到期日期与当前时间进行比较。如果所有这些条件都成立，我们将让用户注册，否则返回错误响应。`现在我们将邀请对象作为解决方法返回给客户端`。电子邮件支持将在`第3部分`中实现。
+> [Understanding Compilers — For Humans](https://medium.com/@CanHasCommunism/understanding-compilers-for-humans-ba970e045877)
 
-我们可以发送请求UUID在网址中注册具有上述内容的新用户。我们的服务器可以获取该id并在数据库中找到Invitation对象，然后将到期日期与当前时间进行比较。如果所有这些条件都成立，我们将让用户注册，否则返回错误响应。现在我们将邀请对象作为解决方法返回给客户端。电子邮件支持将在第3部分中实现。
+我选择Rust作为这部作品的主要语言。它是冗长，高效，现代的，并且在设计上似乎对编写器非常简单。我喜欢使用它。https://www.rust-lang.org/
 
-## 错误处理和`FROM`Trait
+ 
+本文的目的是为了保持读者的注意力而非20页的麻木阅读。本文有许多链接会导航您到引起您兴趣的主题以进行更深入的探索。大多数链接会带领你到Wikipedia。
 
-Rust提供了非常强大的工具，我们可以使用它们将一种错误转换为另一种错误。在这个应用程序中，我们将使用不同的插入操作进行一些操作，即使用柴油保存数据，使用bcrypt保存密码等。这些操作可能会返回错误，但我们需要将它们转换为我们的自定义错误类型。`std::convert::From`是一个Trait，允许我们转换它。在[这里](https://doc.rust-lang.org/std/convert/trait.From.html)阅读更多有关`From`特征的信息。通过实现`From`特征，我们可以使用`?`运算符来[传播](https://doc.rust-lang.org/book/second-edition/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator)将转换为我们的`ServiceError`类型的许多不同类型的错误。
+## 什么是编译器
 
-我们的错误定义在`errors.rs`，让我们通过为`uuid`和`diesel`错误添加impl `From`来实现一些`From`特性，我们还将为`ServiceError`枚举添加一个`Unauthorized`变量。该文件如下所示：
+总的来说，你所谓的编程语言其实就是软件，叫做编译器，它读取文本文件，做了许多处理，并生成二进制文件。 由于计算机只能读1或0，人们写Rust更高质量，而不是写二进制文件，编译器被用来将人类可读的文本转换为计算机可读的机器码。
+
+ 
+编译器可以是任何一个能将一个文本翻译为另一个文本的程序。例如，这是一个用Rust写的编译器，它将所有的0转为1，1转为0 。
 
 ```rust
-// errors.rs
-use actix_web::{error::ResponseError, HttpResponse};
-use std::convert::From;
-use diesel::result::{DatabaseErrorKind, Error};
-use uuid::ParseError;
-
-
-#[derive(Fail, Debug)]
-pub enum ServiceError {
-    #[fail(display = "Internal Server Error")]
-    InternalServerError,
-
-    #[fail(display = "BadRequest: {}", _0)]
-    BadRequest(String),
-
-    #[fail(display = "Unauthorized")]
-    Unauthorized,
-}
-
-// impl ResponseError trait allows to convert our errors into http responses with appropriate data
-impl ResponseError for ServiceError {
-    fn error_response(&self) -> HttpResponse {
-        match *self {
-            ServiceError::InternalServerError => HttpResponse::InternalServerError().json("Internal Server Error, Please try later"),
-            ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
-            ServiceError::Unauthorized => HttpResponse::Unauthorized().json("Unauthorized")
-        }
-    }
-}
-
-// we can return early in our handlers if UUID provided by the user is not valid
-// and provide a custom message
-impl From<ParseError> for ServiceError {
-    fn from(_: ParseError) -> ServiceError {
-        ServiceError::BadRequest("Invalid UUID".into())
-    }
-}
-
-impl From<Error> for ServiceError {
-    fn from(error: Error) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
-        match error {
-            Error::DatabaseError(kind, info) => {
-                if let DatabaseErrorKind::UniqueViolation = kind {
-                    let message = info.details().unwrap_or_else(|| info.message()).to_string();
-                    return ServiceError::BadRequest(message);
-                }
-                ServiceError::InternalServerError
-            }
-            _ => ServiceError::InternalServerError
-        }
-    }
+// An example compiler that turns 0s into 1s, and 1s into 0s.
+ 
+fn main() {
+    let input = "1 0 1 A 1 0 1 3";
+ 
+    // iterate over every character `c` in input
+    let output: String = input.chars().map(|c|
+        if c == '1' { '0' }
+        else if c == '0' { '1' }
+        else { c } // if not 0 or 1, leave it alone
+    ).collect();
+ 
+    println!("{}", output); // 0 1 0 A 0 1 0 3
 }
 ```
 
-这一切都将让我们做事变得方便。
+尽管这个编译器不读取文件，不生成AST，不产生二进制文件，但是它仍然被认为是一个编译器，因为它翻译了输入。
 
-## 得到一些帮助
+## 编译器做了什么
 
-我们有时需要一些帮助。在将密码存储到数据库之前，我们需要对密码进行哈希处理。在Reddit rust community有一个建议可以使用什么算法。在这里建议`argon2`。但为了简单起见，我决定使用`bcrypt`。bcrypt算法在生产中被广泛使用，并且`bcrypt` crate提供了一个非常好的接口来散列和验证密码。
+简单来说，编译器读取源代码生成二进制文件。由于直接将复杂的、人类可读的代码转为一和零是非常复杂的，编译器在程序可运行前有几个步骤要做：
 
-为了将一些问题分开，我们创建一个新文件src/utils.rs并定义一个帮助程序哈希函数，如下所示。
+* 1 读取你给它的源代码中的独立字符。
+* 2 将字符分类为字，数字，符号和操作符。
+* 3 获取已排序完的字符，并通过将它们与模式匹配相匹配和生成操作树来确定它们尝试进行的操作。
+* 4 迭代上一步中生成操作树中的每一个操作，并生成等效的二进制文件。
 
-```rust
-//utils.rs
-use bcrypt::{hash, DEFAULT_COST};
-use errors::ServiceError;
-use std::env;
+当我说编译器立刻从一个操作树转化到二进制文件时，它实际生成了汇编代码，汇编代码随后被汇编/编译成二进制文件。汇编像是更高级的，人类可读的二进制文件。在这里阅读关于[汇编](https://en.wikipedia.org/wiki/Assembly_language)更多的东西。
 
-pub fn hash_password(plain: &str) -> Result<String, ServiceError> {
-    // get the hashing cost from the env variable or use default
-    let hashing_cost: u32 = match env::var("HASH_ROUNDS") {
-        Ok(cost) => cost.parse().unwrap_or(DEFAULT_COST),
-        _ => DEFAULT_COST,
-    };
-    hash(plain, hashing_cost).map_err(|_| ServiceError::InternalServerError)
+![](https://bbs.pediy.com/upload/attach/201811/703263_PBGUBSBPVQH5KY8.png)
+
+## 解释器（Interpreter）是什么
+
+[解释器](https://en.wikipedia.org/wiki/Interpreter_%28computing%29)非常像编译器，它们读取一门语言并处理它。但是，**解释器跳过代码生成并且会[即时执行](https://en.wikipedia.org/wiki/Just-in-time_compilation)AST**。解释器的最大的优点是它在调试期间运行你的程序时所用的时间。一个编译器在程序执行前可能会花费一秒到几分钟时间编译程序，然而解释器立刻执行，不需要编译。解释器最大的缺点是它要求在程序可被执行前，用户的电脑上必须安装解释器。
+
+![](https://bbs.pediy.com/upload/attach/201811/703263_QT9AB6W7R5UZH5E.png)
+
+本文主要谈论编译器，但是你应该清楚他们之间的不同以及和编译器之间的关系。
+
+## 1. 词法分析
+
+第一步是按字符分割输入字符。这步叫做词法分析，或者符号化。词法分析主要的思想是 将字符组合在一起形成单词，标识符，符号等等。词法分析大多不处理任何类似2+2的逻辑——它只会说有三个符号：一个数字：2，一个加号，以及另一个数字：2。
+
+ 
+假设你正在分析如12+3这样的字符串：它会读取字符1,2,+,和3。我们有了独立的字符，但我们必须将他们组合在一起，这是符号化的主要任务之一。例如，我们得到了1和2作为独立的字母，但是我们需要将他们放在一起，并解析他们作为一个单独的整型数字。+同样需要被认为是一个加号，而不是它的文字字符值——字符码43.
+
+![](https://bbs.pediy.com/upload/attach/201811/703263_ECSKEHYDYWUEADJ.png)
+
+如果你可以看到代码，并以这种方式赋予更多的意义，随后，按照Rust符号化可以组合数字位32-bit整型，加号作为Token值Plus。
+
+>[Rust Playground](https://play.rust-lang.org/?gist=070c3b6b985098a306c62881d7f2f82c&version=stable&mode=debug&edition=2015)
+
+你可以在Rust 操作界面点击左上角的“运行”按钮来在浏览器中编译和执行代码。
+
+在编程语言的编译器中，词法分析器可能需要几种不同类型的符号。例如：符号（symbols），数字，标识符，字符串，操作符等。它完全依赖于语言自身，才能知道您需要从源代码中提取哪种类型的符号。
+
+```c
+int main() {
+    int a;
+    int b;
+    a = b = 4;
+    return a - b;
 }
+ 
+Scanner production:
+[Keyword(Int), Id("main"), Symbol(LParen), Symbol(RParen), Symbol(LBrace), Keyword(Int), Id("a"), Symbol(Semicolon), Keyword(Int), Id("b"), Symbol(Semicolon), Id("a"), Operator(Assignment), Id("b"),
+Operator(Assignment), Integer(4), Symbol(Semicolon), Keyword(Return), Id("a"), Operator(Minus), Id("b"), Symbol(Semicolon), Symbol(RBrace)]
+
 ```
 
-您可能已经注意到我们返回一个Result并使用`map_error（）`来返回我们的自定义错误。这是为了允许稍后在我们调用此函数时使用`?`运算符（另一种转换错误的方法是为`Frombcrypt`函数返回的错误实现特征）。
+这是一段经过词法分析的C语言源码，且它的符号都被打印了出来。
 
-当我们在这里时，让我们为上一个教程`models.rs`中定义的`User`结构添加一个方便的方法。我们还删除了`remove_pwd（）`方法，而是定义了另一个SlimUser没有密码字段的结构。我们实现`From`trait来从`User`生成SlimUser。当我们使用它时，一切都会变得清晰。
+## 2. 解析
 
-```rust
-use chrono::{NaiveDateTime, Local};
-use std::convert::From;
-//... snip
-impl User {
-    pub fn with_details(email: String, password: String) -> Self {
-        User {
-            email,
-            password,
-            created_at: Local::now().naive_local(),
-        }
-    }
-}
-//--snip
-#[derive(Debug, Serialize, Deserialize)]
-pub struct SlimUser {
-    pub email: String,
-}
+解析器是语法（分析）的核心。**解析器使用词法分析器生成的符号，尝试判断它们是否处于某种排列样式，随后，将那些排列形式与表达式联系，如调用函数，召回变量或者数学操作**。 解析器是按照字面定义语言的语法。
 
-impl From<User> for SlimUser {
-    fn from(user: User) -> Self {
-        SlimUser {
-           email: user.email
-        }
-    }
-}
+ 
+int a = 3 和 a: int = 3的不同在解析器中。解析器决定了语法的外观。它确定了括号和花括号平衡，每条语句以分号结束，每个函数有一个名字。解析器知道当符号不能匹配到预设的样式时，有些东西的顺序出现了问题。
+
+ 
+你可以编写几种不同[类型的解析器](https://en.wikipedia.org/wiki/Parsing#Types_of_parsers)。其中最常见的是自上而下,[递归下降解析器](https://en.wikipedia.org/wiki/Recursive_descent_parser)。递归下降解析是最容易使用和理解的。我编写的许多解析器示例都是基于递归解析的。
+
+ 
+可以使用[语法](https://en.wikipedia.org/wiki/Formal_grammar)来概括语法解析器解析。如[EBNF](https://en.wikipedia.org/wiki/Extended_Backus–Naur_form)这样的语法可以描述解析器的简单数学操作，如12+3：
+
+```EBNF
+expr = additive_expr ;
+additive_expr = term, ('+' | '-'), term ;
+term = number ;
 ```
 
-不要忘记添加`extern crate bcrypt`;并`mod utils`在您的main.rs。我在第一部分忘记了另一个是登录到控制台。要启用它，请将以下内容添加到main.rs
+简单加减表达式的EBNF语法
 
-```rust
-extern crate env_logger;
-// --snip
+记住，语法文件不是解析器，但是它的确概括了解析器所做的。你按照这样的语法构造一个类似的解析器。它被人类使用，相对于直接查看解析器的代码更容易阅读和理解。
 
-fn main(){
-    dotenv().ok();
-    std::env::set_var("RUST_LOG", "simple-auth-server=debug,actix_web=info");
-    env_logger::init();
-    //--snip
-}
+ 
+该语法的解析器是`expr`解析器，因为它是顶级项目，基本所有都与它有关。唯一有效的输入必须是任何数字，接加号或减号，接任何数字。`expr`期望一个`additive_expr`,这是加法和减法主要出现的地方。`additive_expr`首先期望一项(`term`)（一个数字），随后是加号或减号，另一项。
+
+![](https://bbs.pediy.com/upload/attach/201811/703263_PNS6VAN2U8Z5Y5P.png)
+
+解析12+3生成的AST示例
+
+**当解析器解析时生成的树称为抽象语法树（abstract syntax tree）,或AST**。 AST包含了所有的操作。解析器不需要计算（所解析的）操作，只需以正确的顺序收集它们即可。
+
+我之前添加了我们的词法分析器代码，以便与我们的语法匹配，并生成如图中的ASTs。我用`// BEGIN PARSER //`和`// END PARSER //`标记了新解析器代码的开始和结束。
+
+[Rust Playground](https://play.rust-lang.org/?gist=205deadb23dbc814912185cec8148fcf&version=stable&mode=debug&edition=2015)
+
+我们实际上可以更深入。假设我们想支持只有数字没有操作的输入，或者添加乘法或除法，甚至添加优先级。这可以快速更改语法文件，并在我们解析器代码中做调整来反映出来。
+
+```EBNF
+expr = additive_expr ;
+additive_expr = multiplicative_expr, { ('+' | '-'), multiplicative_expr } ;
+multiplicative_expr = term, { ("*" | "/"), term } ;
+term = number ;
 ```
 
-## 注册用户
-
-如果您还记得上一个教程，我们为`Invitation`创建了一个`handler `程序，现在让我们创建一个注册用户的处理程序。我们将创建一个RegisterUser包含一些数据的结构，允许我们验证邀请，然后从数据库创建并返回一个用户。
-
-创建一个新文件`src/register_handler.rs`并添加`mod register_handler`到您的文件中main.rs。
-
-```rust
-// register_handler.rs
-use actix::{Handler, Message};
-use chrono::Local;
-use diesel::prelude::*;
-use errors::ServiceError;
-use models::{DbExecutor, Invitation, User, SlimUser};
-use uuid::Uuid;
-use utils::hash_password;
-
-// UserData is used to extract data from a post request by the client
-#[derive(Debug, Deserialize)]
-pub struct UserData {
-    pub password: String,
-}
-
-// to be used to send data via the Actix actor system
-#[derive(Debug)]
-pub struct RegisterUser {
-    pub invitation_id: String,
-    pub password: String,
-}
-
-
-impl Message for RegisterUser {
-    type Result = Result<SlimUser, ServiceError>;
-}
-
-
-impl Handler<RegisterUser> for DbExecutor {
-    type Result = Result<SlimUser, ServiceError>;
-    fn handle(&mut self, msg: RegisterUser, _: &mut Self::Context) -> Self::Result {
-        use schema::invitations::dsl::{invitations, id};
-        use schema::users::dsl::users;
-        let conn: &PgConnection = &self.0.get().unwrap();
-
-        // try parsing the string provided by the user as url parameter
-        // return early with error that will be converted to ServiceError
-        let invitation_id = Uuid::parse_str(&msg.invitation_id)?;
-
-        invitations.filter(id.eq(invitation_id))
-            .load::<Invitation>(conn)
-            .map_err(|_db_error| ServiceError::BadRequest("Invalid Invitation".into()))
-            .and_then(|mut result| {
-                if let Some(invitation) = result.pop() {
-                    // if invitation is not expired
-                    if invitation.expires_at > Local::now().naive_local() {
-                        // try hashing the password, else return the error that will be converted to ServiceError
-                        let password: String = hash_password(&msg.password)?;
-                        let user = User::with_details(invitation.email, password);
-                        let inserted_user: User = diesel::insert_into(users)
-                            .values(&user)
-                            .get_result(conn)?;
-
-                        return Ok(inserted_user.into()); // convert User to SlimUser
-                    }
-                }
-                Err(ServiceError::BadRequest("Invalid Invitation".into()))
-            })
-    }
-}
-```
-
-## 解析URL参数
-
-actix-web有许多简单的方法可以从请求中提取数据。其中一种方法是使用Path提取器。
-
-[Path](https://actix.rs/actix-web/actix_web/struct.Path.html)提供可从Request的路径中提取的信息。您可以从路径反序列化任何变量段。
-
-这将允许我们为每个要注册为用户的邀请创建唯一路径。
-
-让我们修改`app.rs`文件中的寄存器路由，并添加一个稍后我们将实现的处理函数。
-
-```rust
-// app.rs
-/// creates and returns the app after mounting all routes/resources
-// add use statement at the top.
-use register_routes::register_user;
-//...snip
-pub fn create_app(db: Addr<DbExecutor>) -> App<AppState> {
-    App::with_state(AppState { db })
-        //... snip
-        // routes to register as a user
-        .resource("/register/{invitation_id}", |r| {
-           r.method(Method::POST).with(register_user);
-        })
+新语法
 
-}
-```
-
-您可能希望暂时注释更改，因为事情未实现并保持您的应用程序已编译并运行。（我尽可能地做，持续反馈）。
-
-我们现在需要的是实现`register_user（）`函数，该函数从客户端发送的请求中提取数据，通过向`RegisterUserActor` 发送消息来调用处理程序。除了url参数，我们还需要从客户端提取密码。我们已经为此创建了一个`UserData`结构体在`register_handler.rs`。我们将使用类型`Json`来创建`UserData`结构。
-
->Json允许将请求主体反序列化为结构体。要从请求的主体中提取类型信息，类型T必须实现serde的反序列化特征。
+[Rust Playground](https://play.rust-lang.org/?gist=1587a5dd6109f70cafe68818a8c1a883&version=nightly&mode=debug&edition=2018)
 
-创建一个新文件`src/register_routes.rs`并添加`mod register_routes`到您的文件中main.rs。
+![](https://bbs.pediy.com/upload/attach/201811/703263_CC2SDTTJ32XKUSH.png)
 
-```rust
-use actix_web::{AsyncResponder, FutureResponse, HttpResponse, ResponseError, State, Json, Path};
-use futures::future::Future;
+C语言的扫描器（又称词法分析器）和解析器的案例。从字符序列“if(net>0.0)total+=net*(1.0+tax/100.0);”开始，扫描器组建了符号序列，并分类，例如作为标识符，保留字，数字字符，或操作符。后面的序列由解析器转换成语法树，然后由生于的编译器阶段处理。扫描器和解析器处理C语言语法常规的和正确的无上下文的部分。
 
-use app::AppState;
-use register_handler::{RegisterUser, UserData};
-
-
-pub fn register_user((invitation_id, user_data, state): (Path<String>, Json<UserData>, State<AppState>))
-                     -> FutureResponse<HttpResponse> {
-    let msg = RegisterUser {
-        // into_inner() returns the inner string value from Path
-        invitation_id: invitation_id.into_inner(),
-        password: user_data.password.clone(),
-    };
+## 3. 生成代码
 
-    state.db.send(msg)
-        .from_err()
-        .and_then(|db_response| match db_response {
-            Ok(slim_user) => Ok(HttpResponse::Ok().json(slim_user)),
-            Err(service_error) => Ok(service_error.error_response()),
-        }).responder()
-}
-```
+[代码生成器](https://en.wikipedia.org/wiki/Code_generation_%28compiler%29)使用AST和代码的等价物或者汇编代码。**代码生成器必须以递归下降顺序遍历AST中的每一项——很像解析器所做的——随后发出等效的代码**。
 
-## 测试您的实现
+> [Compiler Explorer - Rust (rustc 1.29.0)](https://godbolt.org/z/K8416_)
 
-如果你有任何错误，在处理完错误后，让我们给它一个测试
+如果你打开了上面的链接，你可以看到左侧示例代码产生的汇编代码。汇编代码的3-4行展示了编译器在遇到常量时如何生成常量的代码。
 
-```rust
-curl --request POST \
-  --url http://localhost:3000/invitation \
-  --header 'content-type: application/json' \
-  --data '{
-	"email":"name@domain.com"
-}'
-```
-
-应该返回类似的东西
-
-```rust
-{
-  "id": "f87910d7-0e33-4ded-a8d8-2264800d1783",
-  "email": "name@domain.com",
-  "expires_at": "2018-10-27T13:02:00.909757"
-}
-```
-
-想象一下，我们通过创建一个链接来向用户发送电子邮件，该链接包含一个供用户填写的表单。从那里我们会让我们的客户向`http：// localhost：3000 / register / f87910d7-0e33-4ded-a8d8-2264800d1783`发送请求。为了演示本演示，您可以使用以下测试命令测试您的应用程序。
-
-```rust
-curl --request POST \
-  --url http://localhost:3000/register/f87910d7-0e33-4ded-a8d8-2264800d1783 \
-  --header 'content-type: application/json' \
-  --data '{"password":"password"}'
-```
-
-应该返回类似的东西
-
-```rust
-{
-  "email": "name@domain.com"
-}
-```
-
-再次运行该命令将导致错误
-
-```rust
-"Key (email)=(name@domain.com) already exists."
-```
-
-恭喜您现在拥有一个可以邀请，验证和创建用户的Web服务，甚至可以向您发送半有用的错误消息。🎉🎉
-
-## 我们来做AUTH
-
-根据w3.org：
-
->基于令牌的身份验证系统背后的一般概念很简单。允许用户输入用户名和密码以获取允许他们获取特定资源的令牌 - 而无需使用他们的用户名和密码。一旦获得其令牌，用户就可以向远程站点提供令牌 - 其提供对特定资源的访问一段时间。
-
-现在，您如何选择交换该令牌可能会产生安全隐患。您会在互联网上找到许多讨论/辩论以及人们使用的许多方式。我非常警惕在客户端存储可由客户端JavaScript访问的东西。不幸的是，这种方法在各地成千上万的教程中提出 这是一个很好的阅读停止使用JWT进行会话。
-
-这里我不确定，除了你之外，作为读者还有什么建议你`don't follow online tutorials blindly and do your own research`。本教程的目的是了解Actix-web和rust，而不是如何防止服务器漏洞。为了本教程的目的，我们将仅使用http的cookie来交换令牌。
-
-**请不要在生产中使用。**
-
-现在，这就是😰，让我们看看我们能在这里做些什么。actix-web为我们提供了一种巧妙的方法，作为处理会话cookie的中间件，这里记录了[actix_web :: middleware :: identity](https://actix.rs/actix-web/actix_web/middleware/identity/index.html)。要启用此功能，我们修改app.rs文件如下。
-
-```rust
-use actix_web::middleware::identity::{CookieIdentityPolicy, IdentityService};
-use chrono::Duration;
-//--snip
-pub fn create_app(db: Addr<DbExecutor>) -> App<AppState> {
-    // secret is a random 32 character long base 64 string
-    let secret: String = std::env::var("SECRET_KEY").unwrap_or_else(|_| "0".repeat(32));
-    let domain: String = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
-
-    App::with_state(AppState { db })
-        .middleware(Logger::default())
-        .middleware(IdentityService::new(
-            CookieIdentityPolicy::new(secret.as_bytes())
-                .name("auth")
-                .path("/")
-                .domain(domain.as_str())
-                .max_age(Duration::days(1)) // just for testing
-                .secure(false),
-        ))
-        //--snip
-}
-```
-
-很方便的方法，如`req.remember(data)`，`req.identity()`和`req.forget()`等操作HttpRequest的路由参数。这反过来将设置和删除客户端的cookie身份验证。
-
-## JWT
-
-在编写本教程时，我遇到了一些关于要使用什么`JWT` lib的讨论。从一个简单的搜索我发现了一些，并决定与`frank_jwt`一起，然后文森特指出不完整性，建议使用`jsonwebtoken`。使用该lib后遇到问题我得到了很好的响应。现在repo有工作示例，我能够实现以下默认解决方案。请注意，这不是JWT最安全的实现，您可能希望查找资源以使其更好地满足您的需求。
-
-在我们创建auth处理程序和路由函数之前，让我们为util.rs添加一些jwt编码和解码辅助函数。别忘了加入`extern crate jsonwebtoken as jwt`在你的main.rs。
-
-如果有人有更好的实施，我会很乐意接受。
-
-```rust
-// utils.rs
-use models::SlimUser;
-use std::convert::From;
-use jwt::{decode, encode, Header, Validation};
-use chrono::{Local, Duration};
-//--snip
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    // issuer
-    iss: String,
-    // subject
-    sub: String,
-    //issued at
-    iat: i64,
-    // expiry
-    exp: i64,
-    // user email
-    email: String,
-}
-
-// struct to get converted to token and back
-impl Claims {
-    fn with_email(email: &str) -> Self {
-        Claims {
-            iss: "localhost".into(),
-            sub: "auth".into(),
-            email: email.to_owned(),
-            iat: Local::now().timestamp(),
-            exp: (Local::now() + Duration::hours(24)).timestamp(),
-        }
-    }
-}
-
-impl From<Claims> for SlimUser {
-    fn from(claims: Claims) -> Self {
-        SlimUser { email: claims.email }
-    }
-}
-
-pub fn create_token(data: &SlimUser) -> Result<String, ServiceError> {
-    let claims = Claims::with_email(data.email.as_str());
-    encode(&Header::default(), &claims, get_secret().as_ref())
-        .map_err(|_err| ServiceError::InternalServerError)
-}
-
-pub fn decode_token(token: &str) -> Result<SlimUser, ServiceError> {
-    decode::<Claims>(token, get_secret().as_ref(), &Validation::default())
-        .map(|data| Ok(data.claims.into()))
-        .map_err(|_err| ServiceError::Unauthorized)?
-}
-
-// take a string from env variable
-fn get_secret() -> String {
-    env::var("JWT_SECRET").unwrap_or("my secret".into())
-}
-```
-
-## 验证处理
-
-让我们创建一个新文件`src/auth_handler.rs`并给你main.rs添加`mod auth_handler`。
-
-```rust
-//auth_handler.rs
-use actix::{Handler, Message};
-use diesel::prelude::*;
-use errors::ServiceError;
-use models::{DbExecutor, User, SlimUser};
-use bcrypt::verify;
-use actix_web::{FromRequest, HttpRequest, middleware::identity::RequestIdentity};
-
-#[derive(Debug, Deserialize)]
-pub struct AuthData {
-    pub email: String,
-    pub password: String,
-}
-
-impl Message for AuthData {
-    type Result = Result<SlimUser, ServiceError>;
-}
-
-
-impl Handler<AuthData> for DbExecutor {
-    type Result = Result<SlimUser, ServiceError>;
-    fn handle(&mut self, msg: AuthData, _: &mut Self::Context) -> Self::Result {
-        use schema::users::dsl::{users, email};
-        let conn: &PgConnection = &self.0.get().unwrap();
-        let mismatch_error = Err(ServiceError::BadRequest("Username and Password don't match".into()));
-
-        let mut items = users
-            .filter(email.eq(&msg.email))
-            .load::<User>(conn)?;
-
-        if let Some(user) = items.pop() {
-            match verify(&msg.password, &user.password) {
-                Ok(matching) => {
-                    if matching { return Ok(user.into()); } else { return mismatch_error; }
-                }
-                Err(_) => { return mismatch_error; }
-            }
-        }
-        mismatch_error
-    }
-}
-```
-
-上面的处理程序采用`AuthData`包含客户端发送的电子邮件和密码的结构。我们使用该电子邮件从数据库中提取用户并使用bcrypt `verify`函数来匹配密码。如果一切顺利，我们返回用户或我们返回`BadRequest`错误。
-
-现在让我们创建`src/auth_routes.rs`以下内容：
-
-```rust
-// auth_routes.rs
-use actix_web::{AsyncResponder, FutureResponse, HttpResponse, HttpRequest, ResponseError, Json};
-use actix_web::middleware::identity::RequestIdentity;
-use futures::future::Future;
-use utils::create_token;
-
-use app::AppState;
-use auth_handler::AuthData;
-
-pub fn login((auth_data, req): (Json<AuthData>, HttpRequest<AppState>))
-             -> FutureResponse<HttpResponse> {
-    req.state()
-        .db
-        .send(auth_data.into_inner())
-        .from_err()
-        .and_then(move |res| match res {
-            Ok(slim_user) => {
-                let token = create_token(&slim_user)?;
-                req.remember(token);
-                Ok(HttpResponse::Ok().into())
-            }
-            Err(err) => Ok(err.error_response()),
-        }).responder()
-}
-
-pub fn logout(req: HttpRequest<AppState>) -> HttpResponse {
-    req.forget();
-    HttpResponse::Ok().into()
-}
-```
-
-我们的login方法提取`AuthData from请求并向我们在auth_handler.rs中实现的`DbEexcutor`Actor处理程序发送消息。如果一切都很好，我们会让用户返回给我们，我们使用我们之前在`utils.rs`中定义的辅助函数来创建一个令牌和调用`req.remember(token`)。这又设置了一个带有令牌的cookie头，供客户端保存。
-
-我们现在需要做的最后一件事是`app.rs`使用我们的登录/注销功能。将`.rsource("/auth")`闭包更改为以下内容：
-
-```rust
-.resource("/auth", |r| {
-            r.method(Method::POST).with(login);
-            r.method(Method::DELETE).with(logout);
-        })
-```
-
-不要忘记在文件的顶部添加`use auth_routes::{login, logout};`
-
-## 试运行AUTH
-
-如果您一直关注本教程，那么您已经创建了一个使用电子邮件和密码的用户。使用以下curl命令测试我们的服务器。
-
-```rust
-curl -i --request POST \
-  --url http://localhost:3000/auth \
-  --header 'content-type: application/json' \
-  --data '{
-        "email": "name@domain.com",
-        "password":"password"
-}'
-
-## response
-HTTP/1.1 200 OK
-set-cookie: auth=iqsB4KUUjXUjnNRl1dVx9lKiRfH24itiNdJjTAJsU4CcaetPpaSWfrNq6IIoVR5+qKPEVTrUeg==; HttpOnly; Path=/; Domain=localhost; Max-Age=86400
-content-length: 0
-date: Sun, 28 Oct 2018 12:36:43 GMT
-```
-
-如果你收到了如上所述的带有set-cookie标头的200响应，恭喜你已成功登录。
-
-为了测试注销，我们向/auth它发送一个DELETE请求，确保你得到带有空数据和即时到期日的set-cookie头。
-
-```rust
-curl -i --request DELETE \
-  --url http://localhost:3000/auth
-
-## response
-HTTP/1.1 200 OK
-set-cookie: auth=; HttpOnly; Path=/; Domain=localhost; Max-Age=0; Expires=Fri, 27 Oct 2017 13:01:52 GMT
-content-length: 0
-date: Sat, 27 Oct 2018 13:01:52 GMT
-```
-
-## 实现受保护的路由
-
-使Auth的全部意义在于验证请求是否来自经过身份验证的客户端。Actix-web有一个特性`FromRequest`，我们可以在任何类型上实现，然后使用它从请求中提取数据。见文档[这里](https://actix.rs/actix-web/actix_web/trait.FromRequest.html)。我们将在`auth_handler.rs`底部添加以下内容。
-
-```rust
-//auth_handler.rs
-//--snip
-use actix_web::FromRequest;
-use utils::decode_token;
-//--snip
-
-// we need the same data as SlimUser
-// simple aliasing makes the intentions clear and its more readable
-pub type LoggedUser = SlimUser;
-
-impl<S> FromRequest<S> for LoggedUser {
-    type Config = ();
-    type Result = Result<LoggedUser, ServiceError>;
-    fn from_request(req: &HttpRequest<S>, _: &Self::Config) -> Self::Result {
-        if let Some(identity) = req.identity() {
-            let user: SlimUser = decode_token(&identity)?;
-            return Ok(user as LoggedUser);
-        }
-        Err(ServiceError::Unauthorized)
-    }
-}
-```
-
-我们选择使用类型别名而不是创建一个全新的类型。当我们LoggedUser从请求中提取时，读者会知道它是经过身份验证的用户。`FromRequest` trait只是尝试将cookie中的字符串反序列化为我们的结构，如果失败则只返回`Unauthorized`错误。为了测试这个，我们需要添加一个实际路由或app。我们只是`auth_routes.rs`添加另一个函数
-
-```rust
-//auth_routes.rs
-//--snip
-
-pub fn get_me(logged_user: LoggedUser) -> HttpResponse {
-    HttpResponse::Ok().json(logged_user)
-}
-```
-
-要调用它，我们在app.rs资源中注册此方法。它看起来像是以下。
-
-```rust
-//app.rs
-use auth_routes::{login, logout, get_me};
-//--snip
-
-.resource("/auth", |r| {
-    r.method(Method::POST).with(login);
-    r.method(Method::DELETE).with(logout);
-    r.method(Method::GET).with(get_me);
-})
-//--snip
-```
-
-## 测试登录用户
-
-在终端中尝试以下Curl命令。
-
-```rust
-curl -i --request POST \
-  --url http://localhost:3000/auth \
-  --header 'content-type: application/json' \
-  --data '{
-        "email": "name@domain.com",
-        "password":"password"
-}'
-# result would be something like
-HTTP/1.1 200 OK
-set-cookie: auth=HdS0iPKTBL/4MpTmoUKQ5H7wft5kP7OjP6vbyd05Ex5flLvAkKd+P2GchG1jpvV6p9GQtzPEcg==; HttpOnly; Path=/; Domain=localhost; Max-Age=86400
-content-length: 0
-date: Sun, 28 Oct 2018 19:16:12 GMT
-
-## and then pass the cookie back for a get request
-curl -i --request GET \
-  --url http://localhost:3000/auth \
-  --cookie auth=HdS0iPKTBL/4MpTmoUKQ5H7wft5kP7OjP6vbyd05Ex5flLvAkKd+P2GchG1jpvV6p9GQtzPEcg==
-## result
-HTTP/1.1 200 OK
-content-length: 27
-content-type: application/json
-date: Sun, 28 Oct 2018 19:21:04 GMT
-
-{"email":"name@domain.com"}
-```
-
-它应该以json的形式成功返回您的电子邮件。只有登录的用户或具有有效cookie身份验证和令牌的请求才会通过您提取的`LoggedUser`路由。
-
-## 下一步是什么
-
-在本教程的第3部分中，我们将为此应用程序创建**电子邮件验证和前端**。我希望使用某种rust的html模板系统。与此同时，我正在学习Angular，所以我可能会在它前面做一个小应用程序。
-
-[英文原文](https://hgill.io/posts/auth-microservice-rust-actix-web-diesel-complete-tutorial-part-2/)
+ 
+Godbolt Compiler Explorer是非常好的工具，允许你用高级语言写代码并看到它生成的汇编代码。你可以对用它做一些有趣的尝试，看看生成哪一类的代码，但是，不要忘记对你的编译器添加优化标志来显示它的智能之处。（Rust语言使用-o）
+
+ 
+如果你对ASM中编译器是如何保存局部变量到内存感兴趣，[这篇文章](https://norasandler.com/2018/01/08/Write-a-Compiler-5.html)(代码生成节)详细解释了栈。大多时候，当变量不是局部的，高级编译器会在堆上为变量分配内存，并在那里存储，而不是在栈上。你可以阅读更多有关存储变量的内容在[StackOverflow答案](https://stackoverflow.com/questions/18446171/how-do-compilers-assign-memory-addresses-to-variables/18446414#18446414)。
+
+ 
+由于汇编是完全不同的，复杂的主题，我不会特别谈论它太多。我只想强调代码生成器的工作和重要性。并且，代码生成器可以生成的不仅仅是汇编。Haxe有可以生成超过六种不同编程语言的[后端](https://en.wikipedia.org/wiki/Compiler#Back_end);包括C++，Java和Python。
+
+ 
+后端指的是编译器的代码生成器或评估器；因此，前端是词法分析器和解析器。也有中端，大多数是做本节之后的优化和IRs解释。后端大多与前端无关，只需考虑接受到的AST。这意味着可以为几个不同的前端或语言重用相同的后端。众人皆知的[GNU Compiler Collection](https://gcc.gnu.org/)就是一个。
+
+ 
+我的C编译器后端是最好的代码生成器示例；你可以在[这里](https://github.com/asmoaesl/ox/blob/master/src/generator.rs)找到它。
+
+ 
+汇编产生后，它会被写入新的汇编文件（.s或.asm）。这个文件会被汇编器传递，汇编器是汇编的编译器，会生成二进制的等价物。二进制代码随后会被写入称作对象文件的新文件（.o）。
+
+ **对象文件是机器码，但不可执行**。要让它们变得可执行，对象文件需要一起被链接。链接器使用这个通用机器码，并使它变得可执行，共享库或静态库。更多关于连接器点击[这里](https://en.wikipedia.org/wiki/Linker_%28computing%29#Overview) 。
+
+ **链接器是基于操作系统的可变有效程序。一个单独的，第三方的链接器应该能够编译你的后端生成的对象代码。当制作编译器时，不需要创建你自己的链接器。**
+
+ ![](https://bbs.pediy.com/upload/attach/201811/703263_GMARFPVDSRRRKEG.png)
+
+ 编译器可能有[中间表示(intermediate representation,IR)](https://en.wikipedia.org/wiki/Intermediate_representation)。IR是用于无损地表示原始指令以进行优化或翻译成另一种语言。 IR不是原始源代码；IR是为了在代码中找到潜在优化的无损简化。[循环展开](https://en.wikipedia.org/wiki/Loop_unrolling)和[矢量化](https://en.wikipedia.org/wiki/Automatic_vectorization)是使用IR完成的。更多有关IR的优化示例可以在[这个PDF](http://www.keithschwarz.com/cs143/WWW/sum2011/lectures/140_IR_Optimization.pdf)中找到。
+
+## 总结
+
+当你理解了编译器，你可以更高效的使用你的编程语言。可能有一天你会想制作你自己的编程语言？我希望本文可以帮助到你。
+
+## 参考&拓展阅读
+
+- http://craftinginterpreters.com/ ——指导您使用C和Java制作解释器
+
+- https://norasandler.com/2017/11/29/Write-a-Compiler.html——可能对我来说是最有用的“编写编译器”的教程
+
+- 我的C编译器和科学计算器解析器可以在[这里](https://github.com/asmoaesl/ox)和[这里](https://github.com/asmoaesl/rsc)被找到
+
+- 另一种类型解析器示例，称为优先级攀爬解析器，可以在[这里](https://play.rust-lang.org/?gist=d9db7cfad2bb3efb0a635cddcc513839&version=stable&mode=debug&edition=2015)找到。版权所有：Wesley Norris
