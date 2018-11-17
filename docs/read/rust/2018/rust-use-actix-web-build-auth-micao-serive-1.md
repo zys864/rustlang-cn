@@ -1,6 +1,13 @@
 # Rust使用Actix-Web验证Auth Web微服务-整教程第1部分
 
->[本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/rust-use-actix-web-build-auth-micao-serive-1)
+>[本文同步于Rust中文社区](http://rustlang-cn.org/read/rust/rust-use-actix-web-build-auth-micao-serive-1)
+
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
+
+- 1 [Rust中文社区首页](http://rustlang-cn.org/)
+- 2 Rust中文社区[Rust文章栏目](http://rustlang-cn.org/read/rust/)
+- 3 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
+
 
 我们将创建一个rust仅处理用户注册和身份验证的Web服务器。我将在逐步解释每个文件中的步骤。完整的项目代码在[这里](https://gitlab.com/mygnu/rust-auth-server/tree/part_one)。
 

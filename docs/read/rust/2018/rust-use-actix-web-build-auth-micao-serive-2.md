@@ -1,6 +1,13 @@
 # Rust使用Actix-Web验证Auth Web微服务 - 完整教程第2部分
 
-> [本文同步于Rust中文社区](https://rustlang-cn.github.io/read/rust/rust-use-actix-web-build-auth-micao-serive-2.html)
+> [本文同步于Rust中文社区](http://rustlang-cn.org/read/rust/rust-use-actix-web-build-auth-micao-serive-2.html)
+
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
+
+- 1 [Rust中文社区首页](http://rustlang-cn.org/)
+- 2 Rust中文社区[Rust文章栏目](http://rustlang-cn.org/read/rust/)
+- 3 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
+
 
 ## 验证用户电子邮件
 

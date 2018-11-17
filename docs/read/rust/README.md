@@ -4,8 +4,8 @@
 
 欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-- 1 [Rust中文社区首页](https://rustlang-cn.github.io)
-- 2 Rust中文社区[Rust文章栏目](https://rustlang-cn.github.io/read/rust/)
+- 1 [Rust中文社区首页](http://rustlang-cn.org/)
+- 2 Rust中文社区[Rust文章栏目](http://rustlang-cn.org/read/rust/)
 - 3 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
 
 ## 编程语言是如何工作的
