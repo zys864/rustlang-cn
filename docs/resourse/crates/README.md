@@ -4,8 +4,9 @@
 
 * [intrusive-rs](https://crates.io/crates/intrusive-collections) - 用于创建侵入式集合的Rust库。目前支持单链接和双链接列表，以及红黑树。
 * [linked-list](https://crates.io/crates/linked-list) - std :: collections :: LinkedList的替代实现
-* [phf](https://crates.io/crates/phf) - Compile time static maps for Rust
+* [phf](https://crates.io/crates/phf) - Rust编译时 static maps
 * [list_ursors](https://github.com/4e554c4c/list_cursors) - Linked list cursors
+* [concread](https://github.com/firstyear/concread) - Rust的并发可读数据结构
 
 ## 数据库驱动
 
