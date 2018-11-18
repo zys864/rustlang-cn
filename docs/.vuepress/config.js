@@ -40,9 +40,9 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: 'Rust文章', link: '/read/rust/' },
-            { text: 'Rust生态', link: '/read/rusteco/' },
-            { text: 'Rust工作', link: '/read/work/' }
+            { text: 'Rust文章', link: '/read/rust/2018/rust-use-actix-web-build-auth-micao-serive-2' },
+            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' },
+            { text: 'Rust工作', link: '/read/work/2018/rustwork-2018-11-13' }
           ] },
           { text: 'Rust语言', items: [ 
             { text: '深入Rust语言', link: '/rust/book/' },

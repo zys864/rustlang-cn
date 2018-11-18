@@ -3,7 +3,7 @@ home: true
 heroImage: /imgs/rust.png
 pageClass: front
 actionText: 最新文章：深入理解编译器
-actionLink: /read/rust/
+actionLink: /read/rust/2018/understanding-compilers
 features:
 - title: 零开销抽象
   details: 实施高级抽象而没有性能损耗.
