@@ -69,7 +69,7 @@ module.exports = {
             { text: 'Embedonomicon', link: '/iot/embedonomicon/' },
             { text: '资源', link: '/iot/resourse/' }
           ] },
-          { text: '资源', items: [ 
+          { text: '生态', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
             { text: 'Crates', link: '/resourse/crates/' },
             { text: 'Blogs', link: '/resourse/blogs/' },

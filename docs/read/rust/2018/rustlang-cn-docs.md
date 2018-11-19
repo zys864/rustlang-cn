@@ -1,4 +1,12 @@
-# Rust
+# Rust语言中文网络内容建设
+
+Rust 编程语言有很多特质，但 一个很大的优势是良好的文档资源，你可以在这里找到[官方文档](https://doc.rust-lang.org/).本文重点介绍官方Rust语言社区和[Rust中文社区](http://rustlang-cn.org)
+
+**目前Rust并没有官方中文社区,这就是为什么为[Rust中文社区](http://rustlang-cn.org)而不是Rust官方中文社区**
+
+还有其他的Rust中文社区，例如[Rust编程语言社区](https://rust.cc)
+
+[Rust中文社区](http://rustlang-cn.org)致力于Rust编程语言中文网络-QQ群:570065685
 
 ## 一：官方介绍Rust语言社区
 
