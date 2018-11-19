@@ -12,22 +12,40 @@
 
 ## Awesome-Actix
 
-**官方 :**
+**官方库 :**
 
 - [Actix英文站点](https://actix.rs/)
 - [Actix中文站点](https://actix-cn.github.io/)
 - [actix](https://github.com/actix/actix) : Actor framework for Rust
+- [actix-net](https://github.com/actix/actix-net) : 可组合网络服务的框架
 - [actix-web](https://github.com/actix/actix-web) : Actix web is a rust web framework.
 - [actix-redis](https://github.com/actix/actix-redis) ： Redis actor and middleware for Actix
 - [actix-protobuf](https://github.com/actix/actix-protobuf) : Protobuf integration for actix web
-- [actix-remote](https://github.com/actix/actix-remote) : Derive macro for actix framework
+- [actix-remote](https://github.com/actix/actix-remote) : Distributed actors for actix framework.
+- [actix-derive](https://github.com/actix/actix-derive) - Derive macro for actix framework
 - [examples](https://github.com/actix/examples) : Actix web examples
 
-**社区 :**
+**社区库 :**
 
-- [ruster](https://github.com/ruster-xyz/ruster) : online community in rust for rust community
-- [muro](https://github.com/OUISRC/muro) : The interest and community for internet .(reddit clone)
+- [actix-lua](https://github.com/poga/actix-lua) : Actix的安全Lua脚本环境
+- [torchbear](https://github.com/foundpatterns/torchbear) : Rust中的应用程序框架，具有Lua脚本环境
+- [actix_session](https://github.com/chirimof/actix_session) : actix_session
+- [cargo-template-actix-tera](https://github.com/otomato-gh/cargo-template-actix-tera) : cargo template for an actix-web application with tera html templating
+- [actix-prometheus](https://github.com/orhanbalci/actix-prometheus) : Actix的Prometheus度量聚合中间件
+- [hearth](https://github.com/aheart/hearth) ： 通过SSH进行Linux资源监控
+- [actix-telegram](https://github.com/jeizsm/actix-telegram) : telegram bot library on actix
+
+
+
+**社区项目 :**
+
+- [ruster](https://github.com/rustlang-cn/ruster) : online community in rust for rust community
+- [Rust-webapp-starter](https://github.com/rustlang-cn/Rust-webapp-starter) : Rust single page webapp written in actix-web with vuejs.
 - [swipe-server](https://github.com/swipe-app/swipe-server) : Swipe app api with actix-web and graphql
 - [yew-actix-protobuf-sample](https://github.com/havarnov/yew-actix-protobuf-sample) : web app written in yew and actix.
 - [partner](https://github.com/yinyanlv/partner) : 一个私人生活辅助系统，前后端分离。前端：angular6+，material-design；后端：actix-web，diesel，mysql，redis
 - [personal-blog](https://github.com/davidarmstronglewis/personal-blog) : my blog
+- [http-server-rs](https://github.com/gdamjan/http-server-rs) : Simple http server a bit fancier than `python -m http.server` - in Rust + actix-web
+- [bible.rs](https://github.com/DSpeckhals/bible.rs) : 在Rust使用Actix Web和Diesel 编写的圣经服务器 https://bible.rs
+- [actix-api-server](https://github.com/pkuosa-gabriel/actix-api-server) : 基于Actix.rs的RESTful API服务器
+- [flutter_actix_websocket](https://github.com/pythoneer/flutter_actix_websocket)
