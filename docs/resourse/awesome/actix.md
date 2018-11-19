@@ -49,4 +49,3 @@
 - [http-server-rs](https://github.com/gdamjan/http-server-rs) : Simple http server a bit fancier than `python -m http.server` - in Rust + actix-web
 - [bible.rs](https://github.com/DSpeckhals/bible.rs) : 在Rust使用Actix Web和Diesel 编写的圣经服务器 https://bible.rs
 - [actix-api-server](https://github.com/pkuosa-gabriel/actix-api-server) : 基于Actix.rs的RESTful API服务器
-- [flutter_actix_websocket](https://github.com/pythoneer/flutter_actix_websocket)
