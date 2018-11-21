@@ -44,36 +44,41 @@ module.exports = {
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
-          { text: 'Rust语言', items: [ 
-            { text: '深入Rust语言', link: '/rust/book/' },
-            { text: 'Rust异步编程', link: '/rust/async-rust/' },
-            { text: '标准库', link: '/rust/std/' },
-            { text: '参考规范', link: '/rust/reference/' },
-            { text: 'Rust食谱', link: '/rust/cookbook/' },
-            { text: '资源', link: '/rust/resourse/' }
-          ] },
-          { text: 'Server', items: [ 
-            { text: 'Tokio', link: '/server/tokio/' },
-            { text: 'Actix', link: '/server/actix/' },
-            { text: 'Actix-web', link: '/server/actix-web/' },
-            { text: 'Diesel', link: '/server/diesel/' }
-          ] },
-          { text: 'Wasm', items: [ 
-            { text: 'Book', link: '/wasm/book/' },
-            { text: 'Wasm-bindgen', link: '/wasm/wasm-bindgen/' },
-            { text: '资源', link: '/wasm/resourse/' }
-          ] },
-          { text: 'IOT', items: [ 
-            { text: 'Discovery', link: '/iot/discovery/' },
-            { text: 'Embedded-book', link: '/iot/book/' },
-            { text: 'Embedonomicon', link: '/iot/embedonomicon/' },
-            { text: '资源', link: '/iot/resourse/' }
-          ] },
+          { text: '文档', items: [
+              { text: 'Rust语言', items: [
+                  { text: '深入Rust语言', link: '/rust/book/' },
+                  { text: 'Rust异步编程', link: '/rust/async-rust/' },
+                  { text: '标准库', link: '/rust/std/' },
+                  { text: '参考规范', link: '/rust/reference/' },
+                  { text: 'Rust食谱', link: '/rust/cookbook/' }
+                ]
+              },
+              { text: 'Server', items: [ 
+                  { text: 'Tokio', link: '/server/tokio/' },
+                  { text: 'Actix', link: '/server/actix/' },
+                  { text: 'Actix-web', link: '/server/actix-web/' },
+                  { text: 'Diesel', link: '/server/diesel/' }
+                ] 
+              },
+              { text: 'Wasm', items: [ 
+                  { text: 'Book', link: '/wasm/book/' },
+                  { text: 'Wasm-bindgen', link: '/wasm/wasm-bindgen/' }
+                ] 
+              },
+              { text: 'IOT', items: [ 
+                  { text: 'Discovery', link: '/iot/discovery/' },
+                  { text: 'Embedded-book', link: '/iot/book/' },
+                  { text: 'Embedonomicon', link: '/iot/embedonomicon/' }
+                ] 
+              }
+            ]
+          },
           { text: '生态', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
             { text: 'Crates', link: '/resourse/crates/' },
             { text: 'Blogs', link: '/resourse/blogs/' },
-            { text: '书签', link: '/resourse/mark/' }
+            { text: '书签', link: '/resourse/mark/' },
+            { text: '资源', link: '/resourse/resourse/' }
           ] },
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
