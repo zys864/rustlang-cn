@@ -41,9 +41,9 @@ module.exports = {
         nav: [
           { text: '阅读', items: [ 
             { text: 'Rust文章', link: '/read/rust/2018/rust-use-actix-web-build-auth-micao-serive-2' },
-            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' },
-            { text: 'Rust工作', link: '/read/work/2018/rustwork-2018-11-13' }
+            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
+          { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: 'Rust语言', items: [ 
             { text: '深入Rust语言', link: '/rust/book/' },
             { text: 'Rust异步编程', link: '/rust/async-rust/' },
@@ -80,7 +80,7 @@ module.exports = {
         sidebar: {
           '/read/rust/': read('Read'),
           '/read/rusteco/': rusteco('Rusteco'),
-          '/read/work/': work('Work'),
+          '/work/': work('Work'),
           '/rust/book/': book('Rust'),
           '/rust/async-rust/': asyncrust('Async-Rust'),
           '/rust/std/': std('Std'),
