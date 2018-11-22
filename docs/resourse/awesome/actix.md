@@ -41,6 +41,7 @@
 
 **社区项目 :**
 
+- [Actix-Blog](https://github.com/Dengjianping/Actix-Blog) : rust-lang和actix-web提供支持的个人博客
 - [ruster](https://github.com/rustlang-cn/ruster) : online community in rust for rust community
 - [Rust-webapp-starter](https://github.com/rustlang-cn/Rust-webapp-starter) : Rust single page webapp written in actix-web with vuejs.
 - [swipe-server](https://github.com/swipe-app/swipe-server) : Swipe app api with actix-web and graphql
