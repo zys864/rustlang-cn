@@ -20,6 +20,7 @@
 - [actix](https://github.com/actix/actix) : Actor framework for Rust
 - [actix-net](https://github.com/actix/actix-net) : 可组合网络服务的框架
 - [actix-web](https://github.com/actix/actix-web) : Actix web is a rust web framework.
+- [actix-http](https://github.com/fafhrd91/actix-http) actix http library
 - [actix-redis](https://github.com/actix/actix-redis) ： Redis actor and middleware for Actix
 - [actix-protobuf](https://github.com/actix/actix-protobuf) : Protobuf integration for actix web
 - [actix-remote](https://github.com/actix/actix-remote) : Distributed actors for actix framework.
@@ -41,6 +42,7 @@
 
 **社区项目 :**
 
+- [Actix-Blog](https://github.com/Dengjianping/Actix-Blog) : rust-lang和actix-web提供支持的个人博客
 - [ruster](https://github.com/rustlang-cn/ruster) : online community in rust for rust community
 - [Rust-webapp-starter](https://github.com/rustlang-cn/Rust-webapp-starter) : Rust single page webapp written in actix-web with vuejs.
 - [swipe-server](https://github.com/swipe-app/swipe-server) : Swipe app api with actix-web and graphql
