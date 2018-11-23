@@ -1,5 +1,6 @@
 # Rust中的范型编程-Exonum是如何从Iron转移到Actix-web
 
+> 本文同步与[Rust中文社区](https://rustlang-cn.org/read/rust/2018/Rust%E4%B8%AD%E7%9A%84%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B-Exonum%E6%98%AF%E5%A6%82%E4%BD%95%E4%BB%8EIron%E8%BD%AC%E7%A7%BB%E5%88%B0Actix-web.html)
 > 本文时间：2018-11-23，作者：[krircc](https://krircc.github.io/)， 简介：天青色  
 
 欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles),好文将在以下地方直接展示
@@ -527,3 +528,5 @@ impl<(), I, F> From<F> for With<(), I, Result<I>, F>
 ## 结论
 
 如上所述，我们已经实现了一个改进的API，它允许简单而清晰地创建处理程序，而无需担心Web细节。 这些处理程序可以与任何后端一起使用，甚至可以同时使用多个后端。
+
+[英文原文](https://medium.com/meetbitfury/generic-methods-in-rust-how-exonum-shifted-from-iron-to-actix-web-7a2752171388)
