@@ -80,7 +80,9 @@ module.exports = {
             { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' }
           ] },
-          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
+          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' },
+          { text: '知乎', link: 'https://zhuanlan.zhihu.com/tianqingse' },
+          { text: '微博', link: 'https://weibo.com/kriry' }
         ],
         sidebar: {
           '/read/rust/': read('Read'),
