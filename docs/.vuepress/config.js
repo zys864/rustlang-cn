@@ -40,7 +40,7 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: 'Rust文章', link: '/read/rust/2018/Rust中的范型编程-Exonum是如何从Iron转移到Actix-web' },
+            { text: 'Rust文章', link: '/read/rust/2018/rust-use-actix-web-build-auth-micao-serive-3' },
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
@@ -85,8 +85,6 @@ module.exports = {
             { text: '知乎', link: 'https://zhuanlan.zhihu.com/tianqingse' },
             { text: '微博', link: 'https://weibo.com/kriry' }
           ] }
-          
-          
         ],
         sidebar: {
           '/read/rust/': read('Read'),

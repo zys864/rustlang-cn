@@ -174,3 +174,31 @@
   * [utf8](https://crates.io/crates/utf8-ranges)
 
 * [gravatar](https://crates.io/crates/gravatar)
+
+## Toml
+
+* [tomlenv](https://github.com/rustyhorde/tomlenv)  Manage your environment configuration with TOML
+
+## Byte
+
+* [bytes](https://github.com/carllerche/bytes) - Utilities for working with bytes
+
+## String
+
+* [voca_rs](https://github.com/e1r0nd/voca_rs) - The ultimate Rust string library
+* [string](https://github.com/carllerche/string) - Rust String type with configurable byte storage.
+
+## Text
+
+* [Ropey](https://crates.io/crates/ropey) - Ropey is a utf8 text rope library, designed to be the backing text buffer for applications such as text editors
+
+## Profiler
+
+* [vignette](https://github.com/nikhilm/vignette) - A sampling profiler as a library
+
+## 其他
+
+* [fred](https://github.com/anvie/fred) : Simple Document File Reader Library for Rust
+* [gif-generator](https://github.com/eliheuer/gif-generator):Generate animated GIFs from user input
+
+* [gravatar](https://crates.io/crates/gravatar)

@@ -416,4 +416,4 @@ curl --request POST \
 
 在下一部分中，我们将扩展我们的应用程序以生成电子邮件并将其发送给注册用户进行验证。我们还允许用户在验证后注册和验证。
 
-[英文原文](https://hgill.io/posts/auth-microservice-rust-actix-web-diesel-complete-tutorial-part-1/#read-more)
+[英文原文](https://hgill.io/posts/auth-microservice-rust-actix-web-diesel-complete-tutorial-part-1)

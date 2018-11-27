@@ -2,8 +2,8 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: 最新文章：Rust中的范型编程-Exonum是如何从Iron转移到Actix-web
-actionLink: /read/rust/2018/Rust中的范型编程-Exonum是如何从Iron转移到Actix-web
+actionText: 最新文章：Rust使用Actix-Web验证Auth Web微服务-整教程第3部分
+actionLink: /read/rust/2018/rust-use-actix-web-build-auth-micao-serive-3
 features:
 - title: 零开销抽象
   details: 实施高级抽象而没有性能损耗.
