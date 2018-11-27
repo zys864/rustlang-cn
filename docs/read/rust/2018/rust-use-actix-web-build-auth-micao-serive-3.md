@@ -108,7 +108,7 @@ pub fn send_invitation(invitation: &Invitation) {
 }
 ```
 
-为了能够在我们的应用程序中使用此服务，我们在`main.js`文件中添加`extern crate sparkpost;`和`mod email_service;`。请注意，我们不会从`send_invitation`函数返回任何内容。这取决于您在真实应用中想要做什么，现在我们只需登录终端。
+为了能够在我们的应用程序中使用此服务，我们在`main.rs`文件中添加`extern crate sparkpost;`和`mod email_service;`。请注意，我们不会从`send_invitation`函数返回任何内容。这取决于您在真实应用中想要做什么，现在我们只需登录终端。
 
 ## 调整您的邀请处理
 
