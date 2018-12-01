@@ -4,6 +4,8 @@
 
 ## 中文
 
+* [亦输](http://www.cnblogs.com/pyzh)
+
 
 ## 英文
 
