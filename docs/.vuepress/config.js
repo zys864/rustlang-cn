@@ -40,7 +40,7 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-1' },
+            { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-2' },
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
           { text: '文档', items: [
