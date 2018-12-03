@@ -43,7 +43,6 @@ module.exports = {
             { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-1' },
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
-          { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '文档', items: [
               { text: 'Rust语言', items: [
                   { text: '深入Rust语言', link: '/rust/book/' },
@@ -80,12 +79,13 @@ module.exports = {
             { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' }
           ] },
-          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' },
           { text: '网络', items: [ 
             { text: '知乎', link: 'https://zhuanlan.zhihu.com/tianqingse' },
             { text: '微博', link: 'https://weibo.com/kriry' },
             { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' }      
-          ] }
+          ] },
+          { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
+          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {
           '/read/rust/': read('Read'),
