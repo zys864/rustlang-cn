@@ -2,8 +2,8 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: 最新文章：深入浅出Rust-Future-Part-1
-actionLink: /read/rust/2018/深入浅出Rust-Future-Part-1
+actionText: 最新文章：深入浅出Rust-Future-Part-2
+actionLink: /read/rust/2018/深入浅出Rust-Future-Part-2
 features:
 - title: 零开销抽象
   details: 实施高级抽象而没有性能损耗.
