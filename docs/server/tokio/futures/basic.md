@@ -1,10 +1,4 @@
----
-title: "Implementing futures"
-weight : 2020
-menu:
-  docs:
-    parent: futures
----
+# Implementing futures
 
 Implementing futures is very common when using Tokio. Let's start with a very
 basic future that performs no asynchronous logic and simply returns a message

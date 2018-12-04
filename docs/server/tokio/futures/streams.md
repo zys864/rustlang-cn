@@ -1,11 +1,4 @@
----
-title: "Streams"
-weight : 2050
-menu:
-  docs:
-    parent: futures
-    identifier: "futures/runtime-model"
----
+# Streams
 
 Streams are similar to futures, but instead of yielding a single value, they
 asynchronously yield one or more values. They can be thought of as asynchronous
@@ -366,7 +359,6 @@ the requested behavior. Using these adapter combinators, it is possible to:
 [`unfold`]: https://docs.rs/futures/0.1/futures/stream/fn.unfold.html
 [`take`]: https://docs.rs/futures/0.1/futures/stream/trait.Stream.html#method.take
 [`for_each`]: https://docs.rs/futures/0.1/futures/stream/trait.Stream.html#method.for_each
-[returning futures]: {{< ref "/docs/futures/combinators.md#returning-futures" >}}#
 [`once`]: https://docs.rs/futures/0.1/futures/stream/fn.once.html
 [`iter_ok`]: https://docs.rs/futures/0.1/futures/stream/fn.iter_ok.html
 [`iter_result`]: https://docs.rs/futures/0.1/futures/stream/fn.iter_result.html

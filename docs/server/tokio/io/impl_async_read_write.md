@@ -1,10 +1,4 @@
----
-title: "Implementing Async Read/Write"
-weight : 3040
-menu:
-  docs:
-    parent: io
----
+# Implementing Async Read/Write
 
 This page has not been worked on yet. If you'd like to contribute visit the [doc-push]
 repo.

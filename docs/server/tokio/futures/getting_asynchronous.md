@@ -1,10 +1,4 @@
----
-title: "Getting asynchronous"
-weight : 2030
-menu:
-  docs:
-    parent: futures
----
+# Getting asynchronous
 
 Futures are all about managing asynchronicity. Implementing a future that
 completes asynchonously requires correctly handling receiving `Async::NotReady`
@@ -177,4 +171,3 @@ is written to the socket, or an inner future ([`ConnectFuture`] or
 [`ConnectFuture`]: https://docs.rs/tokio/0.1/tokio/net/tcp/struct.ConnectFuture.html
 [`write_buf`]: https://docs.rs/tokio/0.1/tokio/io/trait.AsyncWrite.html#method.write_buf
 [`TcpStream::connect`]: https://docs.rs/tokio/0.1.12/tokio/net/struct.TcpStream.html#method.connect
-[io_section]: {{< ref "/docs/io/overview.md" >}}

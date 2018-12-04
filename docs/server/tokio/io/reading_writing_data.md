@@ -1,13 +1,7 @@
----
-title: "Reading and Writing Data"
-weight : 3020
-menu:
-  docs:
-    parent: io
----
+# Reading and Writing Data
 
 
-
+ 
 # Non-blocking I/O
 
 In [the overview] we mentioned briefly that Tokio's I/O types implement

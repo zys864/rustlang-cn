@@ -1,11 +1,4 @@
----
-title: "Runtime model"
-weight : 2080
-menu:
-  docs:
-    parent: futures
-    identifier: "futures_runtime_model"
----
+# Runtime model
 
 Streams are similar to futures, but instead of yielding a single value, they
 asynchronously yield one or more values. They can be thought of as asynchronous

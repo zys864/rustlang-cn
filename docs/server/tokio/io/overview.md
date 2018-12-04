@@ -1,10 +1,4 @@
----
-title: "I/O Overview"
-weight : 3010
-menu:
-  docs:
-    parent: io
----
+# I/O Overview
 
 The Rust standard library provides support for networking and I/O, such
 as TCP connections, UDP sockets, reading from and writing to files, etc.

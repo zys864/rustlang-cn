@@ -1,10 +1,4 @@
----
-title: "Combinators"
-weight : 2040
-menu:
-  docs:
-    parent: futures
----
+# Combinators
 
 Often times, Future implementations follow similar patterns. To help reduce
 boilerplate, the `futures` crate provides a number of utilities, called
@@ -631,5 +625,3 @@ thoughts.
 
 [doc-push]: https://github.com/tokio-rs/doc-push
 [`map`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.map
-[display-fut]: {{< ref "/docs/futures/basic.md" >}}#cleaning-things-up
-[connect-and-write]: {{< ref "/docs/futures/getting_asynchronous.md" >}}#chaining-computations

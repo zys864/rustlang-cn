@@ -1,10 +1,4 @@
----
-title: "Using AsyncRead and AsyncWrite directly"
-weight : 3030
-menu:
-  docs:
-    parent: io
----
+# Using AsyncRead and AsyncWrite directly
 
 So far, we have primarily talked about `AsyncRead` and `AsyncWrite` in
 the context of I/O combinators provided by Tokio. While these are [often
