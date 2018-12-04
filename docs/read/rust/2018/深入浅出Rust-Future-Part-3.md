@@ -14,7 +14,7 @@
 4. sf.gg专栏[Rust语言](https://segmentfault.com/blog/rust-lang)
 
 5. 微博[Rustlang-cn](https://weibo.com/kriry)
-6. 
+
 # Intro
 
 在这篇文章中我们将会讨论和阐释`Reactor`是如何工作的.在上篇文章中我们，我们频繁的使用`Reactor`来执行我们的`Future`，但是并没有阐述它是如何工作的。现在是时候阐明它了。
