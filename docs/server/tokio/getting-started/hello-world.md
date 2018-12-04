@@ -1,8 +1,8 @@
 # Hello World
 
-为了开始我们的Tokio之旅，我们先从我们必修的"hello world"示例开始。 这个程序将会创建一个TCP流并且写入＂hello,world＂到其中．这与写入非Tokio TCP流的Rust程序之间的区别在于该程序在创建流或者将"hello,world"的时候并不会阻塞程序的执行．
+为了开始我们的Tokio之旅，我们先从我们必修的"hello world"示例开始。 这个程序将会创建一个TCP流并且写入＂hello,world＂到其中．这与写入非Tokio TCP流的Rust程序之间的区别在于该程序在创建流或者将"hello,world"的时候并不会阻塞程序的执行。
 
-在开始之前你应该对TCP流的工作方式有一定的了解，相信理解[rust标准库](https://doc.rust-lang.org/std/net/struct.TcpStream.html)实现会对你有很大的帮助
+在开始之前你应该对TCP流的工作方式有一定的了解，相信理解[rust标准库](https://doc.rust-lang.org/std/net/struct.TcpStream.html)实现会对你有很大的帮助。
 
 让我们开始吧。
 
@@ -11,14 +11,14 @@
 $ cargo new --bin hello-world
 $ cd hello-world
 ```
-接下来，添加必要的依赖项：
+接下来，在 `Cargo.toml` 中添加必要的依赖项：
 
 ```toml
 [dependencies]
 tokio = "0.1"
 ```
 
-在`main.rs`中的引入包和类型：
+在`main.rs`中引入包和类型：
 
 ```rust
 extern crate tokio;
@@ -27,41 +27,56 @@ use tokio::io;
 use tokio::net::TcpStream;
 use tokio::prelude::*;
 ```
-这里我们使用`tokio`自己[`io`]和[`net`]模块。这些模块提供与网络和I/O操作相同的抽象，与std相应的模块 有很小的差别; 所有操作都是异步执行的。
+这里我们使用`tokio`自己[`io`]和[`net`]模块。这些模块提供了与标准库中网络和I/O操作相同的抽象，只有一点很小的差别：所有操作都是异步执行的。
 
 ## 创建流
 
-第一步是创建TcpStream.我们将使用Tokio实现的TcpStream.
+第一步是创建 `TcpStream`.我们将使用Tokio实现的 `TcpStream`.
 
 ```rust
+# #![deny(deprecated)]
+# extern crate tokio;
+#
+# use tokio::net::TcpStream;
 fn main() {
     // Parse the address of whatever server we're talking to
     let addr = "127.0.0.1:6142".parse().unwrap();
-    let stream = TcpStream::connect(&addr);
+    let client = TcpStream::connect(&addr);
 
     // Following snippets come here...
 }
 ```
 
-接下来，我们定义服务器任务。此异步任务将创建一个流，然后一旦它被用于其他的处理程序就生成流．
+接下来，我们给 `client` 加点东西。这里的异步任务将创建一个流，一旦这个流创建成功可用于执行进一步操作时就返回它。
 
 ```rust
-let hello_world = TcpStream::connect(&addr).and_then(|stream| {
-    println("created stream");
+# #![deny(deprecated)]
+# extern crate tokio;
+#
+# use tokio::net::TcpStream;
+# use tokio::prelude::*;
+# fn main() {
+# let addr = "127.0.0.1:6142".parse().unwrap();
+let client = TcpStream::connect(&addr).and_then(|stream| {
+    println!("created stream");
 
-    //Process stream here
+    // Process stream here.
 
     Ok(())
 })
 .map_err(|err| {
-    // All tasks must have an 'Error' type of '()'. This forces error
-    // handing and helps avoid silencing failures.
-    println!("connection error = {:?}",err);
+    // All tasks must have an `Error` type of `()`. This forces error
+    // handling and helps avoid silencing failures.
+    //
+    // In our example, we are only going to log the error to STDOUT.
+    println!("connection error = {:?}", err);
 });
+# }
 ```
-对`TcpStream :: connect`的调用返回创建的TCP流的[`Future`]。我们将在后面的指南中详细了解[`Futures`]，但是现在您可以将aFuture视为表示将来最终会发生的事情的值（在这种情况下将创建流）。这意味着`TcpStream :: connect`可以不等待它返回之前创建流。而是立即返回一个表示创建TCP流工作的值。当这项工作真正执行时，我们会在下面看到 。
 
-`and_then`方法在创建流后生成流。 `and_then`是一个组合函数的示例，用于定义如何处理异步工作。
+对`TcpStream::connect`的调用返回创建的TCP流的[`Future`]。我们将在后面的指南中详细了解[`Futures`]，但是现在您可以将一个Future视为表示将来最终会发生的事情的值（在这种情况下将创建流）。这意味着`TcpStream::connect`可以不等待它返回之前创建流。而是立即返回一个表示创建TCP流工作的值。当这项工作真正执行时，我们会在下面看到。
+
+`and_then`方法在创建流后返回它。 `and_then`是一个组合函数的示例，用于定义如何处理异步工作。
 
 每个组合器函数都获得必要状态的所有权以及执行的回调，并返回具有附加"步骤"的新Future。这个Future是表示将在某个时间点完成的某些计算的值。
 
