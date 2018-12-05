@@ -1,30 +1,17 @@
-# Overview
+# 概述
 
-Futures, hinted at earlier in the guide, are the building block used to manage
-asynchronous logic. They are the underlying asynchronous abstraction used by
-Tokio.
+`Future` 对象，在前文中曾多次提到的，是用来管理异步逻辑的基本构件，也是 Tokio 所使用的底层异步抽象。
 
-A future is a value that represents the completion of an asynchronous
-computation. Usually, the future _completes_ due to an event that happens
-elsewhere in the system. While we’ve been looking at things from the perspective
-of basic I/O, you can use a future to represent a wide range of events, e.g.:
+一个 future 值代表了一个异步计算的完成。通常来讲，future 会因系统的其他部分产生的事件而完成。我们已经通过基本I/O看过一些具体的案例，然而你可以用一个 future 去表示更多可能的事件，比如：
 
-* **A database query**, when the query finishes, the future is completed, and
-  its value is the result of the query.
+* **一次数据库查询**，当查询结束时，future 对象被完成，它的值就是查询的结果.
 
-* **An RPC invocation** to a server. When the server replies, the future is
-  completed, and its value is the server’s response.
+* **一次RPC（远程过程调用）** 。 当远程服务器响应时，future 对象被完成，它的值就是服务器的相应。
 
-* **A timeout**. When time is up, the future is completed, and its value is
-  `()`.
+* **一次超时**. 当给定时间耗尽时，future 对象被完成，它的值为 `()`。
 
-* **A long-running CPU-intensive task**, running on a thread pool. When the task
-  finishes, the future is completed, and its value is the return value of the
-  task.
+* **一个耗时较长的CPU密集型任务**，运行在一个线程池中。当任务结束时，future 对象被完成，它的值就是任务的返回值。
 
-* **Reading bytes from a socket**. When the bytes are ready, the future is
-  completed – and depending on the buffering strategy, the bytes might be
-  returned directly, or written as a side-effect into some existing buffer.
+* **从一个套接字中读取若干字节**. 当这若干字节准备完毕，future 对象被完成——这取决于你的缓冲策略，这些字节可能被直接返回，或者已函数副作用的方式被写入到预先分配好的缓冲区中。
 
-Applications built with Tokio are structured in terms of futures. Tokio takes
-these futures and drives them to completion.
+Tokio 的应用程序是以 future 对象为单位进行构造的，Tokio 掌握这些 future 对象并驱动它们执行。
