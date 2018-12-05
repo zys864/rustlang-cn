@@ -47,7 +47,7 @@ fn main() {
 }
 ```
 
-接下来，我们给 `client` 加点东西。这里的异步任务将创建一个流，一旦这个流创建成功可用于执行进一步操作时就返回它。
+接下来，我们给 `client` 加点东西。这里的异步任务将创建一个流，一旦这个流创建成功可用于执行进一步操作时就返回它（译者注：此处原文使用动词“yield”，不是通过返回值返回，而是通过调用 `and_then` 的 Lambda 表达式参数给出）。
 
 ```rust
 # #![deny(deprecated)]
@@ -74,17 +74,17 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
 # }
 ```
 
-对`TcpStream::connect`的调用返回创建的TCP流的[`Future`]。我们将在后面的指南中详细了解[`Futures`]，但是现在您可以将一个Future视为表示将来最终会发生的事情的值（在这种情况下将创建流）。这意味着`TcpStream::connect`可以不等待它返回之前创建流。而是立即返回一个表示创建TCP流工作的值。当这项工作真正执行时，我们会在下面看到。
+对`TcpStream::connect`的调用返回创建的TCP流的[`Future`]。我们将在后面的指南中详细了解[`Futures`]，但是现在您可以将一个Future视为表示将来最终会发生的事情的值（在这种情况下将创建流）。这意味着`TcpStream::connect`无需在返回前等待流的创建，而是立即返回一个表示创建TCP流操作的值。当这项操作真正执行时，我们会在下面看到。
 
-`and_then`方法在创建流后返回它。 `and_then`是一个组合函数的示例，用于定义如何处理异步工作。
+`and_then`方法在创建流后返回它。 `and_then`是一个组合器（combinator）函数的示例，用于定义如何处理异步工作。
 
 每个组合器函数都获得必要状态的所有权以及执行的回调，并返回具有附加"步骤"的新Future。这个Future是表示将在某个时间点完成的某些计算的值。
 
-值得重申的是，返回的Future是懒惰的，即在调用组合子时不会执行任何工作。相反，一旦所有异步步骤都被排序，最终Future（表示整个任务）就"生成"（即运行）。这是先前定义的工作开始运行的时间。换句话说，到目前为止我们编写的代码实际上并没有创建TCP流。
+值得重申的是，返回的Future是惰性的，即在调用组合器时不会执行任何操作。相反，一旦所有异步操作都被串起来，最终的 Future对象（代表整个任务）就会被“引发”（即运行）。也就是先前定义的操作开始运行的时间。换句话说，到目前为止我们编写的代码实际上并没有创建TCP流。
 
-稍后我们将更多地探讨futures（以及streams和sinks的相关概念）。
+稍后我们将更深入地探讨futures（以及streams和sinks的相关概念）。
 
-同样重要的是要注意，在我们实际运行未来之前，我们已经调用`map_err`来转换我们可能遇到的任何错误`()`。这可以确保我们承认错误。
+同样重要的是要注意，在我们实际执行我们的Future对象之前，我们已经调用`map_err`来转换我们可能遇到的任何错误`()`。这可以确保我们能够获知错误。
 
 接下来，我们将处理流。
 
@@ -92,11 +92,19 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
 
 ## 写入数据
 
-我们的目标是写入"hello world\n"流。
+我们的目标是把"hello world\n"写入到流中。
 
-回到`TcpStream::connect(addr).and_then`块。
+让我们回到`TcpStream::connect(addr).and_then`块：
 
 ```rust
+# #![deny(deprecated)]
+# extern crate tokio;
+#
+# use tokio::io;
+# use tokio::prelude::*;
+# use tokio::net::TcpStream;
+# fn main() {
+# let addr = "127.0.0.1:6142".parse().unwrap();
 let client = TcpStream::connect(&addr).and_then(|stream| {
     println!("created stream");
 
@@ -105,15 +113,17 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
       Ok(())
     })
 })
+# ;
+# }
 ```
 
-[`io::write_all`]函数获取`stream`的所有权，在整个消息写入后返回[`Future`]完成流。 `then`用于对写入完成后运行的步骤进行排序。 在我们的例子中，我们只是向`STDOUT`写一条消息来表示写完了。
+[`io::write_all`]函数获取`stream`的所有权，并返回一个[`Future`]对象，该对象在整个消息写入流后被完成的。 `then`用于对写入完成后运行的步骤进行排序。 在我们的例子中，我们只是向`STDOUT`写一条消息来表示写完了。
 
-注意`result`是一个包含原始流的`Result`。 这允许我们对相同的流进行附加读取或写入。 但是，我们没有其他任何事情要做，所以我们只删除流，然后自动关闭它。
+注意`result`是一个包含原始流的`Result`对象。 这允许我们对相同的流进行附加读取或写入。但是，我们没有其他任何事情要做，所以我们只需要删除流，它会自动被关闭。
 
 ## 运行客户端任务
 
-到目前为止，我们已经`Future`代表了我们的程序要完成的工作，但我们实际上还没有运行它。我们需要一种方法来"产生"这种工作。我们需要一个执行者。
+到目前为止，我们已经拿到了一个代表我们的程序所要完成操作的`Future`对象，但我们实际上还没有运行它。我们需要一种方法来"引发"这种操作。我们需要一个执行者。
 
 执行程序负责调度异步任务，使其完成。有许多执行器实现可供选择，每个都有不同的优缺点。在此示例中，我们将使用`Tokio`运行时([Tokio runtime][rt])的默认执行 程序。
 
@@ -136,13 +146,13 @@ println!("Stream has been created and written to.");
 $ nc -l -p 6142
 ```
 
-在不同的终端，我们将运行我们的项目。
+我们再另开一个终端窗口运行我们的项目。
 
 ```bash
 $ cargo run
 ```
 
-如果一切顺利，你应该看到`hello world`从`Netcat`打印出来。
+如果一切顺利，你应该看到 `Netcat` 打印出 `hello world`。
 
 
 ## 下一步
