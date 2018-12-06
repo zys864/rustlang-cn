@@ -4,7 +4,7 @@
 
 最后，我们说需要运行时来轮询`Future`和`Streams`来推动它们完成。 我们现在将仔细研究运行时。
 
-## Tokio runtime
+## Tokio 运行时
 
 为了让`Future`取得进步，必须要调用`poll`。 这是运行时的工作。
 
@@ -28,7 +28,6 @@ Tokio的一个独特方面是`Future`可以在运行时从其他`Future`或流�
 // Create some kind of future that we want our runtime to execute
 let program = my_outer_stream.for_each(|my_outer_value| {
   println!("Got value {:?} from the stream", my_outer_value);
-  # let my_inner_future = future::ok(1);
 
   let task = my_inner_future.and_then(|my_inner_value| {
     println!("Got a value {:?} from second future", my_inner_value);

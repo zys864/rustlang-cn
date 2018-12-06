@@ -34,10 +34,6 @@ use tokio::prelude::*;
 第一步是创建 `TcpStream`.我们将使用Tokio实现的 `TcpStream`.
 
 ```rust
-# #![deny(deprecated)]
-# extern crate tokio;
-#
-# use tokio::net::TcpStream;
 fn main() {
     // Parse the address of whatever server we're talking to
     let addr = "127.0.0.1:6142".parse().unwrap();
@@ -50,13 +46,6 @@ fn main() {
 接下来，我们给 `client` 加点东西。这里的异步任务将创建一个流，一旦这个流创建成功可用于执行进一步操作时就返回它（译者注：此处原文使用动词“yield”，不是通过返回值返回，而是通过调用 `and_then` 的 Lambda 表达式参数给出）。
 
 ```rust
-# #![deny(deprecated)]
-# extern crate tokio;
-#
-# use tokio::net::TcpStream;
-# use tokio::prelude::*;
-# fn main() {
-# let addr = "127.0.0.1:6142".parse().unwrap();
 let client = TcpStream::connect(&addr).and_then(|stream| {
     println!("created stream");
 
@@ -71,7 +60,6 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
     // In our example, we are only going to log the error to STDOUT.
     println!("connection error = {:?}", err);
 });
-# }
 ```
 
 对`TcpStream::connect`的调用返回创建的TCP流的[`Future`]。我们将在后面的指南中详细了解[`Futures`]，但是现在您可以将一个Future视为表示将来最终会发生的事情的值（在这种情况下将创建流）。这意味着`TcpStream::connect`无需在返回前等待流的创建，而是立即返回一个表示创建TCP流操作的值。当这项操作真正执行时，我们会在下面看到。
@@ -97,14 +85,6 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
 让我们回到`TcpStream::connect(addr).and_then`块：
 
 ```rust
-# #![deny(deprecated)]
-# extern crate tokio;
-#
-# use tokio::io;
-# use tokio::prelude::*;
-# use tokio::net::TcpStream;
-# fn main() {
-# let addr = "127.0.0.1:6142".parse().unwrap();
 let client = TcpStream::connect(&addr).and_then(|stream| {
     println!("created stream");
 
@@ -112,9 +92,7 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
       println!("wrote to stream; success={:?}", result.is_ok());
       Ok(())
     })
-})
-# ;
-# }
+});
 ```
 
 [`io::write_all`]函数获取`stream`的所有权，并返回一个[`Future`]对象，该对象在整个消息写入流后被完成的。 `then`用于对写入完成后运行的步骤进行排序。 在我们的例子中，我们只是向`STDOUT`写一条消息来表示写完了。
