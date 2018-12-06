@@ -1,11 +1,8 @@
-# Getting asynchronous
+# 异步化
 
-Futures are all about managing asynchronicity. Implementing a future that
-completes asynchonously requires correctly handling receiving `Async::NotReady`
-from the inner future.
+Future 是用于管理异步的。想实现一个可以异步完成的 future ，我们就要正确地处理从内部 future 获得 `Async::NotReady` 的过程。
 
-Let's start by implementing a future that establishes a TCP socket with a remote
-peer and extracts the peer socket address, writing it to STDOUT.
+让我们从实现一个新的 future 开始，这个 future 将建立与远端的TCP套接字，然后把对端的 IP 地址写入到标准输出（stdout）。
 
 ```rust
 # #![deny(deprecated)]
@@ -52,28 +49,18 @@ fn main() {
 }
 ```
 
-The implementation of `GetPeerAddr` is very similar to the `Display` future from
-the previous page. The primary difference is, in this case,
-`self.connect.poll()` will (probably) return `Async::NotReady` a number of times
-before returning the connected socket. When this happens, our future returns
-`NotReady`.
+`GetPeerAddr` 的 future 实现非常类似于上一页的 `Display`。主要的区别在于, 这个例子中的 `self.connect.poll()` 在返回连接的套接字之前将 (有可能) 多次返回 `Async::NotReady`。此时，我们的 future 将返回 `NotReady`.
 
-`GetPeerAddr` contains [`ConnectFuture`], a future that completes once a TCP
-stream has been established. This future is returned by [`TcpStream::connect`].
+`GetPeerAddr` 所包含的 future 对象 [`ConnectFuture`] 在 TCP 流建立时被完成。它是由 [`TcpStream::connect`] 返回的.
 
-When `GetPeerAddr` is passed to `tokio::run`, Tokio will repeatedly call `poll`
-until `Ready` is returned. The exact mechanism by which this happens is
-described in later chapters.
+当 `GetPeerAddr` 作为参数传递给 `tokio::run`时，Tokio 将多次调用 `poll` 函数，直到它返回 `Ready`。其中的确切机制将在后续章节介绍。
 
-When implementing `Future`, `Async::NotReady` **must not** be returned **unless**
-`Async::NotReady` was obtained when calling `poll` on an inner future. One way
-to think about it is, when a future is polled, it must do as much work as it can
-until it either completes or becomes blocked on an inner future.
+在实现 `Future` 时， **除非** 我们通过调用内部 future 的 `poll` 函数获得了 `Async::NotReady`，我们的 `poll` **一定不能** 返回 `Async::NotReady`。
+一种理解思路是：当一个 future 被拉取值时，它必须尽其所能的执行任务，直到它被完成或者被内部的 future 阻塞。
 
-# Chaining computations
+# 链式计算
 
-Now, let's take the connect future and update it to write "hello world" once the
-TCP socket has been established.
+现在，我们拿着这个建立连接的 future，给它加上 TCP 套接字建立后打印 “hello world” 的功能。
 
 ```rust
 # #![deny(deprecated)]
@@ -88,8 +75,7 @@ use bytes::{Bytes, Buf};
 use futures::{Future, Async, Poll};
 use std::io::{self, Cursor};
 
-// HelloWorld has two states, namely waiting to connect to the socket
-// and already connected to the socket
+// HelloWorld 有两个状态, 即等待连接的状态和已经连接的状态
 enum HelloWorld {
     Connecting(ConnectFuture),
     Connected(TcpStream, Cursor<Bytes>),
@@ -108,8 +94,7 @@ impl Future for HelloWorld {
                     try_ready!(f.poll())
                 }
                 Connected(ref mut socket, ref mut data) => {
-                    // Keep trying to write the buffer to the socket as long as the
-                    // buffer has more bytes it available for consumption
+                    // 只要缓冲区还有可用的数据，就一直将其写入到套接字中
                     while data.has_remaining() {
                         try_ready!(socket.write_buf(data));
                     }
@@ -130,19 +115,17 @@ fn main() {
     let hello_world = HelloWorld::Connecting(connect_future);
 # let hello_world = futures::future::ok::<(), ()>(());
 
-    // Run it
+    // 运行之
     tokio::run(hello_world)
 }
 ```
 
-It is very common to implement futures as an `enum` of the possible
-states. This allows the future implementation to track its state
-internally by transitioning between the enum's variants.
+将 future 实现为其可能状态的枚举类型是很常见的用法。这使得 future 实现可以通过枚举值的变化跟踪内部状态。
 
-This future is represented as an enumeration of states:
+此例中的 future 被描述为以下状态的枚举：
 
-1. Connecting
-2. Writing "hello world" to the socket.
+1. 连接中
+2. 将 “hello world” 写入到套接字中
 
 The future starts in the connecting state with an inner future of type
 [`ConnectFuture`]. It repeatedly polls this future until the socket is returned.

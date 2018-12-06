@@ -89,20 +89,13 @@ where
 }
 ```
 
-The `Display` takes a future that yields items that can be displayed. When it is
-polled, it first tries to poll the inner future. If the inner future is **not
-ready** then `Display` cannot complete. In this case, `Display` also returns
-`NotReady`.
+`Display` 拥有一个 future 成员，这个 future 成员可以生成被打印显示的对象（译者注：即实现了 `std::fmt::Display` 特质）。当它被拉取时，首先会尝试拉取内部 future 的值。如果内部 future 还 **没有就绪**，这个 `Display` 对象不会被完成。在这种情况下，`Display`对象也会返回 `NotReady`。
 
-**`poll` implementations must never return `NotReady` unless they received
-`NotReady` by calling an inner future.** This will be explained in more detail
-in a later section.
+**除非调用内部的 future 得到一个 `NotReady` 值，`poll` 的实现永远不应当返回 `NotReady`。** 在后续章节我们将详细解释这一点。
 
-The `Display` future will error when the inner future errors. The error is
-bubbled up.
+当内部 future 产生错误时，`Display` 的 future 对象也会产生错误。错误是层层传递上来的。
 
-When `HelloWorld` is combined with `Display`, both the `Item` and `Error` types
-are `()` and the future can be executed by Tokio:
+当 `HelloWorld` 和 `Display` 组合在一起时, 所有的 `Item` 和 `Error` 类型都设置为 `()`，Tokio 就可以直接运行它们:
 
 ```rust
 # #![deny(deprecated)]
@@ -122,14 +115,13 @@ let future = Display(HelloWorld);
 tokio::run(future);
 ```
 
-Running this results in "hello world" being outputted to standard out.
+以上代码的运行结果就是 “hello world” 被输出到标准输出中（stdout）。
 
-# Cleaning things up
+# 清理
 
-The pattern of waiting on an inner future is common enough that there is a
-helper macro: `try_ready!`.
+等待内部 future 的模式很常见，所以有了一个助手宏：`try_ready!`。
 
-The poll function can be rewritten using the macro as such:
+我们的 poll 函数可以用这个宏重写一下，像这样:
 
 ```rust
 # #![deny(deprecated)]
