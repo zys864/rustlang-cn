@@ -382,20 +382,4 @@ impl Decoder for LinesCodec {
 }
 ```
 
-[the overview]: {{< ref "/docs/io/overview.md" >}}
-[the next section]: {{< ref "/docs/io/async_read_write.md" >}}
-[echo server]: {{< ref "/docs/io/overview.md" >}}#an-example-server
 [`Read`]: https://doc.rust-lang.org/std/io/trait.Read.html
-[`AsyncRead`]: {{< api-url "tokio-io" >}}/trait.AsyncRead.html
-[`split`]: {{< api-url "tokio-io" >}}/trait.AsyncRead.html##method.split
-[`AsyncWrite`]: {{< api-url "tokio-io" >}}/trait.AsyncWrite.html
-[`tokio::io`]: {{< api-url "tokio" >}}/io/index.html
-[`tokio::codec`]: {{< api-url "tokio" >}}/codec/index.html
-[`Decoder`]: {{< api-url "tokio" >}}/codec/trait.Decoder.html
-[`Encoder`]: {{< api-url "tokio" >}}/codec/trait.Encoder.html
-[`Framed::new`]: {{< api-url "tokio" >}}/codec/struct.Framed.html#method.new
-[`LinesCodec`]: {{< api-url "tokio" >}}/codec/struct.LinesCodec.html
-[`read_exact`]: {{< api-url "tokio" >}}/io/fn.read_exact.html
-[`write_all`]: {{< api-url "tokio" >}}/io/fn.write_all.html
-[`copy`]: {{< api-url "tokio" >}}/io/fn.copy.html
-[`lines`]: {{< api-url "tokio" >}}/io/fn.lines.html
