@@ -124,7 +124,7 @@ fn main() {
 
 future 从内部包含 [`ConnectFuture`] 的“连接中”（译者注：即 `Connecting`）状态开始，多次拉取这个内部的 future，直到返回一个套接字，状态变为 `Connected`。
 
-从 `Connected` 状态开始，future 将数据写入到套接字中。这是通过 [`write_buf`] 函数完成的。I/O 函数在下一章将会详细介绍。简言之，[`write_buf`] 是一个可以无阻塞地将数据写入套接字地函数。如果套接字还没准备好接受写入，`NotReady` 会被返回。如果某些数据（并不一定是全部数据）被写入，`Ready(n)` 会被返回，而这里的 `n` 就是写入字节的个数。cursor 对象也是一个高级封装。
+进入 `Connected` 状态，future 开始将数据写入到套接字中。写入操作是通过 [`write_buf`] 函数完成的。I/O 函数在下一章将会详细介绍。简言之，[`write_buf`] 就是一个可以无阻塞地将数据写入套接字的函数。如果套接字还没准备好接受写入，`NotReady` 会被返回。如果某些数据（并不一定是全部数据）被写入，`Ready(n)` 会被返回，而这里的 `n` 就是写入字节的个数。cursor 对象也是一个高级封装。
 
 进入 `Connected` 状态之后，只要有剩余数据，future 就必须一直循环写入。因为 [`write_buf`] 使用 `try_ready!()` 调用，当 [`write_buf`] 返回 `NotReady` 时，我们的 `poll` 函数也会返回 `NotReady`。
 
