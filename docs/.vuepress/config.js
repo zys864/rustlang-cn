@@ -80,7 +80,7 @@ module.exports = {
             { text: '资源', link: '/resourse/resourse/' }
           ] },
           { text: '网络', items: [ 
-            { text: '知乎', link: 'https://zhuanlan.zhihu.com/tianqingse' },
+            { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
             { text: '微博', link: 'https://weibo.com/kriry' },
             { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' }      
           ] },
