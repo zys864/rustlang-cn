@@ -60,7 +60,7 @@ Open On-Chip Debugger 0.10.0
 Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
-Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+Info : auto-selecting first available session transport "hla_swd". To override use '`transport select <transport>`'.
 adapter speed: 1000 kHz
 adapter_nsrst_delay: 100
 Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD

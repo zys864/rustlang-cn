@@ -198,7 +198,7 @@ quick_main!(run);
 
 将所有出现的标准`ISO 8601 YYYY-MM-DD`日期模式替换为等效的美式英语日期和斜杠。例如2013-01-15变成01/15/2013。
 
-该方法[Regex::replace_all](https://docs.rs/regex/*/regex/struct.Regex.html#method.replace_all)替换了整个正则表达式的所有出现。 &str实现Replacer特征，允许变量从搜索正则表达式$abcde引用相应的命名捕获组(?P<abcde>REGEX)。有关示例和转义详细信息，请参阅[替换字符串语法](https://docs.rs/regex/*/regex/struct.Regex.html#replacement-string-syntax)。
+该方法[Regex::replace_all](https://docs.rs/regex/*/regex/struct.Regex.html#method.replace_all)替换了整个正则表达式的所有出现。 &str实现Replacer特征，允许变量从搜索正则表达式$abcde引用相应的命名捕获组(`?P<abcde>REGEX`)。有关示例和转义详细信息，请参阅[替换字符串语法](https://docs.rs/regex/*/regex/struct.Regex.html#replacement-string-syntax)。
 
 ```rust
 extern crate regex;

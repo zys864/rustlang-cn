@@ -110,12 +110,4 @@ tokio::run(server);
 More examples can be found [here][examples].
 
 [`std::io::Read`]: https://doc.rust-lang.org/std/io/trait.Read.html
-[`mio`]: {{< api-url "mio" >}}
-[`tokio`]: {{< api-url "tokio" >}}
-[`tokio-fs`]: {{< api-url "tokio" >}}/fs/index.html
-[cross platform]: {{< api-url "mio" >}}/#platforms
-[file operations]: {{< api-url "tokio" >}}/fs/index.html
-[TCP]: {{< api-url "tokio" >}}/net/tcp/index.html
-[UDP]: {{< api-url "tokio" >}}/net/udp/index.html
-[Unix]: {{< api-url "tokio" >}}/net/unix/index.html
 [examples]: https://github.com/tokio-rs/tokio/tree/master/examples
