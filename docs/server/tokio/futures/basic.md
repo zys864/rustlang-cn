@@ -1,12 +1,10 @@
-# Implementing futures
+# 实现 future
 
-Implementing futures is very common when using Tokio. Let's start with a very
-basic future that performs no asynchronous logic and simply returns a message
-(the venerable "hello world").
+使用Tokio时，实现 future 是很常见的. 让我们从一个基本的 future 开始，它不执行异步逻辑，只简单返回一个消息。（经典的“hello world”）
 
-# The `Future` trait.
+# `Future` 特质
 
-The `Future` trait is as follows:
+下面是 `Future` 特质的定义:
 
 ```rust,ignore
 trait Future {
@@ -24,13 +22,13 @@ trait Future {
 }
 ```
 
-Let's implement it for our "hello world" future:
+让我们为 "hello world" future 实现它:
 
 ```rust
 # #![deny(deprecated)]
 extern crate futures;
 
-// `Poll` is a type alias for `Result<Async<T>, E>`
+// `Poll` 是 `Result<Async<T>, E>` 类型的一个别名
 use futures::{Future, Async, Poll};
 
 struct HelloWorld;
@@ -45,38 +43,21 @@ impl Future for HelloWorld {
 }
 ```
 
-The `Item` and `Error` associated types define the types returned by the future
-once it completes. `Item` is the success value and `Error` is returned when the
-future encounters an error while processing. By convention, infallible futures
-set `Error` to `()`.
+`Item` 和 `Error` 的关联类型定义了 future 完成时返回的变量类型。`Item` 代表成功值的类型，`Error` 代表执行遇到错误时返回的值类型。通常，把不会失败的 future 的 `Error` 设置为 `()`。
 
-Futures use a poll based model. The consumer of a future repeatedly calls the
-`poll` function. The future then attempts to complete. If the future is able to
-complete, it returns `Async::Ready(value)`. If the future is unable to complete
-due to being blocked on an internal resource (such as a TCP socket), it returns
-`Async::NotReady`.
+Future 使用基于拉取的模型。future 对象的消费者会多次调用 `poll` 函数，这个 future 就会尝试完成。如果这个 future 能够完成，它就会返回 `Async::Ready(value)`；如果这个 future 因为被内部资源（比如一个TCP套接字）阻塞导致不能完成，它就会返回 `Async::NotReady`。
 
-When a future's `poll` function is called, the implementation will
-**synchronously** do as much work as possible until it is logically
-blocked on some asynchronous event that has not occured yet. The future
-implementation then saves its state internally so that the next time
-`poll` is called (after an external event is receied), it resumes
-processing from the point it left off. Work is not repeated.
+当一个future的 `poll` 函数被调用时，其实现将**异步**地做尽可能多的工作，直到它逻辑上被某个尚未发生的异步事件阻塞。然后，future 实现将在内部保存它的状态，这样当 `poll` 函数再次被调用时（在收到一个内部事件之后），它会从之前离开的地方继续执行。这里不会做重复工作。
 
-The hello world future requires no asynchronous processing and is immediately
-ready, so it returns `Ok(Async::Ready(value))`.
+此处的 “hello world” future 不需要异步处理，是立即就绪的，所以它直接返回 `Ok(Async::Ready(value))`
 
-# Running the future
+# 执行 future
 
-Tokio is responsible for running futures to completion. This is done by passing
-the future to `tokio::run`.
+Tokio 负责将 future 对象执行完成。这是通过将 future 传递给 `tokio::run` 函数来实现的。
 
-The `tokio::run` accepts futures where both `Item` and `Error` are set to `()`.
-This is because Tokio only executes the futures, it does not do anything with
-values. The user of Tokio is required to fully process all values in the future.
+`tokio::run` 函数接受 `Item` and `Error` 都被设置为 `()` 的 future 作为参数。这是因为 Tokio 只执行 future而不会对它们的值做任何操作。Tokio 的使用者需要包揽处理 future 中的所有值。
 
-In our case, let's print the future to STDOUT. We will do that by implementing a
-`Display` future.
+在我们的例子，让我们把 future 打印到标准输出（stdout）中. 我们将通过一个 `Display` future 来实现这个效果。
 
 ```rust
 # #![deny(deprecated)]
