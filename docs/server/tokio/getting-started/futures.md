@@ -89,9 +89,9 @@ track_response_success(response_is_ok);
 
 我们将在下一节中仔细研究这种基于民意调查的模型。
 
-## The Future trait
+## `Future` 特质
 
-`Future`的特点如下：
+`Future` 特质的定义如下：
 
 ```rust
 trait Future {

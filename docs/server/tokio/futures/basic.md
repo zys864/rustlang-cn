@@ -6,7 +6,7 @@
 
 下面是 `Future` 特质的定义:
 
-```rust,ignore
+```rust
 trait Future {
     /// The type of the value returned when the future completes.
     type Item;
@@ -25,7 +25,6 @@ trait Future {
 让我们为 "hello world" future 实现它:
 
 ```rust
-# #![deny(deprecated)]
 extern crate futures;
 
 // `Poll` 是 `Result<Async<T>, E>` 类型的一个别名
@@ -60,7 +59,6 @@ Tokio 负责将 future 对象执行完成。这是通过将 future 传递给 `to
 在我们的例子，让我们把 future 打印到标准输出（stdout）中. 我们将通过一个 `Display` future 来实现这个效果。
 
 ```rust
-# #![deny(deprecated)]
 extern crate futures;
 
 use futures::{Future, Async, Poll};
@@ -98,18 +96,7 @@ where
 当 `HelloWorld` 和 `Display` 组合在一起时, 所有的 `Item` 和 `Error` 类型都设置为 `()`，Tokio 就可以直接运行它们:
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
-# extern crate futures;
-# struct HelloWorld;
-# struct Display<T>(T);
-# impl<T> futures::Future for Display<T> {
-#     type Item = ();
-#     type Error = ();
-#     fn poll(&mut self) -> futures::Poll<(), ()> {
-#         Ok(().into())
-#     }
-# }
 
 let future = Display(HelloWorld);
 tokio::run(future);
@@ -124,7 +111,6 @@ tokio::run(future);
 我们的 poll 函数可以用这个宏重写一下，像这样:
 
 ```rust
-# #![deny(deprecated)]
 #[macro_use]
 extern crate futures;
 
@@ -147,6 +133,4 @@ where
         Ok(Async::Ready(()))
     }
 }
-
-# fn main() {}
 ```

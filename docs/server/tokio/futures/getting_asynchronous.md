@@ -5,7 +5,6 @@ Future 是用于管理异步的。想实现一个可以异步完成的 future �
 让我们从实现一个新的 future 开始，这个 future 将建立与远端的TCP套接字，然后把对端的 IP 地址写入到标准输出（stdout）。
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 #[macro_use]
 extern crate futures;
@@ -43,9 +42,7 @@ fn main() {
         connect: connect_future,
     };
 
-# if false {
     tokio::run(get_peer_addr);
-# }
 }
 ```
 
@@ -63,7 +60,6 @@ fn main() {
 现在，我们拿着这个建立连接的 future，给它加上 TCP 套接字建立后打印 “hello world” 的功能。
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 extern crate bytes;
 #[macro_use]
@@ -113,7 +109,6 @@ fn main() {
     let addr = "127.0.0.1:1234".parse().unwrap();
     let connect_future = TcpStream::connect(&addr);
     let hello_world = HelloWorld::Connecting(connect_future);
-# let hello_world = futures::future::ok::<(), ()>(());
 
     // 运行之
     tokio::run(hello_world)
@@ -127,9 +122,7 @@ fn main() {
 1. 连接中
 2. 将 “hello world” 写入到套接字中
 
-The future starts in the connecting state with an inner future of type
-[`ConnectFuture`]. It repeatedly polls this future until the socket is returned.
-The state is then transitioned to `Connected`.
+future 从内部包含 [`ConnectFuture`] 的“连接中”（译者注：即 `Connecting`）状态开始。它多次拉取这个内部的 future，直到返回一个套接字，状态变为 `Connected`。
 
 From the `Connected` state, the future writes data to the socket. This is done
 with the [`write_buf`] function. I/O functions are covered in more detail in the
