@@ -20,11 +20,11 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 
 #### 资源
 
-- 社区网站生态模块增加标签资源
+- 社区网站生态模块增加[书签](https://rustlang-cn.org/resourse/mark/)资源
 
 #### 论坛
 
-- 新增帖子33项
+- 新增帖子33项[新帖](https://github.com/rustlang-cn/forum/issues)
 
 <hr>
 
