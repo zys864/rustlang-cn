@@ -1,33 +1,18 @@
-# Combinators
+# 组合器
 
-Often times, Future implementations follow similar patterns. To help reduce
-boilerplate, the `futures` crate provides a number of utilities, called
-"combinators", that abstract these patterns. Many of these combinators exist as
-functions on the [`Future`][trait-dox] trait.
+Future 的实现往往遵循相同的模式。为了减少陈词滥调，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以针对 [`Future`] 特质的函数的形式存在。
 
-# Building blocks
+# 基础构件
 
-Let's revisit the future implementations from the previous pages and see how
-they can be simplified by using combinators.
+让我们回顾之前几页中的 future 实现，看看怎么用组合器去简化它们。
 
 ## `map`
 
-The [`map`] combinator takes a future and returns a new future that applies a
-function to the value yielded by the first future.
+[`map`] 组合器拥有一个 future 并返回一个新 future，新 future 的值是通过前一个 future 调用某个给定的函数获得的。
 
-This was the `Display` future [`previously`][display-fut] implemented:
+这是之前实现的 future `Display`：
 
 ```rust
-# #![deny(deprecated)]
-# #[macro_use]
-# extern crate futures;
-# extern crate tokio;
-#
-# use futures::{Future, Async, Poll};
-# use std::fmt;
-#
-# struct Display<T>(T);
-#
 impl<T> Future for Display<T>
 where
     T: Future,
@@ -44,23 +29,20 @@ where
 }
 
 fn main() {
-# let HelloWorld = futures::future::ok::<_, ()>("hello");
     let future = Display(HelloWorld);
     tokio::run(future);
 }
 ```
 
-With the `map` combinator, it becomes:
+如果用 `map` 组合器来写的话，就是这样的:
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 extern crate futures;
 
 use futures::Future;
 
 fn main() {
-# let HelloWorld = futures::future::ok::<_, ()>("hello");
     let future = HelloWorld.map(|value| {
         println!("{}", value);
     });
@@ -69,13 +51,9 @@ fn main() {
 }
 ```
 
-This is how `map` is implemented:
+下面是 `map` 的实现:
 
 ```rust
-# #![deny(deprecated)]
-# #[macro_use]
-# extern crate futures;
-# use futures::{Future, Async, Poll};
 pub struct Map<A, F> where A: Future {
     future: A,
     f: Option<F>,
@@ -95,29 +73,18 @@ impl<U, A, F> Future for Map<A, F>
         Ok(Async::Ready(f(value)))
     }
 }
-# fn main() {}
 ```
-
-Comparing `Map` with our `Display` implementation, it is clear how they both are
-very similar. Where `Display` calls `println!`, `Map` passes the value to the
-function.
+把 `Map` 和我们的 `Display` 放在一起比较，就可以明显看出它们的相似性。`Map` 在 `Display` 调用 `println!` 的相同位置把值传给了给定的函数。
 
 ## `and_then`
 
-Now, let's use combinators to rewrite the future that established a TCP stream
-and wrote "hello world" to the peer using the `and_then` combinator.
+现在，让我们开始用 `and_then` 组合器重写建立TCP流以及写入 “hello world” 的 future。
 
-The `and_then` combinator allows sequencing two asynchronous operations. Once
-the first operation completes, the value is passed to a function. The function
-uses that value to produce a new future and that future is then executed. The
-difference between `and_then` and `map` is that `and_then`'s function returns a
-future where as `map`'s function returns a value.
+`and_then` 组合器允许我们将两个异步操作连接起来。在第一个操作完成时，其值将被传递到一个函数中。该函数会使用该值创建一个新的 future 并使其运行。 `and_then` 和 `map` 的区别是 `and_then` 的函数返回一个 future，而 `map` 的函数返回一个值。
 
-The original implementation is found [here][connect-and-write]. Once updated to
-use combinators, it becomes:
+最初的实现在 [这里][connect-and-write]。用组合器重写的话，就是这样的:
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 extern crate bytes;
 extern crate futures;
@@ -136,14 +103,11 @@ fn main() {
         .map(|_| println!("write complete"))
         .map_err(|_| println!("failed"));
 
-#    let future = futures::future::ok::<(), ()>(());
-
     tokio::run(future);
 }
 ```
 
-Further computations may be sequenced by chaining calls to `and_then`. For
-example:
+进一步的计算也可以用链式调用 `and_then` 来连接。比如：
 
 ```rust
 # #![deny(deprecated)]
@@ -163,7 +127,7 @@ fn main() {
             io::write_all(socket, b"hello world")
         })
         .and_then(|(socket, _)| {
-            // read exactly 11 bytes
+            // 只读取11个字节
             io::read_exact(socket, vec![0; 11])
         })
         .and_then(|(socket, buf)| {
@@ -176,14 +140,11 @@ fn main() {
 }
 ```
 
-The future returned by `and_then` executes identically to the future we
-implemented by hand on the previous page.
+`and_then` 返回的 future 会像我们在之前手动实现的 future 那样执行。
 
-# Essential combinators
+# 基本组合器
 
-It is worth spending some time with the [`Future` trait][trait-dox] and
-[module][mod-dox] documentation to gain familiarity with the full set of
-available combinators. This guide will provide a very quick overview.
+花时间看一下 [`Future` 特质][trait-dox] 和其 [模块][mod-dox] 的文档来熟悉所有可用的组合器是很值得的。本文仅提供快速简要的概述。
 
 [trait-dox]: https://docs.rs/futures/0.1/futures/future/trait.Future.html
 [mod-dox]: https://docs.rs/futures/0.1/futures/future/index.html
