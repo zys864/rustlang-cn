@@ -1,4 +1,4 @@
-# [Discovery](https://rust-embedded.github.io/bookshelf/discovery/index.html)
+# [Discovery](https://rust-embedded.github.io/discovery/)
 
 ### [简介](简介.md)
 ### [1 背景](1背景.md)
