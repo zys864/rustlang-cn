@@ -1,10 +1,11 @@
 exports.read = (title) => {
     return [
-        '2018/深入浅出Rust-Future-Part-3',
+        '2018/深入浅出Rust-Future-Part-4',
         {
             title: '2018',
             collapsable: false,
             children: [
+                '2018/深入浅出Rust-Future-Part-3',
                 '2018/深入浅出Rust-Future-Part-2',
                 '2018/深入浅出Rust-Future-Part-1',
                 '2018/rust-use-actix-web-build-auth-micao-serive-3',
