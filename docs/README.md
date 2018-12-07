@@ -8,15 +8,23 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
 <br>
 
-## 最新内容 2018-12
+## 最新 2018-12
 
-#### 文章
+#### 阅读
 
 - [深入浅出Rust-Future-Part-4](https://rustlang-cn.org//read/rust/2018/深入浅出Rust-Future-Part-4.html)
 
 #### 文档
 
 - [Rust异步编程](https://rustlang-cn.org/rust/async-rust/)
+
+#### 资源
+
+- 社区网站生态模块增加标签资源
+
+#### 论坛
+
+- 新增帖子33项
 
 <hr>
 
