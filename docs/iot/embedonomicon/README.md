@@ -1,1 +1,1 @@
-# [embedonomicon](https://rust-embedded.github.io/bookshelf/embedonomicon/index.html)
+# [embedonomicon](https://docs.rust-embedded.org/embedonomicon/)
