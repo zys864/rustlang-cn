@@ -1,21 +1,19 @@
+# 深入浅出Rust-Future-Part-4
+
 >译自[Rust futures: an uneducated, short and hopefully not boring tutorial - Part 4 - A "real" future from scratch](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-4---a-real-future-from-scratch-734)
 >本文时间：2018-12-03，译者:
 [motecshine](https://github.com/motecshine), 简介：motecshine
 
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文将在以下地方直接展示
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
-1. [Rust中文社区首页](https://rustlang-cn.org)
-
-2. Rust中文社区Rust文章栏目
-
-3. 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/rustlang-cn)
-
-4. sf.gg专栏[Rust语言](https://segmentfault.com/blog/rust-lang)
-
-5. 微博[Rustlang-cn](https://weibo.com/kriry)
-
-# Intro
+## Intro
 
 上三篇文章我们阐述如何处理`Future`的基础知识， 我们现在能组织多个`Future`成为一个`Future chain`, 执行他们,甚至创建他们.但是到现在我们的`Future`还没有贴近我们日常的使用场景。(But, so far, our futures are not really delegating the execution to another thing.)
 在Part-3中我们用了粗暴的方法来`Unpark Future`。虽然解决了问题，并且使`Reactor`变得相对高效，但是这不是最佳实践。今天就让我们换种更好的方式去实现`Future`。

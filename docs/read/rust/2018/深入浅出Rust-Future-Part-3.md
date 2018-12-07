@@ -1,21 +1,19 @@
+# 深入浅出Rust-Future-Part-3
+
 >译自[Rust futures: an uneducated, short and hopefully not boring tutorial - Part 3 - The reactor](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-3---the-reactor-433)
 >本文时间：2018-12-03，译者:
 [motecshine](https://github.com/motecshine), 简介：motecshine
 
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文将在以下地方直接展示
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
-1. [Rust中文社区首页](https://rustlang-cn.org)
-
-2. Rust中文社区Rust文章栏目
-
-3. 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/rustlang-cn)
-
-4. sf.gg专栏[Rust语言](https://segmentfault.com/blog/rust-lang)
-
-5. 微博[Rustlang-cn](https://weibo.com/kriry)
-
-# Intro
+## Intro
 
 在这篇文章中我们将会讨论和阐释`Reactor`是如何工作的.在上篇文章中我们，我们频繁的使用`Reactor`来执行我们的`Future`，但是并没有阐述它是如何工作的。现在是时候阐明它了。
 
