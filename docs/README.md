@@ -8,7 +8,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
 <br>
 
-## 最新 2018-12
+## 更新内容 2018-12
 
 #### 阅读
 
