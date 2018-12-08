@@ -6,7 +6,7 @@ actionText: 最新文章：深入浅出Rust-Future-Part-4
 actionLink: /read/rust/2018/深入浅出Rust-Future-Part-4
 footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
-<br>
+<br><br>
 
 ## 更新内容 2018-12
 
