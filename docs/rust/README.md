@@ -8,5 +8,7 @@
 - [The Reference](https://doc.rust-lang.org/reference/index.html)
 - [The Rustonomicon](https://doc.rust-lang.org/nomicon/index.html)
 - [The Unstable Book](https://doc.rust-lang.org/unstable-book/index.html)
-
-
+- [The Rust StdAPI Doc](https://doc.rust-lang.org/std/index.html)
+- [The Rust CLI Book](https://rust-lang-nursery.github.io/cli-wg/)
+- [The Rust WebAssembly Book](https://rustwasm.github.io/book/)
+- [The Rust Embedded Book](https://rust-embedded.github.io/book/)
