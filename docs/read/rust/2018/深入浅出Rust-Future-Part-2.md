@@ -27,7 +27,7 @@
 我们有两个被叫做`ErrorA`和`ErrorB`的`Error`类型,  我们将会实现`error::Error trait`,尽管这并不是编译器必须让我们做的(但是这是一个好习惯[在我看来这应该算是一个最佳实践]),在我们实现`error::Error trait`的同时还需要实现`std::fmt::Display`,现在就让我们一起实现他吧!
 
 ```rust
-#derive(Debug, Default)]
+#[derive(Debug, Default)]
 pub struct ErrorA {}
 
 impl fmt::Display for ErrorA {
