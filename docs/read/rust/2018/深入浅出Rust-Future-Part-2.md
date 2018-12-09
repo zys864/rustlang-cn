@@ -1,20 +1,18 @@
+# 深入浅出Rust-Future-Part-2
+
 >译自[Rust futures: an uneducated, short and hopefully not boring tutorial - Part 2](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-2-8dd)时间：2018-12-03，译者:
 [motecshine](https://github.com/motecshine), 简介：motecshine
 
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文将在以下地方直接展示
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
-1. [Rust中文社区首页](https://rustlang-cn.org)
-
-2. Rust中文社区Rust文章栏目
-
-3. 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
-
-4. sf.gg专栏[Rust语言](https://segmentfault.com/blog/rust-lang)
-
-5. 微博[Rustlang-cn](https://weibo.com/kriry)
-
-# Intro
+## Intro
 
 在这个系列的第一篇文章我们了解了如何使用`Rust Future`.但是只有我们彻底的了解`Future`并且操作得当才能发挥它真正的作用。这个系列的第二篇文章，我们将介绍如何避免`Future`里常见的陷阱。
 

@@ -4,10 +4,12 @@
 
 欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-- 1 [Rust中文社区首页](http://rustlang-cn.org/)
-- 2 Rust中文社区[Rust文章栏目](http://rustlang-cn.org/read/rust/)
-- 3 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
-
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
 ## 验证用户电子邮件
 

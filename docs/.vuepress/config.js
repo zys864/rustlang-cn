@@ -40,10 +40,11 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-3' },
+            { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-5' },
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
           { text: '文档', items: [
+              { text: '官方书籍大全', link: '/rust/' },
               { text: 'Rust语言', items: [
                   { text: '深入Rust语言', link: '/rust/book/' },
                   { text: 'Rust异步编程', link: '/rust/async-rust/' },
@@ -79,12 +80,13 @@ module.exports = {
             { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' }
           ] },
+          { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '网络', items: [ 
             { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
             { text: '微博', link: 'https://weibo.com/kriry' },
-            { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' }      
+            { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' },
+            { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' }      
           ] },
-          { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {

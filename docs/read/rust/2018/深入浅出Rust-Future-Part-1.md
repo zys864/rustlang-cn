@@ -1,18 +1,18 @@
-本文译自[Rust futures: an uneducated, short and hopefully not boring tutorial - Part 1](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-1-3k3)，时间：2018-12-02，译者:
+# 深入浅出Rust-Future-Part-1
+
+>本文译自[Rust futures: an uneducated, short and hopefully not boring tutorial - Part 1](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-1-3k3)，时间：2018-12-02，译者:
 [motecshine](https://github.com/motecshine), 简介：motecshine
 
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles),好文将在以下地方直接展示
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
-1. [Rust中文社区首页](https://rustlang-cn.org)
-
-2. Rust中文社区Rust文章栏目
-
-3. 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
-
-4. sf.gg专栏[Rust语言](https://segmentfault.com/blog/rust-lang)
-
-# 介绍 
+## 介绍 
 
 如果你是一个程序员并且也喜欢Rust这门语言, 那么你应该经常在社区听到讨论`Future` 这个库的声音, 一些很优秀的`Rust Crates`都使用了`Future` 所以我们也应该对它有足够的了解并且使用它. 但是大多数程序员很难理解`Future`到底是怎么工作的, 当然有官方 `Crichton's tutorial`这样的教程, 虽然很完善, 但我还是很难理解并把它付诸实践. 
 

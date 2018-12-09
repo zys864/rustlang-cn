@@ -3,11 +3,14 @@
 > 本文同步与[Rust中文社区](https://rustlang-cn.org/read/rust/2018/rust-use-actix-web-build-auth-micao-serive-3.html)
 > 时间：2018-11-27，作者：[krircc](https://krircc.github.io/)， 简介：天青色  
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles),好文将在以下地方直接展示
+欢迎向Rust中文社区投稿,**[投稿地址](https://github.com/rustlang-cn/articles)**,好文将在以下地方直接展示
 
-1. [Rust中文社区首页](https://rustlang-cn.org)
-2. Rust中文社区[Rust文章栏目](https://rustlang-cn.org/read/rust/2018/rust-use-actix-web-build-auth-micao-serive-3.html)
-3. 知乎专栏[Rust语言](https://zhuanlan.zhihu.com/tianqingse)
+- 1 [Rust中文社区首页](https://rustlang-cn.org/)
+- 2 Rust中文社区**Rust阅读文章栏目**
+- 3 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
+- 4 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
+- 5 微博[Rustlang-cn](https://weibo.com/kriry)
+- 6 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 
 ## 更新我们的CARGO.TOML
 
