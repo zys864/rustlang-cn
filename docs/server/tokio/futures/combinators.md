@@ -1,33 +1,18 @@
-# Combinators
+# 组合器
 
-Often times, Future implementations follow similar patterns. To help reduce
-boilerplate, the `futures` crate provides a number of utilities, called
-"combinators", that abstract these patterns. Many of these combinators exist as
-functions on the [`Future`][trait-dox] trait.
+Future 的实现往往遵循相同的模式。为了减少重复代码，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以 [`Future`] 特质相关的函数的形式存在。
 
-# Building blocks
+# 基础构件
 
-Let's revisit the future implementations from the previous pages and see how
-they can be simplified by using combinators.
+让我们回顾之前几页中的 future 实现，看看怎么用组合器去简化它们。
 
 ## `map`
 
-The [`map`] combinator takes a future and returns a new future that applies a
-function to the value yielded by the first future.
+[`map`] 组合器拥有一个 future 并返回一个新 future，新 future 的值是通过前一个 future 调用某个给定的函数获得的。
 
-This was the `Display` future [`previously`][display-fut] implemented:
+这是之前实现的 future `Display`：
 
 ```rust
-# #![deny(deprecated)]
-# #[macro_use]
-# extern crate futures;
-# extern crate tokio;
-#
-# use futures::{Future, Async, Poll};
-# use std::fmt;
-#
-# struct Display<T>(T);
-#
 impl<T> Future for Display<T>
 where
     T: Future,
@@ -44,23 +29,20 @@ where
 }
 
 fn main() {
-# let HelloWorld = futures::future::ok::<_, ()>("hello");
     let future = Display(HelloWorld);
     tokio::run(future);
 }
 ```
 
-With the `map` combinator, it becomes:
+如果用 `map` 组合器来写的话，就是这样的:
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 extern crate futures;
 
 use futures::Future;
 
 fn main() {
-# let HelloWorld = futures::future::ok::<_, ()>("hello");
     let future = HelloWorld.map(|value| {
         println!("{}", value);
     });
@@ -69,13 +51,9 @@ fn main() {
 }
 ```
 
-This is how `map` is implemented:
+下面是 `map` 的实现:
 
 ```rust
-# #![deny(deprecated)]
-# #[macro_use]
-# extern crate futures;
-# use futures::{Future, Async, Poll};
 pub struct Map<A, F> where A: Future {
     future: A,
     f: Option<F>,
@@ -95,29 +73,18 @@ impl<U, A, F> Future for Map<A, F>
         Ok(Async::Ready(f(value)))
     }
 }
-# fn main() {}
 ```
-
-Comparing `Map` with our `Display` implementation, it is clear how they both are
-very similar. Where `Display` calls `println!`, `Map` passes the value to the
-function.
+把 `Map` 和我们的 `Display` 放在一起比较，就可以明显看出它们的相似性。`Map` 在 `Display` 调用 `println!` 的相同位置把值传给了给定的函数。
 
 ## `and_then`
 
-Now, let's use combinators to rewrite the future that established a TCP stream
-and wrote "hello world" to the peer using the `and_then` combinator.
+现在，让我们开始用 `and_then` 组合器重写建立TCP流以及写入 “hello world” 的 future。
 
-The `and_then` combinator allows sequencing two asynchronous operations. Once
-the first operation completes, the value is passed to a function. The function
-uses that value to produce a new future and that future is then executed. The
-difference between `and_then` and `map` is that `and_then`'s function returns a
-future where as `map`'s function returns a value.
+`and_then` 组合器允许我们将两个异步操作连接起来。在第一个操作完成时，其值将被传递到一个函数中。该函数会使用该值创建一个新的 future 并使其运行。 `and_then` 和 `map` 的区别是 `and_then` 的函数返回一个 future，而 `map` 的函数返回一个值。
 
-The original implementation is found [here][connect-and-write]. Once updated to
-use combinators, it becomes:
+最初的实现在 [这里][connect-and-write]。用组合器重写的话，就是这样的:
 
 ```rust
-# #![deny(deprecated)]
 extern crate tokio;
 extern crate bytes;
 extern crate futures;
@@ -136,24 +103,13 @@ fn main() {
         .map(|_| println!("write complete"))
         .map_err(|_| println!("failed"));
 
-#    let future = futures::future::ok::<(), ()>(());
-
     tokio::run(future);
 }
 ```
 
-Further computations may be sequenced by chaining calls to `and_then`. For
-example:
+进一步的计算也可以用链式调用 `and_then` 来连接。比如：
 
 ```rust
-# #![deny(deprecated)]
-# extern crate tokio;
-# extern crate bytes;
-# extern crate futures;
-#
-# use tokio::io;
-# use tokio::net::TcpStream;
-# use futures::Future;
 
 fn main() {
     let addr = "127.0.0.1:1234".parse().unwrap();
@@ -163,7 +119,7 @@ fn main() {
             io::write_all(socket, b"hello world")
         })
         .and_then(|(socket, _)| {
-            // read exactly 11 bytes
+            // 只读取11个字节
             io::read_exact(socket, vec![0; 11])
         })
         .and_then(|(socket, buf)| {
@@ -171,71 +127,56 @@ fn main() {
             Ok(())
         });
 
-# let future = futures::future::ok::<(), ()>(());
     tokio::run(future);
 }
 ```
 
-The future returned by `and_then` executes identically to the future we
-implemented by hand on the previous page.
+`and_then` 返回的 future 会像我们在之前手动实现的 future 那样执行。
 
-# Essential combinators
+# 基本组合器
 
-It is worth spending some time with the [`Future` trait][trait-dox] and
-[module][mod-dox] documentation to gain familiarity with the full set of
-available combinators. This guide will provide a very quick overview.
+花时间看一下 [`Future` 特质][trait-dox] 和其 [模块][mod-dox] 的文档来熟悉所有可用的组合器是很值得的。本文仅提供快速简要的概述。
 
 [trait-dox]: https://docs.rs/futures/0.1/futures/future/trait.Future.html
 [mod-dox]: https://docs.rs/futures/0.1/futures/future/index.html
 
-## Concrete futures
+## 既定的 future
 
-Any value can be turned into an immediately complete future. There are a few
-functions in the `future` module for creating such a future:
+任何值都可以立即生成一个已完成的 future。`future` 模块中有一些用于创建该类 future 的函数：
 
-- [`ok`], analogous to `Result::Ok`, converts the provided value into a
-  immediately ready future that yields back the value.
-- [`err`], analogous to `Result::Err`, converts the provided error into an
-  immediately ready future that fails with the error.  as an immediately failed
-  future.
-- [`result`] lifts a result to an immediately complete future.
+- [`ok`]，对应 `Result::Ok`，可以将给定值转化为一个立即就绪的 future，该 future 可以用于生成原值。
+
+- [`err`]，对应 `Result::Err`，可以将给定错误转化为一个立即就绪的失败的 future，该 future 所包含的错误即原错误。
+
+- [`result`] 将一个结果转化为一个立即完成的 future（译者注：`Result::Ok` 或者 `Result::Err` 都是可以的）。
 
 [`ok`]: https://docs.rs/futures/0.1/futures/future/fn.ok.html
 [`err`]: https://docs.rs/futures/0.1/futures/future/fn.err.html
 [`result`]: https://docs.rs/futures/0.1/futures/future/fn.result.html
 
-In addition, there is also a function, [`lazy`], which allows constructing a
-future given a *closure*. The closure is not immediately invoked, instead it is
-invoked the first time the future is polled.
+另外，还有一个 [`lazy`] 函数，允许我们通过一个 *闭包* 来构建一个 future。这个闭包不会被立即调用，而是在 future 第一次被拉取时调用。
 
 [`lazy`]: https://docs.rs/futures/0.1/futures/future/fn.lazy.html
 
-## IntoFuture
+## `IntoFuture` 特质
 
-A crucial API to know about is the [`IntoFuture`] trait, which is a trait for
-values that can be converted into futures. Most APIs that you think of as taking
-futures actually work with this trait instead. The key reason: the trait is
-implemented for `Result`, allowing you to return `Result` values in many places
-that futures are expected.
+[`IntoFuture`] 特质是一个很关键的 API，它代表各种可以被转化为 future 的值。大多数使用 future 的接口实际上是用它实现的。原因在于：`Result` 实现了这个特质，这就允许我们在很多需要返回 future 的地方直接返回 `Result` 值。
 
-Most combinator closures that return a future actually return an instance of
-[`IntoFuture`].
+大多数返回 future 的组合器闭包实际上返回的也是一个 [`IntoFuture`] 实例。
 
 [`IntoFuture`]: https://docs.rs/futures/0.1/futures/future/trait.IntoFuture.html
 
-## Adapters
+## 适配器
 
-Like [`Iterator`], the `Future` trait includes a broad range of "adapter"
-methods. These methods all consume the future, returning a new future providing
-the requested behavior. Using these adapter combinators, it is possible to:
+就像 [`Iterator`] 那样，`Future` 特质也包含了各种各样的“适配器”方法。 这些方法消费当前 future，返回一个新的 future 并执行我们提出的行为请求。使用这些适配组合器，我们可以：
 
-* Change the type of a future ([`map`], [`map_err`])
-* Run another future after one has completed ([`then`], [`and_then`],
+* 改变一个 future 的类型 ([`map`], [`map_err`])
+* 在一个 future 完成时执行另一个 ([`then`], [`and_then`],
   [`or_else`])
-* Figure out which of two futures resolves first ([`select`])
-* Wait for two futures to both complete ([`join`])
-* Convert to a trait object ([`Box::new`])
-* Convert unwinding into errors ([`catch_unwind`])
+* 找出两个 future 中哪个先执行完成 ([`select`])
+* 等待两个 future 都完成 ([`join`])
+* 转化为一个特质对象 ([`Box::new`])
+* 将展开式恐慌转化为错误 ([`catch_unwind`])
 
 [`Iterator`]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
 [`Box`]: https://doc.rust-lang.org/std/boxed/struct.Box.html
@@ -249,28 +190,20 @@ the requested behavior. Using these adapter combinators, it is possible to:
 [`join`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.join
 [`catch_unwind`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.catch_unwind
 
-# When to use combinators
+# 何时使用组合器
 
-Using combinators can reduce a lot of boilerplate, but they are not always a
-good fit. Due to limitations, implementing `Future` manually is going to be common.
+使用组合器可以减少陈词滥调，但它们并不总那么合适。由于某些限制，手动实现 `Future` 可能更为常见。
 
-## Functional style
+## 函数式风格
 
-Closures passed to combinators must be `'static`. This means it is not possible
-to pass references into the closure. Ownership of all state must be moved into
-the closure. The reason for this is that lifetimes are based on the stack. With
-asynchronous code, the ability to rely on the stack is lost.
+传递给组合器的闭包必须是 `'static` 的。这就意味着不可能在闭包中加入引用。所有状态的所有权必须被转移到闭包中。这是因为 Rust 的生命周期是基于栈的。使用异步代码，就意味着失去了栈的相关功能。
 
-Because of this, code written using combinators end up being very functional in
-style. Let's compare Future combinators with synchronous `Result` combinators.
+也正因为如此，使用组合器就会写出函数式风格的代码。让我们比较一下 Future 组合器和异步的 `Result` 组合器。
 
 ```rust
 use std::io;
 
-# struct Data;
-
 fn get_data() -> Result<Data, io::Error> {
-#     unimplemented!();
     // ...
 }
 
@@ -287,13 +220,9 @@ fn get_ok_data() -> Result<Vec<Data>, io::Error> {
     Ok(dst)
 }
 ```
+上面的代码可以工作是因为传递给 `and_then` 的闭包可以获取到 `dst` 的可变借用。Rust 编译器可以保证 `dst` 存活的比闭包更久。
 
-This works because the closure passed to `and_then` is able to obtain a mutable
-borrow to `dst`. The Rust compiler is able to guarantee that `dst` will outlive
-the closure.
-
-However, when using futures, it is no longer possible to borrow `dst`. Instead,
-`dst` must be passed around. Something like:
+然而使用 future 的话，借用 `dst` 就行不通了，必须改为传递 `dst`。像这样：
 
 ```rust
 extern crate futures;
@@ -301,10 +230,7 @@ extern crate futures;
 use futures::{stream, Future, Stream};
 use std::io;
 
-# struct Data;
-
 fn get_data() -> impl Future<Item = Data, Error = io::Error> {
-# futures::future::ok(Data)
     // ...
 }
 
@@ -331,12 +257,9 @@ fn get_ok_data() -> impl Future<Item = Vec<Data>, Error = io::Error> {
             })
         })
 }
-# fn main() {}
 ```
 
-Another strategy, which tends to work best with immutable data, is to store the
-data in an `Arc` and clone handles into the closures. One case in which this
-works well is sharing configuration values in multiple closures. For example:
+还有一种策略，可以配合不可变数据使用，将数据存储在一个 `Arc` 中，然后将句柄的拷贝放到闭包中。有一种比较适用的场景就是将配置值在多个闭包中共享。比如：
 
 ```rust
 extern crate futures;
@@ -347,15 +270,13 @@ use std::sync::Arc;
 
 fn get_message() -> impl Future<Item = String, Error = io::Error> {
     // ....
-# futures::future::ok("".to_string())
 }
 
 fn print_multi() -> impl Future<Item = (), Error = io::Error> {
     let name = Arc::new("carl".to_string());
 
     let futures: Vec<_> = (0..1).map(|_| {
-        // Clone the `name` handle, this allows multiple concurrent futures
-        // to access the name to print.
+        // 拷贝 `name` 句柄, 这样依赖多个并发的 future 都可以打印这个 `name` 值。
         let name = name.clone();
 
         get_message()
@@ -371,12 +292,9 @@ fn print_multi() -> impl Future<Item = (), Error = io::Error> {
 }
 ```
 
-## Returning futures
+## 返回 future
 
-Because combinators often use closures as part of their type signature, it is
-not possible to name the future type. This, in turn, means that the future type
-cannot be used as part of a function's signature. When passing a future as a
-function argument, generics can be used in almost all cases. For example:
+因为组合器经常使用闭包作为它们类型签名的一部分，future 的类型是无法确定的。这就造成 future 的类型无法作为函数签名的一部分。当使用一个 future 作为函数参数时，泛型可以自由运用于几乎所有情况。例如：
 
 ```rust
 extern crate futures;
@@ -385,12 +303,10 @@ use futures::Future;
 
 fn get_message() -> impl Future<Item = String> {
     // ...
-# futures::future::ok::<_, ()>("".to_string())
 }
 
 fn with_future<T: Future<Item = String>>(f: T) {
     // ...
-# drop(f);
 }
 
 let my_future = get_message().map(|message| {
@@ -400,23 +316,19 @@ let my_future = get_message().map(|message| {
 with_future(my_future);
 ```
 
-However, for returning futures, it isn't as simple. There are a few options with
-pros and cons:
+但是当函数返回 future 的时候，就没有这么简单了。这里是一些各有利弊的可选方法:
 
-* [Use `impl Future`](#use-impl-future)
-* [Trait objects](#trait-objects)
-* [Implement `Future` by hand](#implement-future-by-hand)
+* [使用 `impl Future`](#use-impl-future)
+* [特质对象](#trait-objects)
+* [手动实现 `Future`](#implement-future-by-hand)
 
-### Use `impl Future`
+### 使用 `impl Future`
 
-As of Rust version **1.26**, the language feature [`impl Trait`] can be used for
-returning combinator futures. This allows writing the following:
+从 Rust 的 **1.26** 版本开始，[`impl Trait`] 这一语言特性就可以用来返回组合器 future 了。因此我们可以这样写:
 
 [`impl Trait`]: https://github.com/rust-lang/rfcs/blob/master/text/1522-conservative-impl-trait.md
 
 ```rust
-# extern crate futures;
-# use futures::Future;
 fn add_10<F>(f: F) -> impl Future<Item = i32, Error = F::Error>
     where F: Future<Item = i32>,
 {
@@ -424,15 +336,11 @@ fn add_10<F>(f: F) -> impl Future<Item = i32, Error = F::Error>
 }
 ```
 
-The `add_10` function has a return type that is "something that implements
-`Future`" with the specified associated types. This allows returning a future
-without explicitly naming the future type.
+`add_10` 函数的返回值类型是“某个实现了`Future`特质的类型”，它还附带类一些相关类型。这就允许我们不需要显式制定 future 的类型而直接返回一个 future。
 
-The pros to this approach are that it is zero overhead and covers a wide variety
-of cases. However, there is a problem when returning futures from different
-code branches. For example:
+这种方法的优点是它零开销并且适用于各种各样的情况。但是，使用这种方法从不同代码分支返回 future 的时候可能会有一个问题。例如:
 
-```rust,ignore
+```rust
 if some_condition {
     return get_message()
         .map(|message| format!("MESSAGE = {}", message));
@@ -441,27 +349,11 @@ if some_condition {
 }
 ```
 
-#### Returning from multiple branches
+#### 从多个代码分支返回
 
-This results in `rustc` outputting a compilation error of `error[E0308]: if and
-else have incompatible types`. Functions returning `impl Future` must still have
-a single return type. The `impl Future` syntax just means that the return type
-does not have to be named. However, each combinator type has a **different**
-type, so the types being returned in each conditional branch are different.
-
-Given the above scenario, there are two options. The first is to change the
-function to return a [trait object](#trait-objects). The second is to use the
-[`Either`] type:
+以上代码会导致 `rustc` 输出编译错误：`error[E0308]: if and else have incompatible types`（if 和 else 存在不匹配的类型）。也就是说返回 `impl Future` 的函数还是必须有一个唯一确定的返回类型。`impl Future` 语法只是允许我们不明确指定类型。然而，每个组合器类型都有一个**不同**的类型，这就造成各个条件分支中的返回类型不同。对于以上情况，我们有两种解决方案。第一种时将函数的返回值改为一个 [特质对象](#trait-objects)。第二种方法是使用 [`Either`] 类型：
 
 ```rust
-# extern crate futures;
-# use futures::Future;
-# use futures::future::{self, Either};
-# fn get_message() -> impl Future<Item = String> {
-# future::ok::<_, ()>("".to_string())
-# }
-# fn my_op() -> impl Future<Item = String> {
-# let some_condition = true;
 if some_condition {
     return Either::A(get_message()
         .map(|message| format!("MESSAGE = {}", message)));
@@ -469,23 +361,15 @@ if some_condition {
     return Either::B(
         future::ok("My MESSAGE".to_string()));
 }
-# }
-# fn main() {}
 ```
 
-This ensures that the function has a single return type: `Either`.
+这就确保了函数有唯一的返回值类型: `Either`.
 
-In situations where there are more than two branches, `Either` enums must be
-nested (`Either<Either<A, B>, C>`) or a custom, multi variant, enum is defined.
+在多于两个分支的时候，`Either`枚举必须嵌套使用（`Either<Either<A, B>, C>`）或者自行定制一个支持多变量的枚举类型。
 
-This scenario comes up often when trying to conditional return errors.
-Consider:
+这种方案经常用于按条件返回错误的情况。比如：
 
 ```rust
-# extern crate futures;
-# use futures::{future::{self, Either}, Future};
-# fn is_valid(_: &str) -> bool { true }
-# fn get_message() -> impl Future<Item = String, Error = &'static str> { future::ok("".to_string()) }
 fn my_operation(arg: String) -> impl Future<Item = String> {
     if is_valid(&arg) {
         return Either::A(get_message().map(|message| {
@@ -495,21 +379,16 @@ fn my_operation(arg: String) -> impl Future<Item = String> {
 
     Either::B(future::err("something went wrong"))
 }
-# fn main() {}
 ```
-
-In order to return early when an error has been encountered, an `Either` variant
-must be used to contain the error future.
+要在遇到错误时提前返回，必须把错误放到一个 `Either` 变量中。
 
 [`Either`]: https://docs.rs/futures/0.1.25/futures/future/enum.Either.html
 
-#### Associated types
+#### 相关类型
 
-Traits with functions that return futures must include an associated type for
-that future. For example, consider a simplified version of the Tower [`Service`]
-trait:
+具有返回 future 的函数的特质一定会包含 future 相关的类型定义。比如，我们来看一个简化版本的 Tower 库中的 [`Service`] 特质：
 
-```rust,ignore
+```rust
 pub trait Service {
     /// Requests handled by the service.
     type Request;
@@ -527,36 +406,23 @@ pub trait Service {
 }
 ```
 
-In order to implement this trait, the future returned by `call` must be
-nameable and set to the `Future` associated type. In this case, `impl Future`
-does not work and the future must either be boxed as a [trait
-object](#trait-objects) or a custom future must be defined.
+为了实现这个特质，`call` 函数返回的 future 必须被明确指定并被设置为 `Future` 的相关类型。在这种情况下，`impl Future` 就不能用了，我们必须把 future 装箱为一个 [特质对象](#trait-objects)，或者自己定制一个future。
 
 [`Service`]: https://docs.rs/tower-service/0.1/tower_service/trait.Service.html
 
-### Trait objects
+### 特质对象（Trait objects）
 
-Another strategy is to return a boxed future as a [trait object]:
+还有一种策略是返回一个装箱的 future，即一个 [特质对象]：
 
 ```rust
-# extern crate futures;
-# use std::io;
-# use futures::Future;
-# fn main() {}
 fn foo() -> Box<Future<Item = u32, Error = io::Error> + Send> {
     // ...
-# loop {}
 }
 ```
 
-The pro of this strategy is that it is easy to write `Box`. It also is able to
-handle the "branching" described above with arbitrary number of branches:
+这种策略的优点是 `Box` 非常易于使用。我们还可以处理之前所述的分支问题，并且任意多个分支都可以：
 
 ```rust
-# extern crate futures;
-# use futures::{future::{self, Either}, Future};
-# fn is_valid(_: &str) -> bool { true }
-# fn get_message() -> impl Future<Item = String, Error = &'static str> { future::ok("".to_string()) }
 fn my_operation(arg: String) -> Box<Future<Item = String, Error = &'static str> + Send> {
     if is_valid(&arg) {
         if arg == "foo" {
@@ -572,23 +438,15 @@ fn my_operation(arg: String) -> Box<Future<Item = String, Error = &'static str> 
 
     Box::new(future::err("something went wrong"))
 }
-# fn main() {}
 ```
 
-The downside is that the boxing approach requires more overhead. An allocation
-is required to store the returned future value. In addition, whenever the future
-is used Rust needs to dynamically unbox it via a runtime lookup (vtable).
-This can make boxed futures slightly slower in practice, though the difference
-is often not noticeable.
+这种方法的缺点是装箱会产生更多的开销。储存返回的 future 值会带来一次内存分配。并且，无论什么时候使用这个 future，Rust 都需要通过一次运行时查找（vtable；虚表）来动态地拆箱。这会使装箱的 future 在实际运行时稍微慢一些，尽管这种差异往往并不显著。
 
-There is one caveat that can trip up authors trying to use a `Box<Future<...>>`,
-particularly with `tokio::run`. By default, `Box<Future<...>>` is **not** `Send`
-and cannot be sent across threads, **even if the future contained in the box is
-`Send`**.
+有一个附加说明可以帮作者们尝试使用 `Box<Future<...>>`，特别是跟 `tokio::run` 一同使用。默认情况下，`Box<Future<...>>` **没有** 实现 `Send` 特质，无法跨线程发送，即使内部装箱的 future 实现了 `Send` 特质。
 
-To make a boxed future `Send`, it must be annotated as such:
+想确保一个装箱的 future 实现 `Send` 特质, 必须这样写:
 
-```rust,ignore
+```rust
 fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
     // ...
 }
@@ -596,32 +454,19 @@ fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
 
 [trait object]: https://doc.rust-lang.org/book/trait-objects.html
 
-### Implement `Future` by hand
+### 手动实现 `Future`
 
-Finally, when the above strategies fail, it is always possible to fall back on
-implementing `Future` by hand. Doing so provides full control, but comes at a
-cost of additional boilerplate given that no combinator functions can be used
-with this approach.
+最后，当所有以上策略都失败时，我们还是可以退回到手动实现 `Future` 的方法。手动实现可以提供完整的控制，但是因为没有组合器函数能用于这种方法，我们得花更多的精力在那些陈词滥调上了。
 
-## When to use combinators
+## 何时使用组合器
 
-Combinators are powerful ways to reduce boilerplate in your Tokio based
-application, but as discussed in this section, they are not a silver bullet. It
-is common to implement custom futures as well as custom combinators. This raises
-the question of when combinators should be used versus implementing `Future` by
-hand.
+在你基于 Tokio 的应用程序中，组合器是减少重复代码的有力解决方案，但是就如本章节所述，它们并不是“银弹”。实现定制的future和定制的组合器还是很常见的。这就提出了什么时候使用组合器与手动实现 `Future` 的选择问题。
 
-As per the discussion above, if the future type must be nameable and a `Box` is
-not acceptable overhead, then combinators may not be used. Besides this, it
-depends on the complexity of the state that must be passed around between
-combinators.
+根据上述探讨，如果 future 的类型必须被指明并且`Box`是不可接受的开销，那么我们就可以不用组合器。除了这一点，选择什么还取决于组合器间传递的状态的复杂性。
 
-Scenarios when the state must be accessed concurrently from multiple combinators
-may be a good case for implementing a `Future` by hand.
+“状态必须从多个组合器并发访问”可能是手动实现 `Future` 的一个适用场景。
 
-TODO: This section needs to be expanded with examples. If you have ideas to
-improve this section, visit the [doc-push] repo and open an issue with your
-thoughts.
+待完善（TODO）: 本章节需要更多的例子。如果你有改善本章节的好点子，可以访问 [doc-push] 库并以你的想法创建一个问题。
 
 [doc-push]: https://github.com/tokio-rs/doc-push
 [`map`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.map
