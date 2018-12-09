@@ -1,6 +1,6 @@
 # 组合器
 
-Future 的实现往往遵循相同的模式。为了减少陈词滥调，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以针对 [`Future`] 特质的函数的形式存在。
+Future 的实现往往遵循相同的模式。为了减少陈词滥调，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以 [`Future`] 特质相关的函数的形式存在。
 
 # 基础构件
 
@@ -259,9 +259,7 @@ fn get_ok_data() -> impl Future<Item = Vec<Data>, Error = io::Error> {
 }
 ```
 
-Another strategy, which tends to work best with immutable data, is to store the
-data in an `Arc` and clone handles into the closures. One case in which this
-works well is sharing configuration values in multiple closures. For example:
+还有一种策略，可以配合不可变数据使用，将数据存储在一个 `Arc` 中，然后将句柄的拷贝放到闭包中。有一种比较适用的场景就是将配置值在多个闭包中共享。比如：
 
 ```rust
 extern crate futures;
@@ -278,8 +276,7 @@ fn print_multi() -> impl Future<Item = (), Error = io::Error> {
     let name = Arc::new("carl".to_string());
 
     let futures: Vec<_> = (0..1).map(|_| {
-        // Clone the `name` handle, this allows multiple concurrent futures
-        // to access the name to print.
+        // 拷贝 `name` 句柄, 这样依赖多个并发的 future 都可以打印这个 `name` 值。
         let name = name.clone();
 
         get_message()
@@ -295,13 +292,9 @@ fn print_multi() -> impl Future<Item = (), Error = io::Error> {
 }
 ```
 
-## Returning futures
+## 返回 future
 
-因为组合器经常使用闭包作为它们类型签名的一部分，我们无法确定 future 的类型。相应的，future 的类型就无法作为函数签名的一部分。当使用一个 future 作为函数参数时，泛型可以用于几乎所有情况。例如：
-Because combinators often use closures as part of their type signature, it is
-not possible to name the future type. This, in turn, means that the future type
-cannot be used as part of a function's signature. When passing a future as a
-function argument, generics can be used in almost all cases. For example:
+因为组合器经常使用闭包作为它们类型签名的一部分，future 的类型是无法确定的。这就造成 future 的类型无法作为函数签名的一部分。当使用一个 future 作为函数参数时，泛型可以自由运用于几乎所有情况。例如：
 
 ```rust
 extern crate futures;
@@ -323,8 +316,7 @@ let my_future = get_message().map(|message| {
 with_future(my_future);
 ```
 
-However, for returning futures, it isn't as simple. There are a few options with
-pros and cons:
+但是当函数返回 future 的时候，就没有这么简单了。这里是一些各有利弊的可选方法:
 
 * [使用 `impl Future`](#use-impl-future)
 * [特质对象](#trait-objects)
@@ -344,13 +336,9 @@ fn add_10<F>(f: F) -> impl Future<Item = i32, Error = F::Error>
 }
 ```
 
-The `add_10` function has a return type that is "something that implements
-`Future`" with the specified associated types. This allows returning a future
-without explicitly naming the future type.
+`add_10` 函数的返回值类型是“某个实现了`Future`特质的类型”，它还附带类一些相关类型。这就允许我们不需要显式制定 future 的类型而直接返回一个 future。
 
-The pros to this approach are that it is zero overhead and covers a wide variety
-of cases. However, there is a problem when returning futures from different
-code branches. For example:
+这种方法的优点是它零开销并且适用于各种各样的情况。但是，使用这种方法从不同代码分支返回 future 的时候可能会有一个问题。例如:
 
 ```rust
 if some_condition {
@@ -361,17 +349,9 @@ if some_condition {
 }
 ```
 
-#### Returning from multiple branches
+#### 从多个代码分支返回
 
-This results in `rustc` outputting a compilation error of `error[E0308]: if and
-else have incompatible types`. Functions returning `impl Future` must still have
-a single return type. The `impl Future` syntax just means that the return type
-does not have to be named. However, each combinator type has a **different**
-type, so the types being returned in each conditional branch are different.
-
-Given the above scenario, there are two options. The first is to change the
-function to return a [trait object](#trait-objects). The second is to use the
-[`Either`] type:
+以上代码会导致 `rustc` 输出编译错误：`error[E0308]: if and else have incompatible types`（if 和 else 存在不匹配的类型）。也就是说返回 `impl Future` 的函数还是必须有一个唯一确定的返回类型。`impl Future` 语法只是允许我们不明确指定类型。然而，每个组合器类型都有一个**不同**的类型，这就造成各个条件分支中的返回类型不同。对于以上情况，我们有两种解决方案。第一种时将函数的返回值改为一个 [特质对象](#trait-objects)。第二种方法是使用 [`Either`] 类型：
 
 ```rust
 if some_condition {
@@ -383,13 +363,11 @@ if some_condition {
 }
 ```
 
-This ensures that the function has a single return type: `Either`.
+这就确保了函数有唯一的返回值类型: `Either`.
 
-In situations where there are more than two branches, `Either` enums must be
-nested (`Either<Either<A, B>, C>`) or a custom, multi variant, enum is defined.
+在多于两个分支的时候，`Either`枚举必须嵌套使用（`Either<Either<A, B>, C>`）或者自行定制一个支持多变量的枚举类型。
 
-This scenario comes up often when trying to conditional return errors.
-Consider:
+这种方案经常用于按条件返回错误的情况。比如：
 
 ```rust
 fn my_operation(arg: String) -> impl Future<Item = String> {
@@ -402,17 +380,13 @@ fn my_operation(arg: String) -> impl Future<Item = String> {
     Either::B(future::err("something went wrong"))
 }
 ```
-
-In order to return early when an error has been encountered, an `Either` variant
-must be used to contain the error future.
+要在遇到错误时提前返回，必须把错误放到一个 `Either` 变量中。
 
 [`Either`]: https://docs.rs/futures/0.1.25/futures/future/enum.Either.html
 
-#### Associated types
+#### 相关类型
 
-Traits with functions that return futures must include an associated type for
-that future. For example, consider a simplified version of the Tower [`Service`]
-trait:
+具有返回 future 的函数的特质一定会包含 future 相关的类型定义。比如，我们来看一个简化版本的 Tower 库中的 [`Service`] 特质：
 
 ```rust
 pub trait Service {
@@ -439,7 +413,7 @@ object](#trait-objects) or a custom future must be defined.
 
 [`Service`]: https://docs.rs/tower-service/0.1/tower_service/trait.Service.html
 
-### Trait objects
+### 特质对象（Trait objects）
 
 Another strategy is to return a boxed future as a [trait object]:
 
@@ -483,7 +457,7 @@ and cannot be sent across threads, **even if the future contained in the box is
 
 To make a boxed future `Send`, it must be annotated as such:
 
-```rust,ignore
+```rust
 fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
     // ...
 }
@@ -491,14 +465,14 @@ fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
 
 [trait object]: https://doc.rust-lang.org/book/trait-objects.html
 
-### Implement `Future` by hand
+### 手动实现 `Future`
 
 Finally, when the above strategies fail, it is always possible to fall back on
 implementing `Future` by hand. Doing so provides full control, but comes at a
 cost of additional boilerplate given that no combinator functions can be used
 with this approach.
 
-## When to use combinators
+## 何时使用组合器
 
 Combinators are powerful ways to reduce boilerplate in your Tokio based
 application, but as discussed in this section, they are not a silver bullet. It

@@ -1,4 +1,4 @@
-# Runtime model
+# 运行时模型
 
 Streams are similar to futures, but instead of yielding a single value, they
 asynchronously yield one or more values. They can be thought of as asynchronous
