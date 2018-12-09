@@ -1,6 +1,6 @@
 # 组合器
 
-Future 的实现往往遵循相同的模式。为了减少陈词滥调，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以 [`Future`] 特质相关的函数的形式存在。
+Future 的实现往往遵循相同的模式。为了减少重复代码，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以 [`Future`] 特质相关的函数的形式存在。
 
 # 基础构件
 
@@ -406,16 +406,13 @@ pub trait Service {
 }
 ```
 
-In order to implement this trait, the future returned by `call` must be
-nameable and set to the `Future` associated type. In this case, `impl Future`
-does not work and the future must either be boxed as a [trait
-object](#trait-objects) or a custom future must be defined.
+为了实现这个特质，`call` 函数返回的 future 必须被明确指定并被设置为 `Future` 的相关类型。在这种情况下，`impl Future` 就不能用了，我们必须把 future 装箱为一个 [特质对象](#trait-objects)，或者自己定制一个future。
 
 [`Service`]: https://docs.rs/tower-service/0.1/tower_service/trait.Service.html
 
 ### 特质对象（Trait objects）
 
-Another strategy is to return a boxed future as a [trait object]:
+还有一种策略是返回一个装箱的 future，即一个 [特质对象]：
 
 ```rust
 fn foo() -> Box<Future<Item = u32, Error = io::Error> + Send> {
@@ -423,8 +420,7 @@ fn foo() -> Box<Future<Item = u32, Error = io::Error> + Send> {
 }
 ```
 
-The pro of this strategy is that it is easy to write `Box`. It also is able to
-handle the "branching" described above with arbitrary number of branches:
+这种策略的优点是 `Box` 非常易于使用。我们还可以处理之前所述的分支问题，并且任意多个分支都可以：
 
 ```rust
 fn my_operation(arg: String) -> Box<Future<Item = String, Error = &'static str> + Send> {
@@ -444,18 +440,11 @@ fn my_operation(arg: String) -> Box<Future<Item = String, Error = &'static str> 
 }
 ```
 
-The downside is that the boxing approach requires more overhead. An allocation
-is required to store the returned future value. In addition, whenever the future
-is used Rust needs to dynamically unbox it via a runtime lookup (vtable).
-This can make boxed futures slightly slower in practice, though the difference
-is often not noticeable.
+这种方法的缺点是装箱会产生更多的开销。储存返回的 future 值会带来一次内存分配。并且，无论什么时候使用这个 future，Rust 都需要通过一次运行时查找（vtable；虚表）来动态地拆箱。这会使装箱的 future 在实际运行时稍微慢一些，尽管这种差异往往并不显著。
 
-There is one caveat that can trip up authors trying to use a `Box<Future<...>>`,
-particularly with `tokio::run`. By default, `Box<Future<...>>` is **not** `Send`
-and cannot be sent across threads, **even if the future contained in the box is
-`Send`**.
+有一个附加说明可以帮作者们尝试使用 `Box<Future<...>>`，特别是跟 `tokio::run` 一同使用。默认情况下，`Box<Future<...>>` **没有** 实现 `Send` 特质，无法跨线程发送，即使内部装箱的 future 实现了 `Send` 特质。
 
-To make a boxed future `Send`, it must be annotated as such:
+想确保一个装箱的 future 实现 `Send` 特质, 必须这样写:
 
 ```rust
 fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
@@ -467,26 +456,15 @@ fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
 
 ### 手动实现 `Future`
 
-Finally, when the above strategies fail, it is always possible to fall back on
-implementing `Future` by hand. Doing so provides full control, but comes at a
-cost of additional boilerplate given that no combinator functions can be used
-with this approach.
+最后，当所有以上策略都失败时，我们还是可以退回到手动实现 `Future` 的方法。手动实现可以提供完整的控制，但是因为没有组合器函数能用于这种方法，我们得花更多的精力在那些陈词滥调上了。
 
 ## 何时使用组合器
 
-Combinators are powerful ways to reduce boilerplate in your Tokio based
-application, but as discussed in this section, they are not a silver bullet. It
-is common to implement custom futures as well as custom combinators. This raises
-the question of when combinators should be used versus implementing `Future` by
-hand.
+在你基于 Tokio 的应用程序中，组合器是减少重复代码的有力解决方案，但是就如本章节所述，它们并不是“银弹”。实现定制的future和定制的组合器还是很常见的。这就提出了什么时候使用组合器与手动实现 `Future` 的选择问题。
 
-As per the discussion above, if the future type must be nameable and a `Box` is
-not acceptable overhead, then combinators may not be used. Besides this, it
-depends on the complexity of the state that must be passed around between
-combinators.
+根据上述探讨，如果 future 的类型必须被指明并且`Box`是不可接受的开销，那么我们就可以不用组合器。除了这一点，选择什么还取决于组合器间传递的状态的复杂性。
 
-Scenarios when the state must be accessed concurrently from multiple combinators
-may be a good case for implementing a `Future` by hand.
+“状态必须从多个组合器并发访问”可能是手动实现 `Future` 的一个适用场景。
 
 待完善（TODO）: 本章节需要更多的例子。如果你有改善本章节的好点子，可以访问 [doc-push] 库并以你的想法创建一个问题。
 
