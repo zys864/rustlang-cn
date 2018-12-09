@@ -2,8 +2,8 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: 最新文章：深入浅出Rust-Future-Part-4
-actionLink: /read/rust/2018/深入浅出Rust-Future-Part-4
+actionText: 最新文章：深入浅出Rust-Future-Part-5
+actionLink: /read/rust/2018/深入浅出Rust-Future-Part-5
 footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
 <br><br>
@@ -13,7 +13,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 #### 阅读
 
 - [深入浅出Rust-Future-Part-4](https://rustlang-cn.org//read/rust/2018/深入浅出Rust-Future-Part-4.html)
-
+- [深入浅出Rust-Future-Part-5](https://rustlang-cn.org//read/rust/2018/深入浅出Rust-Future-Part-5.html)
 #### 文档
 
 - [Rust异步编程](https://rustlang-cn.org/rust/async-rust/)
