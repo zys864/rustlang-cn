@@ -44,7 +44,7 @@ module.exports = {
             { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
           ] },
           { text: '文档', items: [
-              { text: '官方书籍大全', link: '/officebooks' },
+              { text: '官方书籍大全', link: '/rust/' },
               { text: 'Rust语言', items: [
                   { text: '深入Rust语言', link: '/rust/book/' },
                   { text: 'Rust异步编程', link: '/rust/async-rust/' },
