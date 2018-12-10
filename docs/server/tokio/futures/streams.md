@@ -1,14 +1,10 @@
 # 流
 
-Streams are similar to futures, but instead of yielding a single value, they
-asynchronously yield one or more values. They can be thought of as asynchronous
-iterators.
+流跟 future 很像，但是不只产生一个值，而是可能产生一个或多个值。我们可以把它看作是异步的迭代器。
 
-Just like futures, streams are able to represent a wide range of things as long
-as those things produce discrete values at different points sometime in the
-future. For instance:
+就像 future 一样，流也可以代表各种各样的事物，只要这些事物可以在未来某几个不同的时间点产生离散的值。比如：
 
-* **UI Events** caused by the user interacting with a GUI in different ways. When an
+* **UI 事件** caused by the user interacting with a GUI in different ways. When an
   event happens the stream yields a different message to your app over time.
 * **Push Notifications from a server**. Sometimes a request/response model is not
   what you need. A client can establish a notification stream with a server to be
