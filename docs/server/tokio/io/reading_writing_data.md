@@ -41,7 +41,7 @@ indicate that the operation _would_ have blocked (for example because
 there was no more data available) if it wasn't non-blocking. The
 provided `poll_read` method relies on this:
 
-```rust,ignore
+```rust
 fn poll_read(&mut self, buf: &mut [u8]) -> Poll<usize, std::io::Error> {
     match self.read(buf) {
         Ok(t) => Ok(Async::Ready(t)),
@@ -229,7 +229,7 @@ want to take a look at before you decide to write your own!
 Both the [`copy`] example above and the [echo server] contained this
 mysterious-looking snippet:
 
-```rust,ignore
+```rust
 let (reader, writer) = socket.split();
 let bytes_copied = tokio::io::copy(reader, writer);
 ```
@@ -254,7 +254,7 @@ expressed in `copy`'s types.
 Enter [`split`], a provided method on the `AsyncRead` trait when the
 type *also* implements `AsyncWrite`. If we look at the signature, we see
 
-```rust,ignore
+```rust
 fn split(self) -> (ReadHalf<Self>, WriteHalf<Self>)
   where Self: AsyncWrite { ... }
 ```

@@ -23,7 +23,7 @@ yield many values, so lets start with a stream that generates the fibonacci sequ
 
 The `Stream` trait is as follows:
 
-```rust,ignore
+```rust
 trait Stream {
     /// The type of the value yielded by the stream.
     type Item;
