@@ -135,7 +135,7 @@ fn main() {
 
 # 基本组合器
 
-花时间看一下 [`Future` 特质][trait-dox] 和其 [模块][mod-dox] 的文档来熟悉所有可用的组合器是很值得的。本文仅提供快速简要的概述。
+看一下 [`Future` 特质][trait-dox] 和其 [模块][mod-dox] 的文档来熟悉所有可用的组合器是很值得的。本文仅提供快速简要的概述。
 
 [trait-dox]: https://docs.rs/futures/0.1/futures/future/trait.Future.html
 [mod-dox]: https://docs.rs/futures/0.1/futures/future/index.html
@@ -168,7 +168,7 @@ fn main() {
 
 ## 适配器
 
-就像 [`Iterator`] 那样，`Future` 特质也包含了各种各样的“适配器”方法。 这些方法消费当前 future，返回一个新的 future 并执行我们提出的行为请求。使用这些适配组合器，我们可以：
+就像 [`Iterator`] 那样，`Future` 特质也包含了各种各样的“适配器”方法。 这些方法消费当前 future，返回一个新的 future 以提供我们请求的行为。使用这些适配组合器，我们可以：
 
 * 改变一个 future 的类型 ([`map`], [`map_err`])
 * 在一个 future 完成时执行另一个 ([`then`], [`and_then`],

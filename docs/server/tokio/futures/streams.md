@@ -172,11 +172,11 @@ impl Stream for Fibonacci {
     type Error = ();
 
     fn poll(&mut self) -> Poll<Option<u64>, ()> {
-        // Wait until the next interval
+        // 等待下一个间隔
         try_ready!(
             self.interval.poll()
-                // The interval can fail if the Tokio runtime is unavailable.
-                // In this example, the error is ignored.
+                // 如果 Tokio 运行时不可用，interval 可能会拉取失败
+                // 在本例中，错误不做处理
                 .map_err(|_| ())
         );
 
@@ -249,22 +249,17 @@ tokio::run(
 
 # 基本组合器
 
-It is worth spending some time with the [`Stream` trait][trait-dox] and
-[module][mod-dox] documentation to gain some familiarity with the full set of
-available combinators. This guide will provide a very quick overview.
+花时间看一下 [`Stream` 特质][trait-dox] 及模块[mod-dox]文档来熟悉各种可用的组合器是很值得的。本文仅提供快速简要的概述。
 
 ## 既定的流
 
-The [`stream` module][mod-dox] contains functions for converting values and
-iterators into streams.
+[`stream` 模块][mod-dox] 包括一些将已有的值和迭代器转化为流的函数。
 
-- [`once`] converts the provided value into an immediately ready stream that
-  yields a single item: the provided value.
-- [`iter_ok`] and [`iter_result`] both take [`IntoIterator`] values and converts
-  them to an immediately ready stream that yields the iterator values.
-- [`empty`] returns a stream that immediately yields `None`.
+- [`once`] 将给定值转化为一个立即就绪的流，它将产生一个值：给定值。
+- [`iter_ok`] 和 [`iter_result`] 都使用 [`IntoIterator`] 值并将它们转化为一个立即就绪的流，该流将遍历产生迭代器的值。
+- [`empty`] 返回一个立即产生 `None` 的流。
 
-For example:
+例如:
 
 ```rust
 extern crate tokio;
@@ -284,16 +279,14 @@ tokio::run(
 
 ## 适配器
 
-Like [`Iterator`], the `Stream` trait includes a broad range of "adapter"
-methods. These methods all consume the stream, returning a new stream providing
-the requested behavior. Using these adapter combinators, it is possible to:
+像 [`Iterator`] 一样，`Stream` 特质包括各种各样的“适配器”方法。这些方法都会消费当前流，返回一个新流以提供我们请求的行为。使用这些适配组合器，我们可以:
 
-* Change the type of a stream ([`map`], [`map_err`], [`and_then`]).
-* Handle stream errors ([`or_else`]).
-* Filter stream values ([`take`], [`take_while`], [`skip`], [`skip_while`],
+* 改变一个流的类型 ([`map`], [`map_err`], [`and_then`]).
+* 处理流产生的错误 ([`or_else`]).
+* 过滤流产生的值 ([`take`], [`take_while`], [`skip`], [`skip_while`],
   [`filter`], [`filter_map`]).
-* Asynchronously iterate the values ([`for_each`], [`fold`]).
-* Combine multiple streams together ([`zip`], [`chain`], [`select`]).
+* 异步遍历 ([`for_each`], [`fold`]).
+* 将多个流组合到一起 ([`zip`], [`chain`], [`select`]).
 
 [interval]: https://docs.rs/tokio/0.1/tokio/timer/struct.Interval.html
 [trait-dox]: https://docs.rs/futures/0.1/futures/stream/trait.Stream.html
