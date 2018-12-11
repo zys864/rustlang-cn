@@ -17,7 +17,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 #### 文档
 
 - [Rust异步编程](https://rustlang-cn.org/rust/async-rust/)
-_ [Tokio](https://rustlang-cn.org/server/tokio/)文档更新
+- [Tokio](https://rustlang-cn.org/server/tokio/)文档更新
 
 #### 资源
 
