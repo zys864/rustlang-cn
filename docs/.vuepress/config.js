@@ -80,6 +80,13 @@ module.exports = {
             { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' }
           ] },
+          { text: '全栈', items: [ 
+            { text: 'Linux', link: '/os/linux/' },
+            { text: 'Bash', link: '/os/bash/' },
+            { text: 'HTML', link: '/w3c/html/' },
+            { text: 'CSS', link: '/w3c/css/' },
+            { text: 'Ecmascript', link: '/w3c/ecmascript/' },
+          ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '网络', items: [ 
             { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
