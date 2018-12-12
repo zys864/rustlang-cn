@@ -18,8 +18,8 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
     <p><a href="/read/rustlang-cn/2018/12.html" >Rust中文社区社刊 2018-12</a></p>
   </div>
   <div class="feature">
-    <button class="new" ><a href="https://github.com/rustlang-cn/forum/issues/new" target="_black">中文论坛</a></button>
-    <p><a href="https://github.com/rustlang-cn/forum/issues/new" target="_black">浏览/交流/分享/Code</a></p>
+    <button class="new" ><a href="https://github.com/rustlang-cn/forum/issues" target="_black">中文论坛</a></button>
+    <p><a href="https://github.com/rustlang-cn/forum/issues" target="_black">浏览/交流/分享/Code</a></p>
   </div>
 </div>
 
