@@ -10,7 +10,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 
 <button class="new"><a href="/read/rust/2018/深入浅出Rust-Future-Part-5.html" >最新文章</a></button>
 <button class="new" id="two"><a href="/read/rustlang-cn/2018/12.html" >最新月刊</a></button>
-<button class="new" id="three"><a href="https://github.com/rustlang-cn/forum/issues/new" >论坛发帖</a></button>
+<button class="new" id="three"><a href="https://github.com/rustlang-cn/forum/issues/new" target="_black">论坛发帖</a></button>
 
 <br><hr><br>
 
@@ -55,6 +55,11 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
   <div class="feature">
     <h2>嵌入式</h2>
     <p>针对资源匮乏的设备？需要低级控制而不放弃高级便利性？Rust让你满意</p>
+    <div><a href="/iot/book/">更多</a></div>
+  </div>
+  <div class="feature">
+    <h2>游戏</h2>
+    <p>高性能渲染，实时光线追踪、SIMD</p>
     <div><a href="/iot/book/">更多</a></div>
   </div>
 </div>
