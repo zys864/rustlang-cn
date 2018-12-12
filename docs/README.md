@@ -9,7 +9,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 <br><br>
 
 <button class="new"><a href="/read/rust/2018/深入浅出Rust-Future-Part-5.html" >最新文章</a></button>
-<button class="new" id="two"><a href="/read/rustlang-cn/2018/12.html" >最新月刊</a></button>
+<button class="new" id="two"><a href="/read/rustlang-cn/2018/12.html" >最新社刊</a></button>
 <button class="new" id="three"><a href="https://github.com/rustlang-cn/forum/issues/new" target="_black">论坛发帖</a></button>
 
 <br><hr><br>
