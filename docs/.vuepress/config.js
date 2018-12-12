@@ -41,7 +41,8 @@ module.exports = {
         nav: [
           { text: '阅读', items: [ 
             { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-5' },
-            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
+            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' },
+            { text: 'Rust中文社区月刊', link: '/read/rustlang-cn/2018/12' }
           ] },
           { text: '文档', items: [
               { text: '官方书籍大全', link: '/rust/' },
@@ -65,9 +66,13 @@ module.exports = {
                   { text: 'Wasm-bindgen', link: '/wasm/wasm-bindgen/' }
                 ] 
               },
+              { text: 'CLI', items: [ 
+                  { text: 'book', link: '/cli/book/' }
+                ] 
+              },
               { text: 'IOT', items: [ 
+                  { text: 'book', link: '/iot/book/' },
                   { text: 'Discovery', link: '/iot/discovery/' },
-                  { text: 'Embedded-book', link: '/iot/book/' },
                   { text: 'Embedonomicon', link: '/iot/embedonomicon/' }
                 ] 
               }
