@@ -1,19 +1,15 @@
 # 创建任务
 
-Tokio based applications are organized in terms of Tasks. A task is a small unit
-of logic that executes independently from other tasks. It is similar to [Go's
-goroutine] and [Erlang's process], but asynchronous. In other words, tasks are
-asynchronous green threads. Tasks are spawned for similar reasons that threads
-are spawned in synchronous code, but spawning a task with Tokio is extremely
-lightweight.
+基于 Tokio 的应用程序是以任务为单位组织的。任务是较小的独立运行的逻辑单元。类似于 [Go 语言的 goroutine][Go's goroutine] 和 [Erlang 的 process][Erlang's process]。换句话说，任务是异步的绿色线程。创建任务与使用同步代码创建线程往往出于相似的原因，但是使用 Tokio 创建任务非常轻量。
 
+之前的一些例子定义 future 并将其传递给 `tokio::run` 函数。这样就会在 Tokio 的运行时上创建一个任务并执行。
 Previous examples defined a future and passed that future to `tokio::run`. This
 resulted in a task being spawned onto Tokio's runtime to execute the provided
 future. Additional tasks may be spawned by calling `tokio::spawn`, but only from
 code that is already running on a Tokio task. One way to think about it is the
 future passed to `tokio::run` is the "main function".
 
-In the following example, four tasks are spawned.
+下面的例子创建了四个任务.
 
 ```rust
 extern crate tokio;
