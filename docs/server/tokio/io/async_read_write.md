@@ -1,11 +1,11 @@
-# Using AsyncRead and AsyncWrite directly
+# 直接使用 AsyncRead 和 AsyncWrite
 
 So far, we have primarily talked about `AsyncRead` and `AsyncWrite` in
 the context of I/O combinators provided by Tokio. While these are [often
 enough], sometimes you need to implement your own combinators that
 want to perform asynchronous reads and writes directly.
 
-# Reading data with `AsyncRead`
+## Reading data with `AsyncRead`
 
 The heart of `AsyncRead` is the `poll_read` method. It maps the
 `WouldBlock` error that indicates that an I/O `read` operation would
@@ -30,7 +30,7 @@ interested.
 With that all said, let's look at how we might implement the
 [`read_exact`] method ourselves!
 
-```rust,no_run
+```rust
 # extern crate tokio;
 #[macro_use]
 extern crate futures;
@@ -127,7 +127,7 @@ where
 }
 ```
 
-# Writing data with `AsyncWrite`
+## Writing data with `AsyncWrite`
 
 Just like `poll_read` is the core piece of `AsyncRead`, `poll_write` is
 the core of `AsyncWrite`. Like `poll_read`, it maps the `WouldBlock`
@@ -152,7 +152,7 @@ Tokio uses the same mechanism to manage notifications for `poll_write`
 and `poll_flush` as it does for `poll_read`, and you can read more about
 it in the [non-blocking I/O] section of Tokio internals.
 
-## Shutdown
+### Shutdown
 
 `AsyncWrite` also adds one method that is *not* part of `Write`:
 `shutdown`. From [its documentation][shutdown]:
@@ -191,13 +191,13 @@ Note that calling `shutdown` on a write "half" of a type that implements
 can usually still continue reading data as you please until the other
 side shuts down their corresponding write "half".
 
-## An example of using `AsyncWrite`
+### An example of using `AsyncWrite`
 
 Without further ado, let's take a look at how we might implement
 [`write_all`]:
 
 
-```rust,no_run
+```rust
 # extern crate tokio;
 #[macro_use]
 extern crate futures;

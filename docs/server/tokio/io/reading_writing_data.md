@@ -1,8 +1,6 @@
-# Reading and Writing Data
+# 数据读写
 
-
- 
-# Non-blocking I/O
+## Non-blocking I/O
 
 In [the overview] we mentioned briefly that Tokio's I/O types implement
 non-blocking variants of `std::io::Read` and `std::io::Write` called
@@ -16,7 +14,7 @@ I/O story, and are important to understand when working with I/O code.
 So, let's take a look at [`AsyncRead`] and see what all the fuss is
 about:
 
-```rust,no_run
+```rust
 use std::io::Read;
 pub trait AsyncRead: Read {
     // ...
@@ -61,7 +59,7 @@ inform you whether it is `Ready` (and some data was read) or `NotReady`
 (and you'll have to `poll_read` again later).
 
 
-# Working with I/O futures
+## Working with I/O futures
 
 Since `AsyncRead` (and `AsyncWrite`) are pretty much futures, you can
 easily embed them in your own futures and `poll_read` them just as you
@@ -83,7 +81,7 @@ read thus far, and continues to issue `poll_ready` on the `AsyncRead`
 buffer. At that point, it returns `Ready(buf)` with the filled buffer.
 Let's take a look:
 
-```rust,no_run
+```rust
 # extern crate tokio;
 use tokio::net::tcp::TcpStream;
 use tokio::prelude::*;
@@ -123,13 +121,10 @@ returns a `Future` that writes out all the bytes of the buffer into the
 buffer has been written out and flushed. We can combine this with
 [`read_exact`] to echo whatever the server says back to it:
 
-```rust,no_run
-# extern crate tokio;
+```rust
 use tokio::net::tcp::TcpStream;
 use tokio::prelude::*;
 
-# fn main() {
-# let addr = "127.0.0.1:12345".parse().unwrap();
 let echo_fut = TcpStream::connect(&addr)
     .and_then(|stream| {
         // We're going to read the first 32 bytes the server sends us
@@ -148,7 +143,6 @@ let echo_fut = TcpStream::connect(&addr)
 
 // As before, we can chain more futures onto echo_fut,
 // or declare ourselves finished and run it with tokio::run.
-# }
 ```
 
 Tokio also comes with an I/O combinator to implement this kind of
@@ -160,13 +154,10 @@ have been written out and flushed to the output. This is the combinator
 we used in our [echo server]! It greatly simplifies our example from
 above, and also makes it work for _any_ amount of server data!
 
-```rust,no_run
-# extern crate tokio;
+```rust
 use tokio::net::tcp::TcpStream;
 use tokio::prelude::*;
 
-# fn main() {
-# let addr = "127.0.0.1:12345".parse().unwrap();
 let echo_fut = TcpStream::connect(&addr)
     .and_then(|stream| {
         // First, we need to get a separate read and write handle for
@@ -180,7 +171,6 @@ let echo_fut = TcpStream::connect(&addr)
     .inspect(|(bytes_copied, r, w)| {
         println!("echoed back {} bytes", bytes_copied);
     });
-# }
 ```
 
 Pretty neat!
@@ -192,13 +182,10 @@ times though, you want to operate on higher-level representations, like
 `AsyncRead`, and returns a `Stream` that yields each line from the input
 until there are no more lines to read:
 
-```rust,no_run
-# extern crate tokio;
+```rust
 use tokio::net::tcp::TcpStream;
 use tokio::prelude::*;
 
-# fn main() {
-# let addr = "127.0.0.1:12345".parse().unwrap();
 let lines_fut = TcpStream::connect(&addr).and_then(|stream| {
     // We want to parse out each line we receive on stream.
     // To do that, we may need to buffer input for a little while
@@ -218,13 +205,12 @@ let lines_fut = TcpStream::connect(&addr).and_then(|stream| {
         Ok(())
     })
 });
-# }
 ```
 
 There are also plenty more I/O combinators in [`tokio::io`] that you may
 want to take a look at before you decide to write your own!
 
-# Split I/O resources
+## Split I/O resources
 
 Both the [`copy`] example above and the [echo server] contained this
 mysterious-looking snippet:
@@ -267,7 +253,7 @@ a different future, and handle the reads and writes completely
 independently! Behind the scenes, [`split`] ensures that if we both try
 to read and write at the same time, only one of them happen at a time.
 
-# Transports
+## Transports
 
 Turning an `AsyncRead` into a `Stream` (like [`lines`] does) or an
 `AsyncWrite` into a `Sink` is pretty common in applications that need to
