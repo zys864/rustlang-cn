@@ -81,9 +81,9 @@ Proactor和Reactor是两种经典的多路复用I/O模型，主要用于在高�
 
 I/O多路复用机制都依赖于一个事件分发器，事件分离器把接收到的客户事件分发到不同的事件处理器中，如下
 
-![event](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/event.png)
+![event](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/event.png)
 
-## select，poll，epoll
+## select，poll，epoll   
 
 在操作系统级别select，poll，epoll是3个常用的I/O多路复用机制，简单了解一下将有助于我们理解Proactor和Reactor。
 
@@ -91,7 +91,7 @@ I/O多路复用机制都依赖于一个事件分发器，事件分离器把接�
 
 select的原理如下：
 
-![select](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/select.png)
+![select](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/select.png)
 
 用户程序发起读操作后，将阻塞查询读数据是否可用，直到内核准备好数据后，用户程序才会真正的读取数据。
 
@@ -101,7 +101,7 @@ poll与select的原理相似，用户程序都要阻塞查询事件是否就绪�
 
 epoll是select和poll的改进，原理图如下：
 
-![epoll](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/epoll.png)
+![epoll](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/epoll.png)
 
 epoll使用“事件”的方式通知用户程序数据就绪，并且使用内存拷贝的方式使用户程序直接读取内核准备好的数据，不用再读取数据
 
@@ -109,7 +109,7 @@ epoll使用“事件”的方式通知用户程序数据就绪，并且使用内
 
 Proactor是一个异步I/O的多路复用模型，原理图如下：
 
-![proactor](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/proactor.png)
+![proactor](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/proactor.png)
 
 - 用户发起IO操作到事件分离器
 - 事件分离器通知操作系统进行IO操作
@@ -122,7 +122,7 @@ Proactor是一个异步I/O的多路复用模型，原理图如下：
 
 Reactor是一个同步的I/O多路复用模型，它没有Proactor模式那么复杂，原理图如下：
 
-![reactor](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/reactor.png)
+![reactor](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/reactor.png)
 
 - 用户发起IO操作到事件分离器
 - 事件分离器调用相应的处理器处理事件
@@ -149,7 +149,7 @@ Reactor是一个同步的I/O多路复用模型，它没有Proactor模式那么�
 
 使用线程池的技术来处理I/O操作，原理图如下：
 
-![muti-thread](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/muti-thread.png)
+![muti-thread](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/muti-thread.png)
 
 - Acceptor专门用来监听接收客户端的请求
 - I/O读写操作由线程池进行负责
@@ -159,7 +159,7 @@ Reactor是一个同步的I/O多路复用模型，它没有Proactor模式那么�
 
 在多线程Reactor中只有一个Acceptor，如果出现登录、认证等耗性能的操作，这时就会有单点性能问题，因此产生了主从Reactor多线程模型，原理如下：
 
-![master-worker](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/master-worker.png)
+![master-worker](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/master-worker.png)
 
 - Acceptor不再是一个单独的NIO线程，而是一个独立的NIO线程池
 - Acceptor处理完后，将事件注册到IO线程池的某个线程上
@@ -170,7 +170,7 @@ Reactor是一个同步的I/O多路复用模型，它没有Proactor模式那么�
 
 在解决了什么是Reactor模式后，我们来看看Reactor模式是由什么模块构成。图是一种比较简洁形象的表现方式，因而先上一张图来表达各个模块的名称和他们之间的关系：
 
-![Reactor_Structures](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/Reactor_Structures.png)
+![Reactor_Structures](https://raw.githubusercontent.com/rustlang-cn/articles/master/static/imgs/2018/linux-server-programming/Reactor_Structures.png)
 
 - Handle：即操作系统中的句柄，是对资源在操作系统层面上的一种抽象，它可以是打开的文件、一个连接(Socket)、Timer等。由于Reactor模式一般使用在网络编程中，因而这里一般指Socket Handle，即一个网络连接（Connection，在Java NIO中的Channel）。这个Channel注册到Synchronous Event Demultiplexer中，以监听Handle中发生的事件，对ServerSocketChannnel可以是CONNECT事件，对SocketChannel可以是READ、WRITE、CLOSE事件等。
   

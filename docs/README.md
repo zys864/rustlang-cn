@@ -2,85 +2,80 @@
 home: true
 heroImage: /imgs/rust.png
 pageClass: front
-actionText: 最新文章：深入浅出Rust-Future-Part-5
-actionLink: /read/rust/2018/深入浅出Rust-Future-Part-5
+actionText: 学习Rust语言
+actionLink: /rust/book/
 footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
-<br><br>
-
-## 更新内容 2018-12
-
-#### 阅读
-
-- [深入浅出Rust-Future-Part-4](https://rustlang-cn.org//read/rust/2018/深入浅出Rust-Future-Part-4.html)
-- [深入浅出Rust-Future-Part-5](https://rustlang-cn.org//read/rust/2018/深入浅出Rust-Future-Part-5.html)
-#### 文档
-
-- [Rust异步编程](https://rustlang-cn.org/rust/async-rust/)
-
-#### 资源
-
-- 社区网站生态模块增加[书签](https://rustlang-cn.org/resourse/mark/)资源
-
-#### 论坛
-
-- 新增帖子33项[新帖](https://github.com/rustlang-cn/forum/issues)
-
-<hr>
-
-# Hi
-
-Rust 是一种安全、并发、实用的系统语言。 它有着惊人的运行速度，能够防止段错误，并保证线程安全
+<br>
 
 <div class="features">
   <div class="feature">
-    <h2>零开销抽象</h2>
-    <p>实施高级抽象而没有性能损耗</p>
-    <div><a href="#">更多</a></div>
+    <button class="new"><a href="/read/rust/2018/深入浅出Rust-Future-Part-5.html" >最新文章</a></button>
+    <p><strong>深入浅出Rust-Future-Part-5</strong></p>
   </div>
   <div class="feature">
-    <h2>转移语义</h2>
-    <p>转移所有权灵活且强大</p>
-    <div><a href="#">更多</a></div>
+    <button class="new"><a href="/read/rustlang-cn/2018/12.html" >最新社刊</a></button>
+    <p><strong >Rust中文社刊 2018-12</strong></p>
   </div>
   <div class="feature">
-    <h2>内存安全</h2>
-    <p>内存安全与生俱来</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>线程无数据竞争</h2>
-    <p>高效安全的进行无畏并发编程</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>基于 trait 的泛型</h2>
-    <p>通用和高级泛型编程</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>模式匹配</h2>
-    <p>逻辑灵活又高效</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>类型推断</h2>
-    <p>强大类型系统保证质量与安全</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>极小运行时</h2>
-    <p>裸机、嵌入式、到规模系统，Rust无处不在</p>
-    <div><a href="#">更多</a></div>
-  </div>
-  <div class="feature">
-    <h2>高效 C 绑定</h2>
-    <p>无痛高效集成C语言生态</p>
-    <div><a href="#">更多</a></div>
+    <button class="new"><a href="https://github.com/rustlang-cn/forum/issues" target="_black">中文论坛</a></button>
+    <p><strong>浏览/交流/分享/Code</strong></p>
   </div>
 </div>
 
 <hr>
+
+# Why Rust
+
+<strong>Rust</strong> 是一种安全、并发、实用的编程语言，有着惊人的运行速度，能够防止段错误，并保证线程安全,使每个人都能够构建
+可靠，高效的软件
+
+<div class="features">
+  <div class="feature">
+    <h2>性能</h2>
+    <p>Rust非常快速且节省内存：没有运行时或垃圾收集器，它可以为性能关键型服务提供动力，在嵌入式设备上运行，并且可以轻松地与其他语言集成</p>
+  </div>
+  <div class="feature">
+    <h2>可靠性</h2>
+    <p>Rust的丰富类型系统和所有权模型保证了内存安全性和线程安全性 - 使您能够在编译时消除许多类错误</p>
+  </div>
+  <div class="feature">
+    <h2>生产率</h2>
+    <p>Rust拥有出色的文档，友好的编译器和有用的错误消息，以及一流的工具 - 集成的包管理器和构建工具，具有自动完成和类型检查的智能多编辑器支持，自动格式化程序等</p>
+  </div>
+</div>
+
+# 使用 Rust
+
+<div class="features">
+  <div class="feature">
+    <h2>命令行</h2>
+    <p>使用Rust强大的生态系统快速启动CLI工具。Rust可帮助您放心地维护应用程序并轻松分发</p>
+    <div><a href="/cli/book/">更多</a></div>
+  </div>
+  <div class="feature">
+    <h2>WebAssembly</h2>
+    <p>使用Rust可以一次为一个模块增加JavaScript。发布到npm，与WebPack捆绑，然后你就参加了比赛</p>
+    <div><a href="/wasm/book/">更多</a></div>
+  </div>
+  <div class="feature">
+    <h2>网络</h2>
+    <p>可预测的表现。微小的资源足迹。坚如磐石的可靠性。Rust非常适合网络服务</p>
+    <div><a href="#">更多</a></div>
+  </div>
+  <div class="feature">
+    <h2>嵌入式</h2>
+    <p>针对资源匮乏的设备？需要低级控制而不放弃高级便利性？Rust让你满意</p>
+    <div><a href="/iot/book/">更多</a></div>
+  </div>
+  <div class="feature">
+    <h2>游戏</h2>
+    <p>高性能渲染，实时光线追踪、SIMD</p>
+    <div><a href="/iot/book/">更多</a></div>
+  </div>
+</div>
+
+<hr><br>
 <div>
     <a href="https://github.com/rustlang-cn" target="_black">GitHub</a>&emsp;
     <a href="https://zhuanlan.zhihu.com/rustlang-cn" target="_black">知乎</a>&emsp;

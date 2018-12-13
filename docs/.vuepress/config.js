@@ -1,5 +1,5 @@
 let { read } = require ('./category/read.js')
-let { rusteco } = require ('./category/rusteco.js')
+let { rustlangcn } = require ('./category/rustlangcn.js')
 let { work } = require ('./category/work.js')
 let { book } = require ('./category/rust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
@@ -30,6 +30,7 @@ module.exports = {
     themeConfig: {
         repo: 'rustlang-cn/rustlang-cn',
         docsDir: 'docs',
+        // logo: '/imgs/rust.png',
         displayAllHeaders: true,
         editLinks: true,
         editLinkText: '在 GitHub 上编辑此页',
@@ -40,8 +41,8 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: 'Rust文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-5' },
-            { text: 'Rust生态', link: '/read/rusteco/2018/rusteco-2018-11-13' }
+            { text: '文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-5' },
+            { text: '社刊', link: '/read/rustlang-cn/2018/12' }
           ] },
           { text: '文档', items: [
               { text: '官方书籍大全', link: '/rust/' },
@@ -65,9 +66,13 @@ module.exports = {
                   { text: 'Wasm-bindgen', link: '/wasm/wasm-bindgen/' }
                 ] 
               },
+              { text: 'CLI', items: [ 
+                  { text: 'book', link: '/cli/book/' }
+                ] 
+              },
               { text: 'IOT', items: [ 
+                  { text: 'book', link: '/iot/book/' },
                   { text: 'Discovery', link: '/iot/discovery/' },
-                  { text: 'Embedded-book', link: '/iot/book/' },
                   { text: 'Embedonomicon', link: '/iot/embedonomicon/' }
                 ] 
               }
@@ -78,20 +83,27 @@ module.exports = {
             { text: 'Crates', link: '/resourse/crates/' },
             { text: 'Blogs', link: '/resourse/blogs/' },
             { text: '书签', link: '/resourse/mark/' },
-            { text: '资源', link: '/resourse/resourse/' }
+            { text: '资源', link: '/resourse/resourse/' },
+            { text: '网络', items: [ 
+              { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
+              { text: '微博', link: 'https://weibo.com/kriry' },
+              { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' },
+              { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' }      
+            ] }
+          ] },
+          { text: '全栈', items: [ 
+            { text: 'Linux', link: '/os/linux/' },
+            { text: 'Bash', link: '/os/bash/' },
+            { text: 'HTML', link: '/w3c/html/' },
+            { text: 'CSS', link: '/w3c/css/' },
+            { text: 'Ecmascript', link: '/w3c/ecmascript/' },
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
-          { text: '网络', items: [ 
-            { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
-            { text: '微博', link: 'https://weibo.com/kriry' },
-            { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' },
-            { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' }      
-          ] },
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {
           '/read/rust/': read('Read'),
-          '/read/rusteco/': rusteco('Rusteco'),
+          '/read/rustlang-cn/': rustlangcn('Rustlang-cn'),
           '/work/': work('Work'),
           '/rust/book/': book('Rust'),
           '/rust/async-rust/': asyncrust('Async-Rust'),
