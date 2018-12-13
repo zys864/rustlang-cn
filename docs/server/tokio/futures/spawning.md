@@ -2,12 +2,7 @@
 
 基于 Tokio 的应用程序是以任务为单位组织的。任务是较小的独立运行的逻辑单元。类似于 [Go 语言的 goroutine][Go's goroutine] 和 [Erlang 的 process][Erlang's process]。换句话说，任务是异步的绿色线程。创建任务与使用同步代码创建线程往往出于相似的原因，但是使用 Tokio 创建任务非常轻量。
 
-之前的一些例子定义 future 并将其传递给 `tokio::run` 函数。这样就会在 Tokio 的运行时上创建一个任务并执行。
-Previous examples defined a future and passed that future to `tokio::run`. This
-resulted in a task being spawned onto Tokio's runtime to execute the provided
-future. Additional tasks may be spawned by calling `tokio::spawn`, but only from
-code that is already running on a Tokio task. One way to think about it is the
-future passed to `tokio::run` is the "main function".
+之前的一些例子定义 future 并将其传递给 `tokio::run` 函数。这样就会在 Tokio 的运行时上创建一个任务并执行。更多的任务可能需要通过调用 `tokio::spawn` 来创建，这仅限于那些已经作为 Tokio 任务运行的代码。有一个帮助理解的好方法，我们可以把传递给 `tokio::run` 函数的 future 视为 “main 函数”。
 
 下面的例子创建了四个任务.
 
@@ -29,28 +24,20 @@ tokio::run(lazy(|| {
 }));
 ```
 
-The `tokio::run` function will block until the the future passed to `run`
-teriminates as well as **all other spawned tasks**. In this case, `tokio::run`
-blocks until all four tasks output to STDOUT and terminate.
+`tokio::run` 函数将会一直阻塞，直到传递给它的 future 包括其他所有创建的任务执行完。而在这个例子中，`tokio::run`将会阻塞至四个任务将内容打印到标准输出（stdout）然后退出。
 
-The [`lazy`] function runs the closure the first time the future is polled. It
-is used here to ensure that `tokio::spawn` is called from a task. Without
-[`lazy`], `tokio::spawn` would be called from outside the context of a task,
-which results in an error.
+[`lazy`] 函数会在 future 第一次被拉取时运行内部的闭包。这里使用它是为了确保 `tokio::spawn` 是从一个任务中调用的。如果不使用 [`lazy`]，`tokio::spawn` 就会在任务上下文的外部调用，这样就会产生错误了。
 
-# Communicating with tasks
+# 与任务通信
 
-Just as with Go and Erlang, tasks can communicate using message passing. In
-fact, it will be very common to use message passing to coordinate multiple
-tasks. This allows independent tasks to still interact.
+就像 Go 语言和 Erlang 那样，任务可以通过传递消息来通信。实际上，使用消息传递来协调任务是非常常见的。相互独立的任务因此可以产生互动。
 
-The [`futures`] crate provides a [`sync`] module which contains some channel
-types that are ideal for message passing across tasks.
+[`futures`] 库提供了一个 [`sync`] 模块，这个模块包括了一些通道（channel）类型，它们是跨任务消息传递的理想选择。
 
-* [`oneshot`] is a channel for sending exactly one value.
-* [`mpsc`] is a channel for sending many (zero or more) values.
+* [`oneshot`] 是用于发送单个值的通道。
+* [`mpsc`] 是用于发送多个值（零或多个）的通道。
 
-A `oneshot` is ideal for getting the result from a spawned task:
+`oneshot` 非常适用于从一个已创建的任务中获取结果：
 
 ```rust
 extern crate tokio;
@@ -76,7 +63,7 @@ tokio::run(lazy(|| {
 }));
 ```
 
-And `mpsc` is good for sending a stream of values to another task:
+而 `mpsc` 适用于将流式数据发送到另一个任务中：
 
 ```rust
 extern crate tokio;
@@ -107,7 +94,7 @@ tokio::run(lazy(|| {
 These two message passing primitives will also be used in the examples below to
 coordinate and communicate between tasks.
 
-# Multi threaded
+# 多线程
 
 While it is possible to introduce concurrency with futures without spawning
 tasks, this concurrency will be limited to running on a single thread. Spawning
@@ -120,7 +107,7 @@ runtime handles scheduling.
 
 [rt]: https://docs.rs/tokio/0.1/tokio/runtime/index.html
 
-# When to spawn tasks
+# 何时创建任务
 
 As all things software related, the answer is that it depends. Generally, the
 answer is spawn a new task whenever you can. The more available tasks, the
@@ -129,7 +116,7 @@ multiple tasks do require communication, this will involve channel overhead.
 
 The following examples will help illustrate cases for spawning new tasks.
 
-## Processing inbound sockets
+## 处理入站连接
 
 The most straightforward example for spawning tasks is a network server.
 The primary task listens for inbound sockets on a TCP listener. When a
@@ -175,7 +162,7 @@ The listener task and the tasks that process each socket are completely
 unrelated. They do not communicate and either can terminate without
 impacting the others. This is a perfect use case for spawning tasks.
 
-## Background processing
+## 后台处理
 
 Another case is to spawn a task that runs background computations in
 service of other tasks. The primary tasks send data to the background
