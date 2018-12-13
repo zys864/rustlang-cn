@@ -55,7 +55,7 @@ fn main() {
 在实现 `Future` 时， **除非** 我们通过调用内部 future 的 `poll` 函数获得了 `Async::NotReady`，我们的 `poll` **一定不能** 返回 `Async::NotReady`。
 一种理解思路是：当一个 future 被拉取值时，它必须尽其所能的执行任务，直到它被完成或者被内部的 future 阻塞。
 
-# 链式计算
+## 链式计算
 
 现在，我们拿着这个建立连接的 future，给它加上 TCP 套接字建立后打印 “hello world” 的功能。
 

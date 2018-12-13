@@ -2,7 +2,7 @@
 
 使用Tokio时，实现 future 是很常见的. 让我们从一个基本的 future 开始，它不执行异步逻辑，只简单返回一个消息。（经典的“hello world”）
 
-# `Future` 特质
+## `Future` 特质
 
 下面是 `Future` 特质的定义:
 
@@ -50,7 +50,7 @@ Future 使用基于拉取的模型。future 对象的消费者会多次调用 `p
 
 此处的 “hello world” future 不需要异步处理，是立即就绪的，所以它直接返回 `Ok(Async::Ready(value))`
 
-# 执行 future
+## 执行 future
 
 Tokio 负责将 future 对象执行完成。这是通过将 future 传递给 `tokio::run` 函数来实现的。
 
@@ -104,7 +104,7 @@ tokio::run(future);
 
 以上代码的运行结果就是 “hello world” 被输出到标准输出中（stdout）。
 
-# 清理
+## 清理
 
 等待内部 future 的模式很常见，所以有了一个助手宏：`try_ready!`。
 

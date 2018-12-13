@@ -2,11 +2,11 @@
 
 Future 的实现往往遵循相同的模式。为了减少重复代码，`future` 库提供了许多被称为 “组合器（Combinator）” 的工具，它们是这些模式的抽象，多以 [`Future`] 特质相关的函数的形式存在。
 
-# 基础构件
+## 基础构件
 
 让我们回顾之前几页中的 future 实现，看看怎么用组合器去简化它们。
 
-## `map`
+### `map`
 
 [`map`] 组合器拥有一个 future 并返回一个新 future，新 future 的值是通过前一个 future 调用某个给定的函数获得的。
 
@@ -76,7 +76,7 @@ impl<U, A, F> Future for Map<A, F>
 ```
 把 `Map` 和我们的 `Display` 放在一起比较，就可以明显看出它们的相似性。`Map` 在 `Display` 调用 `println!` 的相同位置把值传给了给定的函数。
 
-## `and_then`
+### `and_then`
 
 现在，让我们开始用 `and_then` 组合器重写建立TCP流以及写入 “hello world” 的 future。
 
@@ -133,14 +133,14 @@ fn main() {
 
 `and_then` 返回的 future 会像我们在之前手动实现的 future 那样执行。
 
-# 基本组合器
+## 基本组合器
 
 花时间看一下 [`Future` 特质][trait-dox] 和其 [模块][mod-dox] 的文档来熟悉所有可用的组合器是很值得的。本文仅提供快速简要的概述。
 
 [trait-dox]: https://docs.rs/futures/0.1/futures/future/trait.Future.html
 [mod-dox]: https://docs.rs/futures/0.1/futures/future/index.html
 
-## 既定的 future
+### 既定的 future
 
 任何值都可以立即生成一个已完成的 future。`future` 模块中有一些用于创建该类 future 的函数：
 
@@ -158,7 +158,7 @@ fn main() {
 
 [`lazy`]: https://docs.rs/futures/0.1/futures/future/fn.lazy.html
 
-## `IntoFuture` 特质
+### `IntoFuture` 特质
 
 [`IntoFuture`] 特质是一个很关键的 API，它代表各种可以被转化为 future 的值。大多数使用 future 的接口实际上是用它实现的。原因在于：`Result` 实现了这个特质，这就允许我们在很多需要返回 future 的地方直接返回 `Result` 值。
 
@@ -166,7 +166,7 @@ fn main() {
 
 [`IntoFuture`]: https://docs.rs/futures/0.1/futures/future/trait.IntoFuture.html
 
-## 适配器
+### 适配器
 
 就像 [`Iterator`] 那样，`Future` 特质也包含了各种各样的“适配器”方法。 这些方法消费当前 future，返回一个新的 future 以提供我们请求的行为。使用这些适配组合器，我们可以：
 
@@ -190,11 +190,11 @@ fn main() {
 [`join`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.join
 [`catch_unwind`]: https://docs.rs/futures/0.1/futures/future/trait.Future.html#method.catch_unwind
 
-# 何时使用组合器
+## 何时使用组合器
 
 使用组合器可以减少陈词滥调，但它们并不总那么合适。由于某些限制，手动实现 `Future` 可能更为常见。
 
-## 函数式风格
+### 函数式风格
 
 传递给组合器的闭包必须是 `'static` 的。这就意味着不可能在闭包中加入引用。所有状态的所有权必须被转移到闭包中。这是因为 Rust 的生命周期是基于栈的。使用异步代码，就意味着失去了栈的相关功能。
 
@@ -292,7 +292,7 @@ fn print_multi() -> impl Future<Item = (), Error = io::Error> {
 }
 ```
 
-## 返回 future
+### 返回 future
 
 因为组合器经常使用闭包作为它们类型签名的一部分，future 的类型是无法确定的。这就造成 future 的类型无法作为函数签名的一部分。当使用一个 future 作为函数参数时，泛型可以自由运用于几乎所有情况。例如：
 
@@ -322,7 +322,7 @@ with_future(my_future);
 * [特质对象](#trait-objects)
 * [手动实现 `Future`](#implement-future-by-hand)
 
-### 使用 `impl Future`
+#### 使用 `impl Future`
 
 从 Rust 的 **1.26** 版本开始，[`impl Trait`] 这一语言特性就可以用来返回组合器 future 了。因此我们可以这样写:
 
@@ -349,7 +349,7 @@ if some_condition {
 }
 ```
 
-#### 从多个代码分支返回
+##### 从多个代码分支返回
 
 以上代码会导致 `rustc` 输出编译错误：`error[E0308]: if and else have incompatible types`（if 和 else 存在不匹配的类型）。也就是说返回 `impl Future` 的函数还是必须有一个唯一确定的返回类型。`impl Future` 语法只是允许我们不明确指定类型。然而，每个组合器类型都有一个**不同**的类型，这就造成各个条件分支中的返回类型不同。对于以上情况，我们有两种解决方案。第一种时将函数的返回值改为一个 [特质对象](#trait-objects)。第二种方法是使用 [`Either`] 类型：
 
@@ -384,7 +384,7 @@ fn my_operation(arg: String) -> impl Future<Item = String> {
 
 [`Either`]: https://docs.rs/futures/0.1.25/futures/future/enum.Either.html
 
-#### 相关类型
+##### 相关类型
 
 具有返回 future 的函数的特质一定会包含 future 相关的类型定义。比如，我们来看一个简化版本的 Tower 库中的 [`Service`] 特质：
 
@@ -410,7 +410,7 @@ pub trait Service {
 
 [`Service`]: https://docs.rs/tower-service/0.1/tower_service/trait.Service.html
 
-### 特质对象（Trait objects）
+#### 特质对象（Trait objects）
 
 还有一种策略是返回一个装箱的 future，即一个 [特质对象]：
 
@@ -454,11 +454,11 @@ fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
 
 [trait object]: https://doc.rust-lang.org/book/trait-objects.html
 
-### 手动实现 `Future`
+#### 手动实现 `Future`
 
 最后，当所有以上策略都失败时，我们还是可以退回到手动实现 `Future` 的方法。手动实现可以提供完整的控制，但是因为没有组合器函数能用于这种方法，我们得花更多的精力在那些陈词滥调上了。
 
-## 何时使用组合器
+### 何时使用组合器
 
 在你基于 Tokio 的应用程序中，组合器是减少重复代码的有力解决方案，但是就如本章节所述，它们并不是“银弹”。实现定制的future和定制的组合器还是很常见的。这就提出了什么时候使用组合器与手动实现 `Future` 的选择问题。
 

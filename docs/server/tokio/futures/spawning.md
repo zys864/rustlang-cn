@@ -1,6 +1,6 @@
 # 创建任务
 
-基于 Tokio 的应用程序是以任务为单位组织的。任务是较小的独立运行的逻辑单元。类似于 [Go 语言的 goroutine][Go's goroutine] 和 [Erlang 的 process][Erlang's process]。换句话说，任务是异步的绿色线程。创建任务与使用同步代码创建线程往往出于相似的原因，但是使用 Tokio 创建任务非常轻量。
+基于 Tokio 的应用程序是以任务（task）为单位组织的。任务是较小的独立运行的逻辑单元。类似于 [Go 语言的 goroutine][Go's goroutine] 和 [Erlang 的 process][Erlang's process]。换句话说，任务是异步的绿色线程（green thread）。创建（spawn）任务与使用同步代码创建线程往往出于相似的原因，但是使用 Tokio 创建任务非常轻量。
 
 之前的一些例子定义 future 并将其传递给 `tokio::run` 函数。这样就会在 Tokio 的运行时上创建一个任务并执行。更多的任务可能需要通过调用 `tokio::spawn` 来创建，这仅限于那些已经作为 Tokio 任务运行的代码。有一个帮助理解的好方法，我们可以把传递给 `tokio::run` 函数的 future 视为 “main 函数”。
 
@@ -28,7 +28,7 @@ tokio::run(lazy(|| {
 
 [`lazy`] 函数会在 future 第一次被拉取时运行内部的闭包。这里使用它是为了确保 `tokio::spawn` 是从一个任务中调用的。如果不使用 [`lazy`]，`tokio::spawn` 就会在任务上下文的外部调用，这样就会产生错误了。
 
-# 与任务通信
+## 与任务通信
 
 就像 Go 语言和 Erlang 那样，任务可以通过传递消息来通信。实际上，使用消息传递来协调任务是非常常见的。相互独立的任务因此可以产生互动。
 
@@ -81,7 +81,7 @@ tokio::run(lazy(|| {
             tx.send(format!("Message {} from spawned task", i))
                 .map_err(|e| println!("error = {:?}", e))
         })
-        .map(|_| ()) // Drop tx handle
+        .map(|_| ()) // 释放 tx 句柄
     });
 
     rx.for_each(|msg| {
@@ -91,37 +91,25 @@ tokio::run(lazy(|| {
 }));
 ```
 
-These two message passing primitives will also be used in the examples below to
-coordinate and communicate between tasks.
+以上两个消息传递原语也将用于后续例子中任务间的协调与通信。
 
-# 多线程
+## 多线程
 
-While it is possible to introduce concurrency with futures without spawning
-tasks, this concurrency will be limited to running on a single thread. Spawning
-tasks allows the Tokio runtime to schedule these tasks on multiple threads.
+使用 future 而不创建任务来实现并发也是可以的，这种并发将运行于单线程中。而创建任务则允许 Tokio 运行时在多个线程上调度这些任务。
 
-The [multi-threaded Tokio runtime][rt] manages multiple OS threads internally.
-It multiplexes many tasks across a few physical threads. When a Tokio
-application spawns its tasks, these tasks are submitted to the runtime and the
-runtime handles scheduling.
+[多线程 Tokio 运行时][rt] 在内部管理多个操作系统线程。它可以仅靠少量物理线程多路复用来运行很多任务。当一个 Tokio 应用创建任务时，这些任务会被提交给运行时环境，运行时环境将自动调度。
 
 [rt]: https://docs.rs/tokio/0.1/tokio/runtime/index.html
 
-# 何时创建任务
+## 何时创建任务
 
-As all things software related, the answer is that it depends. Generally, the
-answer is spawn a new task whenever you can. The more available tasks, the
-greater the ability to run the tasks in parallel. However, keep in mind that if
-multiple tasks do require communication, this will involve channel overhead.
+对于大多数软件相关的问题，我们的答案都是要视具体情况来决定。通常来说，你应该尽可能的创建任务。因为你创建的任务越多，就意味着你并行地执行任务的能力就越强。但是，一定要注意，多任务通信会引入通道的开销。
 
-The following examples will help illustrate cases for spawning new tasks.
+接下来的几个例子将介绍如何创建新任务。
 
-## 处理入站连接
+### 处理入站套接字
 
-The most straightforward example for spawning tasks is a network server.
-The primary task listens for inbound sockets on a TCP listener. When a
-new connection arrives, the listener task spawns a new task for
-processing the socket.
+创建任务最直接的例子就是网络服务器。它的主任务（main task）是用TCP监听器监听入站套接字。当一个新的连接建立时，监听器任务将创建一个新任务来处理对应的套接字。
 
 ```rust
 extern crate tokio;
@@ -134,49 +122,35 @@ use futures::{Future, Stream};
 let addr = "127.0.0.1:0".parse().unwrap();
 let listener = TcpListener::bind(&addr).unwrap();
 
-# if false {
 tokio::run({
     listener.incoming().for_each(|socket| {
-        // An inbound socket has been received.
+        // 接受到一个入站套接字
         //
-        // Spawn a new task to process the socket
+        // 创建一个新任务来处理套接字
         tokio::spawn({
-            // In this example, "hello world" will be written to the
-            // socket followed by the socket being closed.
+            // 在本例中，直接将 "hello world" 写入到套接字中然后关闭
             io::write_all(socket, "hello world")
-                // Drop the socket
+                // 释放套接字
                 .map(|_| ())
-                // Write any error to STDOUT
+                // 向标准输出（stdout）中写入错误信息
                 .map_err(|e| println!("socket error = {:?}", e))
         });
 
-        // Receive the next inbound socket
+        // 接受下一个入站套接字
         Ok(())
     })
     .map_err(|e| println!("listener error = {:?}", e))
 });
-# }
 ```
+监听任务以及每个套接字的处理任务是完全无关的。它们不需要通信，运行停止也不会影响其它任务。以上，就是一个创建任务的完美用例。
 
-The listener task and the tasks that process each socket are completely
-unrelated. They do not communicate and either can terminate without
-impacting the others. This is a perfect use case for spawning tasks.
+### 后台处理
 
-## 后台处理
+另一个例子是创建任务用于执行后台计算来为其它任务提供服务。它的主任务发送数据至后台任务处理，但并不关心数据是否或何时被处理。这样就可以实现一个单独的后台任务对来自多个主任务的数据进行合并处理。 
 
-Another case is to spawn a task that runs background computations in
-service of other tasks. The primary tasks send data to the background
-task for processing but do not care about if and when the data gets
-processed. This also allows a single background task to coalesce data
-from multiple primary tasks.
+这个例子需要主任务与后台任务通信。通常用 [`mpsc`] 通道来处理。
 
-This requires communication between the primary tasks and the background
-task. This is usually handled with an [`mpsc`] channel.
-
-The following example is a TCP server that reads data from the remote
-peer and tracks the number of received bytes. It then sends the number
-of received bytes to a background task. This background task writes the
-total number of bytes read from all socket tasks every 30 seconds.
+下面的例子是一个TCP服务器，它从远端读取数据，并记录接受的字节数。然后，它把接受的字节数发送到一个后台任务。这个后台任务将每30秒打印各套接字任务接受的字节数总和。
 
 ```rust
 extern crate tokio;
@@ -247,7 +221,6 @@ fn bg_task(rx: mpsc::Receiver<usize>)
     .map(|_| ())
 }
 
-# if false {
 // Start the application
 tokio::run(lazy(|| {
     let addr = "127.0.0.1:0".parse().unwrap();
@@ -286,10 +259,9 @@ tokio::run(lazy(|| {
     })
     .map_err(|e| println!("listener error = {:?}", e))
 }));
-# }
 ```
 
-## Coordinating access to a resource
+### 协调资源访问
 
 When working with futures, the preferred strategy for coordinating
 access to a shared resource (socket, data, etc...) is by using message
@@ -394,7 +366,7 @@ tokio::run(lazy(|| {
 # }
 ```
 
-# When not to spawn tasks
+## 何时不要创建任务
 
 If the amount of coordination via message passing and synchronization primitives
 outweighs the parallism benefits from spawning tasks, then maintaining a single
