@@ -22,10 +22,24 @@ exports.asyncrust = (title) => {
             ]
         },
         {
+            title: 'Async/Await',
+            collapsable: true,
+            children: [
+            'async_await/chapter'
+            ]
+        },
+        {
             title: 'Pinning',
             collapsable: true,
             children: [
             'pinning/chapter'
+            ]
+        },
+        {
+            title: 'Streams',
+            collapsable: true,
+            children: [
+            'streams/chapter'
             ]
         }
     ]

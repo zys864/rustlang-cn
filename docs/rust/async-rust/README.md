@@ -1,34 +1,34 @@
 # Rust异步编程
 
-- [Getting Started](getting_started/chapter.md)
-  - [What This Book Covers](getting_started/chapter.md#what-this-book-covers)
-  - [Why Async?](getting_started/why_async.md)
-  - [The State of Asynchronous Rust](getting_started/state_of_async_rust.md)
-  - [`async`/`await!` Primer](getting_started/async_await_primer.md)
-  - [Applied: HTTP Server](getting_started/http_server_example.md)
-- [Under the Hood: Executing `Future`s and Tasks](execution/chapter.md)
-  - [The `Future` Trait](execution/future.md)
-  - [Task Wakeups with `LocalWaker` and `Waker`](execution/wakeups.md)
-    - [Applied: Build a Timer](execution/wakeups.md)
-  - [Applied: Build an Executor](execution/executor.md)
-  - [Executors and System IO](execution/io.md)
-- [`async`/`await`](...)
-  - [What and Why](...)
-  - [`async` Blocks, Closures, and Functions](...)
-  - [Cancellation and Timeouts](...)
-  - [Applied: XXX](...)
-- [Pinning](pinning/chapter.md)
-  - [Practical Usage](pinning/chapter.md#how-to-use-pinning)
-- [Streams](...)
-  - [Patterns: Iteration and Concurrency](...)
-- [Executing Multiple Futures at a Time](...)
-  - [`select!` and `join!`](...)
-  - [Spawning](...)
-  - [`FuturesUnordered`](...)
-- [I/O](...)
-  - [`AsyncRead` and `AsyncWrite`](...)
-- [Asynchronous Design Patterns: Solutions and Suggestions](...)
-  - [Modeling Servers and the Request/Response Pattern](...)
-  - [Managing Shared State](...)
-- [The Ecosystem: Tokio and More](...)
-  - Lots, lots more?...
+- 入门
+  * 本书涵盖的内容
+  * 为什么异步？
+  * 异步`Rust`的状态
+  * `async/await!` 基础
+  * 应用：HTTP服务器
+- 深入异步:执行`Future`和任务
+  * `Future`特质
+  * 使用`LocalWaker`和`Waker`唤醒任务
+    - 应用：构建计时器
+  * 应用：构建执行者
+  * 执行者和系统IO
+- `async/await`
+  * 是什么和为什么
+  * `async块`，闭包和函数
+  * 应用：XXX
+- Pinning
+  * 实际用途
+- 流
+  * 模式：迭代和并发
+- 一次执行多个`Future`
+  * `select!` 和 `join!`
+  * Spawning
+  * 撤销和超时
+  * `FuturesUnordered`
+- `I/O`
+  * `AsyncRead` 和 `AsyncWrite`
+- 异步设计模式：解决方案和建议
+  * 服务器模型和请求/响应模式
+  * 管理共享状态
+- 生态系统：Tokio等等
+  * 还有很多吗......
