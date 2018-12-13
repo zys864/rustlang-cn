@@ -1,4 +1,4 @@
-# The `Stream` Trait
+# `Stream`
 
 The `Stream` trait is similar to `Future` but can yield multiple values before
 completing, similar to the `Iterator` trait from the standard library:

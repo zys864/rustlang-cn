@@ -112,7 +112,6 @@ async fn foo() {
         ...
         println!("{}", my_string);
     };
- 
     // Run both futures to completion, printing "foo" twice
     let ((), ()) = join!(future_one, future_two);
 }
