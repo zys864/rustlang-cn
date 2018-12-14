@@ -1,3 +1,6 @@
-# Rust中文社刊
+<div id="lanmu">
+    <div id="word">Rust中文社刊</div>
+</div>
 
-#### [Rust中文社刊 2018-12](/read/rustlang-cn/2018/12.html)
+<h4><img src="/imgs/rust.png"/>
+<a href="/read/rustlang-cn/2018/12.html">Rust中文社刊 2018-12</a></h4>

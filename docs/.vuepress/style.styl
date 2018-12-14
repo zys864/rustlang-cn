@@ -2,6 +2,7 @@
     display: none;
 }
 
+//------------------------home------------------------
 .front {
     background-image: url("/imgs/sky.jpg");
     background-size: cover;
@@ -28,6 +29,8 @@
 .new a {
     color: #ffffff;
 }
+
+//---------------------docs----------------------------------
 .sidebar {
     width: 16rem;
 }
@@ -43,6 +46,28 @@
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 16px rgba(0,0,0,.3);
     background-color: #8AC3421;
+}
+
+//---------------------blog----------------------------
+
+#lanmu {
+    width: 100%;
+    height: 11rem;
+    background-image: url("/imgs/sky.jpg");
+    background-size: cover;
+    text-align: center;
+}
+#lanmu #word {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #7B463D;
+    padding: 4rem 0;
+    line-height: 3.3rem; 
+}
+
+h4 img {
+    width: 1rem;
+    height: 1rem; 
 }
 
 @media (max-width: 420px) {
@@ -65,3 +90,10 @@
        padding-right: 5rem;
     }
 } 
+
+@media (max-width: 460px) {
+    #lanmu #word {
+        padding: 3rem 0;
+        line-height: 3.3rem; 
+    }
+}
