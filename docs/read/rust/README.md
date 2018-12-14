@@ -3,6 +3,9 @@
 </div>
 
 <h4><img src="/imgs/rust.png"/>
+<a href="/read/rust/2018/rust-error-handle.html">Rust错误处理</a></h4>
+
+<h4><img src="/imgs/rust.png"/>
 <a href="/read/rust/2018/深入浅出Rust-Future-Part-5.html">深入浅出Rust-Future-Part-5</a></h4>
 
 <h4><img src="/imgs/rust.png"/>
