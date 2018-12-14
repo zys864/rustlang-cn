@@ -1,4 +1,4 @@
-![img](https://pic4.zhimg.com/v2-b2f74379a336441cc8cce891da26ad35_1200x500.jpg)
+![img](https://images.wallpaperscraft.com/image/artist_waves_colorful_129158_1366x768.jpg)
 
 # Rust错误处理
 
