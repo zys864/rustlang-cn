@@ -41,6 +41,7 @@ exports.asyncrust = (title) => {
             children: [
             'streams/chapter'
             ]
-        }
+        },
+        'api'
     ]
 }
