@@ -1,5 +1,3 @@
-let { read } = require ('./category/read.js')
-let { rustlangcn } = require ('./category/rustlangcn.js')
 let { work } = require ('./category/work.js')
 let { book } = require ('./category/rust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
@@ -41,8 +39,8 @@ module.exports = {
         searchMaxSuggestions: 11,
         nav: [
           { text: '阅读', items: [ 
-            { text: '文章', link: '/read/rust/2018/深入浅出Rust-Future-Part-5' },
-            { text: '社刊', link: '/read/rustlang-cn/2018/12' }
+            { text: '文章', link: '/read/rust/' },
+            { text: '社刊', link: '/read/rustlang-cn/' }
           ] },
           { text: '文档', items: [
               { text: '官方书籍大全', link: '/rust/' },
@@ -94,17 +92,17 @@ module.exports = {
           { text: '全栈', items: [ 
             { text: 'Linux', link: '/os/linux/' },
             { text: 'Bash', link: '/os/bash/' },
+            { text: 'Web', link: '/w3c/webapi/' },
             { text: 'HTML', link: '/w3c/html/' },
             { text: 'CSS', link: '/w3c/css/' },
             { text: 'Ecmascript', link: '/w3c/ecmascript/' },
+            { text: 'DBA', link: '/dba/dba' },
+            { text: 'Postgresql', link: '/dba/postgresql/' },
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {
-          '/read/rust/': read('Read'),
-          '/read/rustlang-cn/': rustlangcn('Rustlang-cn'),
-          '/work/': work('Work'),
           '/rust/book/': book('Rust'),
           '/rust/async-rust/': asyncrust('Async-Rust'),
           '/rust/std/': std('Std'),
@@ -114,7 +112,8 @@ module.exports = {
           '/server/actix-web/': actixweb('Actix-Web'),
           '/server/diesel/': diesel('Diesel'),
           '/iot/discovery/': discovery('Discovery'),
-          '/resourse/awesome/': awesome('Awesome')
+          '/resourse/awesome/': awesome('Awesome'),
+          '/work/': work('Work'),
         }
     }
 }

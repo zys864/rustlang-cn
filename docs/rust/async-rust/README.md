@@ -1,5 +1,7 @@
 # Rust异步编程
 
+> 本书译自官方[async-book](https://rust-lang.github.io/async-book/),欢迎参与！本书翻译[仓库](https://github.com/rustlang-cn/rustlang-cn/tree/master/docs/rust/async-rust)，官方书[仓库](https://github.com/rust-lang/async-book).
+
 - 入门
   * 本书涵盖的内容
   * 为什么异步？

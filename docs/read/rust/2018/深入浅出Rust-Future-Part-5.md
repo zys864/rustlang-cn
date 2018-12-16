@@ -1,9 +1,8 @@
 # 深入浅出Rust-Future-Part-5
 
->[原文:Rust futures: an uneducated, short and hopefully not boring tutorial - Part 5 - Streams](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-5---streams-5i8)
+>[原文出处](https://dev.to/mindflavor/rust-futures-an-uneducated-short-and-hopefully-not-boring-tutorial---part-5---streams-5i8)
 >本文时间：2018-12-09，译者:
 [motecshine](https://github.com/motecshine), 简介：motecshine
-
 
 欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文将在以下地方直接展示
 

@@ -10,18 +10,20 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 
 <div class="features">
   <div class="feature">
-    <button class="new"><a href="/read/rust/2018/深入浅出Rust-Future-Part-5.html" >最新文章</a></button>
-    <p><strong>深入浅出Rust-Future-Part-5</strong></p>
+    <button class="new"><a href="/read/rust/" >文章专栏</a></button>
+    <p><a href="/read/rust/2018/rust-error-handle.html" ><strong>最新文章：Rust错误处理</strong></a></p>
   </div>
   <div class="feature">
-    <button class="new"><a href="/read/rustlang-cn/2018/12.html" >最新社刊</a></button>
-    <p><strong >Rust中文社刊 2018-12</strong></p>
+    <button class="new"><a href="/read/rustlang-cn/" >社刊专栏</a></button>
+    <p><a href="/read/rustlang-cn/2018/12-1.html" ><strong >最新社刊：Rust中文社刊12月上</strong></a></p>
   </div>
   <div class="feature">
     <button class="new"><a href="https://github.com/rustlang-cn/forum/issues" target="_black">中文论坛</a></button>
-    <p><strong>浏览/交流/分享/Code</strong></p>
+    <p><a href="https://github.com/rustlang-cn/forum/issues/new" target="_black"><strong>现在点击发新帖</strong></a></p>
   </div>
 </div>
+
+<div id="join"><a href="https://github.com/rustlang-cn/Important/issues/1" target="_black"><strong>欢迎加入</strong></a>,共建Rust语言中文网络！</div>
 
 <hr>
 

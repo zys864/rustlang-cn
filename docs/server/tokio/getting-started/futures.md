@@ -87,7 +87,7 @@ track_response_success(response_is_ok);
 
 使用基于轮询的模型提供了许多优点，包括作为零成本抽象，即与手动编写异步代码相比，使用Rust`Future`没有额外的开销。
 
-我们将在下一节中仔细研究这种基于民意调查的模型。
+我们将在下一节中仔细研究这种基于轮询的模型。
 
 ## `Future` 特质（trait）
 
@@ -112,3 +112,31 @@ trait Future {
 最后，Futures有一种名为`poll`的方法。 我们不会在本节中详细介绍轮询模型，因为您不需要了解有关使用组合器的`Future`的轮询模型。 现在唯一需要注意的是，`poll`是在`tokio`运行时调用的，以便查看Future是否已完成。 如果你很好奇：Async是一个带有值的枚举，Ready(Item)或者NotReady告诉`tokio`运行时`Future`是否完成。
 
 在以后的部分中，我们将从头开始实现`Future`，包括编写一个`poll`函数，该函数在`Future`完成时正确通知`tokio`运行时。
+
+## 流(Streams)
+
+流是同类`Future`的迭代器。流不会在未来的某个时间点产生值，而是在将来的某个时刻产生一组值。换句话说，像`Future`一样，流在未来的某一点上不会产生一个值。他们随着时间的推移继续产生值。
+
+就像`Future`一样，只要这些东西在未来的某个时间点在不同的点产生离散值，就可以使用流来表示各种各样的东西。例如：
+
+* 由用户以不同方式与GUI交互而导致的UI事件。当事件发生时，流会随着时间的推移向您的应用生成不同的消息。
+* 从服务器推送通知。有时请求/响应模型不是您需要的。客户端可以与服务器建立通知流，以便能够从服务器接收消息而无需特别请求。
+* 传入套接字连接。当不同的客户端连接到服务器时，连接流将产生套接字连接。
+
+Streams在实现过程中非常类似于future：
+
+```rust
+trait Stream {
+    /// The type of the value yielded by the stream.
+    type Item;
+
+    /// The type representing errors that occurred while processing the computation.
+    type Error;
+
+    /// The function that will be repeatedly called to see if the stream has
+    /// another value it can yield
+    fn poll(&mut self) -> Poll<Option<Self::Item>, Self::Error>;
+}
+```
+
+`Streams`带有他们自己的组合器，在**使用 Future 工作**章节更深入地介绍。
