@@ -123,7 +123,6 @@ where
 ```
 
 现在，斐波那契额数列就可以被打印出来了：
-Now, the fibonacci sequence can be displayed:
 
 ```rust
 extern crate tokio;
@@ -168,7 +167,7 @@ impl Fibonacci {
 impl Stream for Fibonacci {
     type Item = u64;
 
-    // The stream will never yield an error
+    // 该流将永远不会产生错误
     type Error = ();
 
     fn poll(&mut self) -> Poll<Option<u64>, ()> {
