@@ -23,6 +23,8 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
   </div>
 </div>
 
+<div id="join"><a href="https://github.com/rustlang-cn/Important/issues/1" target="_black"><strong>欢迎加入</strong></a>,共建Rust语言中文网络！</div>
+
 <hr>
 
 # Why Rust
