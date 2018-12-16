@@ -263,22 +263,11 @@ tokio::run(lazy(|| {
 
 ### 协调资源访问
 
-When working with futures, the preferred strategy for coordinating
-access to a shared resource (socket, data, etc...) is by using message
-passing. To do this, a dedicated task is spawned to manage the resource
-and other tasks interact with the resource by sending messages.
+在使用 future 时，协调资源（套接字、数据等等）访问的一个较好的策略时使用消息传递。要实现这样的策略，就需要创建一个专用的任务管理资源，而其它的任务通过发送消息与这个资源交互。
 
-This pattern is very similar to the previous example, but this time the
-tasks want to receive a message back once the operation is complete. To
-implement this, both `mpsc` and `oneshot` channels are used.
+这种模式与之前的例子非常相似，但是这次，任务需要在操作完成后接受一个返回消息。要实现这种模式，`mpsc` 和 `oneshot` 两种通道都会用到。
 
-The example coordinates access to a [transport] over a ping / pong
-protocol. Pings are sent into the transport and pongs are received.
-Primary tasks send a message to the coordinator task to initiate a ping,
-the coordinator task will respond to the ping request with the [round
-trip time][rtt]. The message sent to the coordinator task over the
-`mpsc` contains a `oneshot::Sender` allowing the coordinator task to
-respond.
+这个例子通过 “乒乓协议（ping/pong protocol）” 协调对一个 [transport] 的访问。“乒” 是发送到 transport 上的，而 “乓” 是在上面接收到的。主任务（primary task）发送一个消息到协调者任务（coordinator task）来初始化一个 “乒” 的请求，协调者任务会将消息往返时间作为请求的响应。主任务通过 `mpsc` 发送给协调者任务的消息包含一个  `oneshot::Sender` 值，协调者任务可以通过它返回响应。 
 
 ```rust
 extern crate tokio;
@@ -300,7 +289,6 @@ impl Transport {
     }
 
     fn recv_pong(&self) -> impl Future<Item = (), Error = io::Error> {
-#         future::ok(())
         // ...
     }
 }
@@ -339,17 +327,15 @@ fn rtt(tx: mpsc::Sender<Message>)
         })
 }
 
-# if false {
-// Start the application
+// 启动应用
 tokio::run(lazy(|| {
-    // Create the channel that is used to communicate with the
-    // background task.
+    // 创建用于与后台任务通信的通道.
     let (tx, rx) = mpsc::channel(1_024);
 
-    // Spawn the background task:
+    // 创建后台任务：
     tokio::spawn(coordinator_task(rx));
 
-    // Spawn a few tasks that use the coordinator to requst RTTs.
+    // 创建少量任务，它们向协调者任务请求 RTT 时间。
     for _ in 0..4 {
         let tx = tx.clone();
 
@@ -363,18 +349,13 @@ tokio::run(lazy(|| {
 
     Ok(())
 }));
-# }
 ```
 
 ## 何时不要创建任务
 
-If the amount of coordination via message passing and synchronization primitives
-outweighs the parallism benefits from spawning tasks, then maintaining a single
-task is preferred.
+如果通过消息传递进行协调以及同步原语带来的开销已经超过了创建任务带来的并行收益，那么使用一个单独的任务会是更好的选择。
 
-For example, it is generally better to maintain reading from and writing to a
-single TCP socket on a single task instead of splitting up reading and writing
-between two tasks.
+比如，通常来讲，对同一个 TCP 套接字而言，在一个的任务中进行读写要好过把读和写分到两个任务中进行。
 
 [Go's goroutine]: https://www.golang-book.com/books/intro/10
 [Erlang's process]: http://erlang.org/doc/reference_manual/processes.html
