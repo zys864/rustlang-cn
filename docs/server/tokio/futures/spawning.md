@@ -164,11 +164,10 @@ use futures::future::lazy;
 use futures::sync::mpsc;
 use std::time::Duration;
 
-// Defines the background task. The `rx` argument is the channel receive
-// handle. The task will pull `usize` values (which represent number of
-// bytes read by a socket) off the channel and sum it internally. Every
-// 30 seconds, the current sum is written to STDOUT and the sum is reset
-// to zero.
+
+// 定义后台任务。`rx` 参数是通道的接收句柄。
+// 任务将从通道中拉取 `usize` 值（代表套接字读取都字节数）并求总和。
+// 所求的总和将每三十秒被打印到标准输出（stdout）然后重置为零。
 fn bg_task(rx: mpsc::Receiver<usize>)
 -> impl Future<Item = (), Error = ()>
 {
@@ -182,7 +181,7 @@ fn bg_task(rx: mpsc::Receiver<usize>)
         Done,
     }
 
-    // Interval at which the current sum is written to STDOUT.
+    // 打印总和到标准输出都时间间隔。
     let tick_dur = Duration::from_secs(30);
 
     let interval = Interval::new_interval(tick_dur)
@@ -212,7 +211,7 @@ fn bg_task(rx: mpsc::Receiver<usize>)
             Item::Tick => {
                 println!("bytes read = {}", num);
 
-                // Reset the byte counter
+                // 重置字节计数器
                 future::ok(0)
             }
             _ => unreachable!(),
@@ -221,40 +220,38 @@ fn bg_task(rx: mpsc::Receiver<usize>)
     .map(|_| ())
 }
 
-// Start the application
+// 启动应用
 tokio::run(lazy(|| {
     let addr = "127.0.0.1:0".parse().unwrap();
     let listener = TcpListener::bind(&addr).unwrap();
 
-    // Create the channel that is used to communicate with the
-    // background task.
+    // 创建用于与后台任务通信的通道。
     let (tx, rx) = mpsc::channel(1_024);
 
-    // Spawn the background task:
+    // 创建后台任务：
     tokio::spawn(bg_task(rx));
 
     listener.incoming().for_each(move |socket| {
-        // An inbound socket has been received.
+        // 接收到一个入站套接字。
         //
-        // Spawn a new task to process the socket
+        // 创建新任务处理套接字。
         tokio::spawn({
-            // Each spawned task will have a clone of the sender handle.
+            // 每个新创建的任务都会拥有发送者句柄的一份拷贝。
             let tx = tx.clone();
 
-            // In this example, "hello world" will be written to the
-            // socket followed by the socket being closed.
+            // 在本例中，将 "hello world" 写入套接字然后关闭之。
             io::read_to_end(socket, vec![])
-                // Drop the socket
+                // 释放套接字
                 .and_then(move |(_, buf)| {
                     tx.send(buf.len())
                         .map_err(|_| io::ErrorKind::Other.into())
                 })
                 .map(|_| ())
-                // Write any error to STDOUT
+                // 打印错误信息到标准输出
                 .map_err(|e| println!("socket error = {:?}", e))
         });
 
-        // Receive the next inbound socket
+        // 接收下一个入站套接字
         Ok(())
     })
     .map_err(|e| println!("listener error = {:?}", e))

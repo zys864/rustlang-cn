@@ -1,9 +1,6 @@
-# `async`/`await!` Primer
+# `async`/`await!` 入门
 
-`async`/`await!` is Rust's built-in tool for writing asynchronous functions
-that look like synchronous code. `async` transforms a block of code into a
-state machine that implements a trait called `Future`. This block can be
-run to completion using an futures executor:
+`async`/`await!` 是 Rust 编写像同步代码那样的异步函数的内置工具。`async` 将一个代码块转化为一个实现了名为 `Future` 的特质（trait）的状态机。该代码块可以使用一个 future 的执行器来完成执行：
 
 ```rust
 use futures::executor::block_on;
@@ -11,14 +8,12 @@ use futures::executor::block_on;
     println!("hello, world!");
 }
  fn main() {
-    let future = hello_world(); // Nothing is printed
-    block_on(future); // `future` is run and "hello, world!" is printed
+    let future = hello_world(); // 不打印任何信息
+    block_on(future); // `future` 被执行并打印 "hello, world!"
 }
 ```
 
-Inside an `async fn`, you can use `await!` to wait for the completion of
-another type that implements the `Future` trait, such as the output of
-another `async fn`:
+在一个 `async fn` 中，你可以使用 `await!` 来等待另一个实现了 `Future` 特质的类型完成，比如另一个 `async fn` 的输出:
 
 ```rust
 use futures::executor::block_on;
@@ -30,8 +25,7 @@ use futures::executor::block_on;
     await!(hello_world());
 }
  fn main() {
-    // Run the future returned by `async_main`, causing "hello, world!"
-    // to be printed twice.
+    // 执行由 `async_main` 返回的 future，使 "hello, world!" 被打印两次
     block_on(async_main());
 }
 ```
