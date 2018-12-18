@@ -30,11 +30,8 @@ use futures::executor::block_on;
 }
 ```
 
-Unlike `block_on`, `await!` doesn't block the current thread, but instead
-asynchronously waits for the future to complete, allowing other tasks to
-run if the future is currently unable to make progress. For example,
-imagine that we have three `async fn`: `learn_song`, `sing_song`, and
-`dance`:
+不同于 `block_on`, `await!` 不阻塞当前线程，而是异步地等待 future 完成，这就允许我们在当前任务无法运行时运行其它任务。比如，想象一下我们由这样三个 `async fn`：`learn_song`、`sing_song` 以及
+`dance`：
 
 ```rust
 async fn learn_song() -> Song { ... }
@@ -42,8 +39,7 @@ async fn sing_song(song: Song) { ... }
 async fn dance() { ... }
 ```
 
-One way to do learn, sing, and dance would be to block on each of these
-individually:
+一种执行“学习”、“唱歌” 和 “跳舞” 的方法是，在执行每一项任务时阻塞：
 
 ```rust
 fn main() {

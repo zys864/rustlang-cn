@@ -188,7 +188,7 @@ fn bg_task(rx: mpsc::Receiver<usize>)
         .map(|_| Item::Tick)
         .map_err(|_| ());
 
-    // Turn the stream into a sequence of:
+    // 将流转换为这样的序列:
     // Item(num), Item(num), ... Done
     //
     let items = rx.map(Item::Value)
