@@ -29,7 +29,9 @@
 
 **社区库 :**
 
-- [actix-nats]() : Actix的NATS Message Broker(异步消息队列客户端)
+- [rust-amqp](https://github.com/fafhrd91/rust-amqp) - AMQP 1.0 Protocol implementation in Rust
+- [rust-amqp-transport](https://github.com/fafhrd91/rust-amqp-transport) - AMQP 1.0 Transport
+- [actix-nats](https://github.com/YellowInnovation/actix-nats) : Actix的NATS Message Broker(异步消息队列客户端)
 - [actix-lua](https://github.com/poga/actix-lua) : Actix的安全Lua脚本环境
 - [torchbear](https://github.com/foundpatterns/torchbear) : Rust中的应用程序框架，具有Lua脚本环境
 - [actix_session](https://github.com/chirimof/actix_session) : actix_session
