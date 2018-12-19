@@ -49,24 +49,19 @@ fn main() {
 }
 ```
 
-However, we're not giving the best performance possible this way-- we're
-only ever doing one thing at once! Clearly we have to learn the song before
-we can sing it, but it's possible to dance at the same time as learning and
-singing the song. To do this, we can create two separate `async fn` which
-can be run concurrently:
+但是，我们使用这种方式并没有发挥出最大的性能——我们只是把它们一个个执行了。很明显，我们唱歌之前必须要学会它，但是在学歌和唱歌的同时我们也是可以跳舞的。要实现这样的效果，我们可以分别创建两个 `async fn` 来并发地执行：
 
 ```rust
 async fn learn_and_sing() {
-    // Wait until the song has been learned before singing it.
-    // We use `await!` here rather than `block_on` to prevent blocking the
-    // thread, which makes it possible to `dance` at the same time.
+    // 在唱之前等待学习完成
+    // 这里我们使用 `await!` 而不是 `block_on` 来防止阻塞线程，这样就可以同时执行 `dance` 了。
     let song = await!(learn_song());
     await!(sing_song(song));
 }
  async fn async_main() {
     let f1 = learn_and_sing();
     let f2 = dance();
-     // `join!` is like `await!` but can wait for multiple futures concurrently
+     // `join!` 类似于 `await!` ，但是可以等待多个 future 并发完成
     join!(f1, f2)
 }
  fn main() {
@@ -74,12 +69,6 @@ async fn learn_and_sing() {
 }
 ```
 
-In this example, learning the song must happen before singing the song, but
-both learning and singing can happen at the same time as dancing. If we used
-`block_on(learn_song())` rather than `await!(learn_song())` in `learn_and_sing`,
-the execution would block until learning the song completed, making it
-impossible to dance at the same time. By `await!`ing learning the song, we
-allow other tasks to run concurrently.
+在本例中，学歌必须发生在唱歌之前，但是学习和唱歌当同时都可以跳舞。如果我们在 `learn_and_sing` 中使用 `block_on(learn_song())` 而不是 `await!(learn_song())` 的话，它的执行将阻塞至学歌结束，就无法同时跳舞了。通过 `await!` 学歌这一操作，我们允许其他任务并发执行。
 
-Now that you've learned the basics of `async`/`await!`, let's try out an
-example.
+到目前为止你已经学会了 `async`/`await!` 的基本用法，现在我们尝试写一个例子。
