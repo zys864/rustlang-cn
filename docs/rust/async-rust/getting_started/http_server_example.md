@@ -1,13 +1,9 @@
-# Simple HTTP Server
+# 简单的 HTTP 服务器
 
-Let's use `async`/`await!` to build an echo server!
- To start, run `rustup update nightly` to make sure you've got the latest and
-greatest copy of Rust-- we're working with bleeding-edge features, so it's
-essential to stay up-to-date. Once you've done that, run
-`cargo +nightly new async-await-echo` to create a new project, and open up
-the resulting `async-await-echo` folder.
+让我们用 `async`/`await!` 构建一个 echo 服务器！
+首先，执行 `rustup update nightly` 来确保你已经使用了最新以及最好的 Rust 版本——我们要使用最前沿的特性，所以需要保持最新。完成这一步之后，执行 `cargo +nightly new async-await-echo` 来创建一个工程，然后打开生成的 `async-await-echo` 目录。
 
-Let's add some dependencies to the `Cargo.toml` file:
+我们在 `Cargo.toml` 文件中加入一些依赖项:
 
 ```toml
 [dependencies]
@@ -27,19 +23,17 @@ hyper = "0.12.9"
 tokio = { version = "0.1.11", features = ["async-await-preview"] }
 ```
 
-Now that we've got our dependencies out of the way, let's start writing some
-code. Open up `src/main.rs` and enable the following features at the top of
-the file:
+好的，我们已经搞定了依赖项，现在开始编码。打开 `src/main.rs` 文件，并在文件开头处启用下面的特性：
 
  ```rust
 #![feature(async_await, await_macro, futures_api)]
 ```
 
-- `async_await` adds support for the `async fn` syntax.
-- `await_macro` adds support for the `await!` macro.
-- `futures_api` adds support for the nightly `std::future` and `std::task`
+- `async_await` 增加了对 `async fn` 语法的支持。
+- `await_macro` 增加了对 `await!` 宏的支持.
+- `futures_api` 增加了对 nightly 版本中 `std::future` 和 `std::task` 模块的支持，这两个模块定义了核心库的 `Future` 特质以及相关依赖类型。
   
-modules which define the core `Future` trait and dependent types. Additionally, we have some imports to add:
+另外，我们还需要再加一些导入项：
 
 ```rust
 use {
@@ -70,6 +64,7 @@ use {
 };
 ```
 
+处理好了导入项，
 Once the imports are out of the way, we can start putting together the
 boilerplate to allow us to serve requests:
 
@@ -115,6 +110,7 @@ fn main() {
 }
 ```
 
+如果现在执行 `cargo run`，你应该能看到终端输出 "Listening on http://127.0.0.1:300" 的消息。在浏览器中打开这个 URL，你将看到 "thread ... panicked at 'not yet implemented'." 的字样。不错！我们只缺处理请求的代码了。开始我们先直接返回一个静态的消息：
 If you `cargo run` now, you should see the message "Listening on
 http://127.0.0.1:300" printed on your terminal. If you open that URL in your
 browser of choice, you'll see "thread ... panicked at 'not yet implemented'."
