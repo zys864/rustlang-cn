@@ -1,6 +1,6 @@
 # `async`/`await!` 入门
 
-`async`/`await!` 是 Rust 编写像同步代码那样的异步函数的内置工具。`async` 将一个代码块转化为一个实现了名为 `Future` 的特质（trait）的状态机。该代码块可以使用一个 future 的执行器来完成执行：
+`async`/`await!` 是 Rust 语言用于编写像同步代码一样的异步函数的内置工具。`async` 将一个代码块转化为一个实现了名为 `Future` 的特质（trait）的状态机。该代码块可以使用一个 future 的执行器来完成执行：
 
 ```rust
 use futures::executor::block_on;
@@ -13,7 +13,7 @@ use futures::executor::block_on;
 }
 ```
 
-在一个 `async fn` 中，你可以使用 `await!` 来等待另一个实现了 `Future` 特质的类型完成，比如另一个 `async fn` 的输出:
+在一个 `async fn` 中，你可以使用 `await!` 来等待另一个实现了 `Future` 特质的类型的完成，比如另一个 `async fn` 的输出:
 
 ```rust
 use futures::executor::block_on;
@@ -53,7 +53,7 @@ fn main() {
 
 ```rust
 async fn learn_and_sing() {
-    // 在唱之前等待学习完成
+    // 在唱歌之前等待学歌完成
     // 这里我们使用 `await!` 而不是 `block_on` 来防止阻塞线程，这样就可以同时执行 `dance` 了。
     let song = await!(learn_song());
     await!(sing_song(song));
