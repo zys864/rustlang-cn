@@ -1,37 +1,34 @@
 # `async`/`await!` 入门
 
-`async`/`await!` 是 Rust 语言用于编写像同步代码一样的异步函数的内置工具。`async` 将一个代码块转化为一个实现了名为 `Future` 的特质（trait）的状态机。该代码块可以使用一个 future 的执行器来完成执行：
+`async/await!` 是 Rust 语言用于编写像同步代码一样的异步函数的内置工具。`async` 将一个代码块转化为一个实现了名为` Future `的特质（trait）的状态机。虽然在同步方法中调用阻塞函数会阻塞整个线程，但阻塞的`Futures`将让出线程控制权，允许其他`Futures`运行。
+
+要创建异步函数，可以使用`async fn`语法：
 
 ```rust
+async fn do_something() { ... }
+```
+
+`async fn`返回的值是一个`Future`，需要在执行着上运行才能起作用：
+
+```rust
+// `block_on` blocks the current thread until the provided future has run to
+// completion. Other executors provide more complex behavior, like scheudling
+// multiple futures onto the same thread.
 use futures::executor::block_on;
- async fn hello_world() {
+
+async fn hello_world() {
     println!("hello, world!");
 }
- fn main() {
-    let future = hello_world(); // 不打印任何信息
-    block_on(future); // `future` 被执行并打印 "hello, world!"
+
+fn main() {
+    let future = hello_world(); // Nothing is printed
+    block_on(future); // `future` is run and "hello, world!" is printed
 }
 ```
 
-在一个 `async fn` 中，你可以使用 `await!` 来等待另一个实现了 `Future` 特质的类型的完成，比如另一个 `async fn` 的输出:
+在`async fn`中，你可以使用`await！` 等待另一种实现`Future`特性的类型完成，例如另一个`async fn`的输出。 与`block_on`不同，`await！` 不会阻止当前线程，而是异步等待`Future`完成，如果`Future`无法取得进展，则允许其他任务运行。
 
-```rust
-use futures::executor::block_on;
- async fn hello_world() {
-    println!("hello, world!");
-}
- async fn async_main() {
-    await!(hello_world());
-    await!(hello_world());
-}
- fn main() {
-    // 执行由 `async_main` 返回的 future，使 "hello, world!" 被打印两次
-    block_on(async_main());
-}
-```
-
-不同于 `block_on`, `await!` 不阻塞当前线程，而是异步地等待 future 完成，这就允许我们在当前任务无法运行时运行其它任务。比如，想象一下我们由这样三个 `async fn`：`learn_song`、`sing_song` 以及
-`dance`：
+例如，假设我们有三个`async fn`：`learn_song`，`sing_song`和`dance`：
 
 ```rust
 async fn learn_song() -> Song { ... }
@@ -69,6 +66,6 @@ async fn learn_and_sing() {
 }
 ```
 
-在本例中，学歌必须发生在唱歌之前，但是学习和唱歌当同时都可以跳舞。如果我们在 `learn_and_sing` 中使用 `block_on(learn_song())` 而不是 `await!(learn_song())` 的话，它的执行将阻塞至学歌结束，就无法同时跳舞了。通过 `await!` 学歌这一操作，我们允许其他任务并发执行。
+在本例中，学歌必须发生在唱歌之前，但是学习和唱歌当同时都可以跳舞。如果我们在 `learn_and_sing `中使用` block_on(learn_song()) `而不是 `await!(learn_song())` 的话，它的执行将阻塞至学歌结束，就无法同时跳舞了。通过 `await!` 学歌这一操作，我们允许其他任务并发执行。
 
-到目前为止你已经学会了 `async`/`await!` 的基本用法，现在我们尝试写一个例子。
+到目前为止你已经学会了 `async/await! `的基本用法，现在我们尝试写一个例子。
