@@ -6,7 +6,7 @@
 
 让我们在`Cargo.toml`文件中添加一些依赖项：
 
-```toml
+```rust
 [dependencies]
 # The latest version of the "futures" library, which has lots of utilities
 # for writing async code. Enable the "tokio-compat" feature to include the
