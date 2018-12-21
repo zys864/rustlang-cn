@@ -3,16 +3,6 @@ exports.book = (title) => {
         '',
         'start',
         {
-            title: '工具链',
-            collapsable: true,
-            children: [
-            'toolchain/rustup',
-            'toolchain/cargo-base',
-            'toolchain/cargo-set',
-            'toolchain/attribute'
-            ]
-        },
-        {
             title: '类型',
             collapsable: true,
             children: [
@@ -50,20 +40,6 @@ exports.book = (title) => {
             ]
         },
         {
-            title: '模块',
-            collapsable: true,
-            children: [
-            'module/module'
-            ]
-        },
-        {
-            title: '宏',
-            collapsable: true,
-            children: [
-            'macro/macro'
-            ]
-        },
-        {
             title: '错误处理',
             collapsable: true,
             children: [
@@ -74,13 +50,10 @@ exports.book = (title) => {
             ]
         },
         {
-            title: '测试',
+            title: '模块',
             collapsable: true,
             children: [
-            'test/',
-            'test/writing-tests',
-            'test/running-tests',
-            'test/test-organization'
+            'module/module'
             ]
         },
         {
@@ -106,10 +79,37 @@ exports.book = (title) => {
             ]
         },
         {
+            title: '宏',
+            collapsable: true,
+            children: [
+            'macro/macro'
+            ]
+        },
+        {
             title: 'Unsafe',
             collapsable: true,
             children: [
             'unsafe/unsafe'
+            ]
+        },
+        {
+            title: '测试',
+            collapsable: true,
+            children: [
+            'test/',
+            'test/writing-tests',
+            'test/running-tests',
+            'test/test-organization'
+            ]
+        },
+        {
+            title: '工具链',
+            collapsable: true,
+            children: [
+            'toolchain/rustup',
+            'toolchain/cargo-base',
+            'toolchain/cargo-set',
+            'toolchain/attribute'
             ]
         },
         {
