@@ -12,7 +12,7 @@ exports.asyncrust = (title) => {
             ]
         },
         {
-            title: 'Execution',
+            title: '执行者',
             collapsable: true,
             children: [
             'execution/chapter',
@@ -30,14 +30,14 @@ exports.asyncrust = (title) => {
             ]
         },
         {
-            title: 'Pinning',
+            title: '固定',
             collapsable: true,
             children: [
             'pinning/chapter'
             ]
         },
         {
-            title: 'Streams',
+            title: '流',
             collapsable: true,
             children: [
             'streams/chapter'
