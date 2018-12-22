@@ -1,7 +1,6 @@
-# `Stream`
+# `Stream`特质
 
-The `Stream` trait is similar to `Future` but can yield multiple values before
-completing, similar to the `Iterator` trait from the standard library:
+tream`特质类似于Future，但可以在完成之前得到多个值，类似于标准库的`Iterator`特质：
 
 ```rust
 trait Stream {
@@ -16,10 +15,7 @@ trait Stream {
 }
 ```
 
-One common example of a `Stream` is the `Receiver` for the channel type from
-the `futures` crate. It will yield `Some(val)` every time a value is sent
-from the `Sender` end, and will yield `None` once the `Sender` has been
-dropped and all pending messages have been received:
+`Stream`的一个常见的例子是 来自`futures`箱子的`Receiver`通道类型。每次从Sender端发送一个值时它都会产生某个值，并且一旦`Sender`端被删除，它就会产生`None`并且收到端暂停所有消息接收：
 
 ```rust
 use futures::channel::mpsc;
@@ -39,15 +35,11 @@ let fut = async {
 };
 ```
 
-## Patterns: Iteration and Concurrency
+## 模式：迭代和并发
 
-Similar to synchronous `Iterator`s, there are many different ways to iterate
-over and process the values in a `Stream`. There are combinator-style methods
-such as `map`, `filter`, and `fold`, and their early-exit-on-error cousins
-`try_map`, `try_filter`, and `try_fold`.
+与同步`Iterators` 类似，有许多不同的方法可以迭代和处理`Stream`中的值。有组合子式的方法，如`map`，`filter`和`fold`，和` try_map`，`try_filter`和`try_fold`。
 
-Unfortunately, `for` loops are not yet usable with `Stream`s, but for
-imperative-style code, `while let` and `.for_each` are available:
+不幸的是，`for`循环不能用于`Streams`，但是对于命令式代码，`while let`和`for_each`可用：
 
 ```rust
 use futures::prelude::*;
@@ -72,11 +64,7 @@ let fut = async {
 };
 ```
 
-However, if we're just processing one element at a time, we're potentially
-leaving behind opportunity for concurrency, which is, after all, why we're
-writing async code in the first place. To process multiple items from a stream
-concurrently, use the `for_each_concurrent` and `try_for_each_concurrent`
-methods:
+但是，如果我们一次只处理一个元素，那么我们可能会失去并发机会，毕竟，这就是我们为什么要编写异步代码的原因。要同时处理流中的多个项，请使用`for_each_concurrent`和`try_for_each_concurrent` 方法：
 
 ```rust
 use futures::prelude::*;
@@ -95,10 +83,4 @@ let fut = async {
 };
 ```
 
-This approach allows up to `MAX_CONCURRENT_JUMPERS` to all be jumping at once
-(or performing any operation on the items, for that matter-- the API isn't
-strictly tied to jumping). If you want to allow an unlimited number of
-operations at once, you can use `None` rather than `MAX_CONCURRENT_...`, but
-beware that if `stream` comes from untrusted user input, this can allow
-badly behaved clients to overload the system with too many simultaneous
-requests.
+这种方法允许最多`MAX_CONCURRENT_JUMPERS`一次跳转（或对项执行任何操作，就此而言 - API并不严格依赖于跳跃）。如果您希望一次允许无限数量的操作，您可以使用`None`而不是`MAX_CONCURRENT_...`，但要注意，如果`stream`来自不受信任的用户输入，这可能允许不端的客户端行为使系统同时请求过多而过载。
