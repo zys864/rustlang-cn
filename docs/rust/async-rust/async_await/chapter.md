@@ -31,14 +31,11 @@ fn baz() -> impl Future<Output = u8> {
 }
 ```
 
-正如我们在第一章中看到的那样，`async`和其他`Future`是懒惰的：它们在运行之前什么都不做。运行`Future`的最常见方式是`await!`它。当在Future`上调用`await!`时，它将尝试运行以完成它。如果`Future`被阻止，它将让出当前线程。当可以取得更多进展时，执行者将获取 `Future`并将继续运行，以便`await!`解决。
+正如我们在第一章中看到的那样，`async`和其他`Future`是懒惰的：它们在运行之前什么都不做。运行`Future`的最常见方式是`await!`它。当在`Future`上调用`await!`时，它将尝试运行以完成它。如果`Future`被阻止，它将让出当前线程。当可以取得更多进展时，执行者将获取 `Future`并将继续运行，以便`await!`解决。
 
 ## `async` 生命周期
 
 `async fn`与传统函数不同，带引用或其他非`'static`参数的,返回一个受参数生命周期限制的`Future`：
-Unlike traditional functions, `async fn`s which take references or other
-non-`'static` arguments return a `Future` which is bounded by the lifetime of
-the arguments:
 
 ```rust
 // This function:
@@ -50,15 +47,9 @@ fn foo<'a>(x: &'a u8) -> impl Future<Output = ()> + 'a {
 }
 ```
 
-This means that the future returned from an `async fn` must be `await!`ed
-while its non-`'static` arguments are still valid. In the common
-case of `await!`ing the future immediately after calling the function
-(like `await!(foo(&x))`) this is not an issue. However, if storing the future
-or sending it over to another task or thread, this may be an issue.
+这意味着从`async fn`返回`Future`必须是`await!`，当为非'static参数时仍然有效。常见情况中,在调用函数（如`await!(foo(&x))`）之后立即`await!` `Future`，这不是问题。但是，如果存储`Future`或将其发送到另一个任务或线程，这可能是一个问题。
 
-One common workaround for turning an `async fn` with references-as-arguments
-into a `'static` future is to bundle the arguments with the call to the
-`async fn` inside an `async` block:
+将带有引用作为参数的 `async fn`转换为`'static` `Future`的一个常见解决方法是将参数与对块`async fn`调用捆绑在一起放进`async`块内：
 
 ```rust
 async fn foo(x: &u8) -> u8 { *x }
@@ -76,15 +67,11 @@ fn good() -> impl Future<Output = ()> {
 }
 ```
 
-By moving the argument into the `async` block, we extend its lifetime to match
-that of the `Future` returned from the call to `foo`.
+通过将参数移动到`async`块中，我们将其生命周期延长到与调用`foo`返回`Future`的生命周期相匹配。
 
 ## `async move`
 
-`async` blocks and closures allow the `move` keyword, much like normal
-closures. An `async move` block will take ownership of the variables it
-references, allowing it to outlive the current scope, but giving up the ability
-to share those variables with other code:
+`async`块和闭包允许move关键字，就像普通的闭包一样。一个`async move`块将获取它引用变量的所有权，允许它活得比目前的范围长，但放弃了与其他代码分享那些变量的能力：
 
 ```rust
 /// `async` block:
@@ -121,24 +108,12 @@ fn foo() -> impl Future<Output = ()> {
 }
 ```
 
-## `await!`ing on a Multithreaded Executor
+## `await!` 在多线程执行者
 
-Note that, when using a multithreaded `Future` executor, a `Future` may move
-between threads, so any variables used in `async` bodies must be able to travel
-between threads, as any `await!` can potentially result in a switch to a new
-thread.
+请注意，在使用多线程`Future`执行者时，`Future`可能在线程之间移动，因此在`async`主体中使用的任何变量都必须能够在线程之间传输，因为任何`await!`变量都可能导致切换到新线程。
 
-This means that it is not safe to use `Rc`, `&RefCell` or any other types
-that don't implement the `Send` trait, including references to types that don't
-implement the `Sync` trait.
+这意味着使用`Rc，&RefCell`是不安全的或任何其他没实现`Send`特征的类型，包括引用未实现`Sync`特质的类型。
 
-(Caveat: it is possible to use these types so long as they aren't in scope
-during a call to `await!`.)
+（警告：只要在调用`await!`期间它们不在范围内，就可以使用这些类型。）
 
-Similarly, it isn't a good idea to hold a traditional non-futures-aware lock
-across an `await!`, as it can cause the threadpool to lock up: one task could
-take out a lock, `await!` and yield to the executor, allowing another task to
-attempt to take the lock and cause a deadlock. To avoid this, use the `Mutex`
-in `futures::lock` rather than the one from `std::sync`.
-
-[the first chapter]: TODO ../getting_started/async_await_primer.md
+类似地，在`await!`期间持有一个传统的非`Future`感知的锁不是一个好主意，因为它可能导致线程池锁定：一个任务可以取出锁，`await!`并让出执行者，允许另一个任务尝试获取锁导致死锁。要避免这种情况，请使用`futures::lock`中的`Mutex`而不是`std::sync`中的。
