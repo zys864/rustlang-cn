@@ -1,6 +1,6 @@
 # `Stream`特质
 
-tream`特质类似于Future，但可以在完成之前得到多个值，类似于标准库的`Iterator`特质：
+`Stream`特质类似于`Future`，但可以在完成之前得到多个值，类似于标准库的`Iterator`特质：
 
 ```rust
 trait Stream {
