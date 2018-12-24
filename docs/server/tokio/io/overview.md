@@ -39,7 +39,7 @@ of any of them change.
 To get a sense of how this fits together, consider this [echo
 server](https://tools.ietf.org/html/rfc862) implementation:
 
-```rust,no_run
+```rust
 # extern crate tokio;
 use tokio::prelude::*;
 use tokio::net::TcpListener;
