@@ -1,5 +1,6 @@
 # 官方Rust书籍大全
 - [The Rust Programming Language](https://doc.rust-lang.org/book/index.html)
+- [The Rust-2018 Book](https://rust-lang-nursery.github.io/edition-guide/introduction.html)
 - [The Cargo Book](https://doc.rust-lang.org/cargo/index.html)
 - [Rust By Example](https://doc.rust-lang.org/rust-by-example/index.html)
 - [The Rustc Book](https://doc.rust-lang.org/rustc/index.html)
