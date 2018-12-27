@@ -1,50 +1,23 @@
 # I/O 概述
 
-The Rust standard library provides support for networking and I/O, such
-as TCP connections, UDP sockets, reading from and writing to files, etc.
-However, those operations are all synchronous, or _blocking_, meaning
-that when you call them, the current thread may stop executing and go to
-sleep until it is unblocked. For example, the `read` method in
-[`std::io::Read`] will block until there is data to read. In the world
-of futures, that behavior is unfortunate, since we would like to
-continue executing other futures we may have while waiting for the I/O
-to complete.
+Rust标准库提供对网络和`I/O`的支持，例如`TCP`连接，`UDP`套接字，读取和写入文件等。但是，这些操作都是同步或阻塞，这意味着当您调用它们时，当前线程可能会停止执行并进入睡眠状态，直到它被解除阻塞。例如，[std :: io :: Read](https://doc.rust-lang.org/std/io/trait.Read.html)中的`read`方法将阻塞，直到有数据要读取。在`future`的世界中，这种行为是不幸的，因为我们希望在等待`I / O`完成时继续执行我们可能拥有的其他`future`。
 
-To enable this, Tokio provides _non-blocking_ versions of many standard
-library I/O resources, such as [file operations] and [TCP], [UDP], and
-[Unix] sockets. They return futures for long-running operations (like
-accepting a new TCP connection), and implement non-blocking variants of
-`std::io::Read` and `std::io::Write` called `AsyncRead` and
-`AsyncWrite`.
+为了实现这一点，`Tokio`提供了许多标准库`I / O`资源的非阻塞版本，例如文件操作和`TCP`，`UDP`和`Unix`套接字。它们返回长期运行的`future`（如接受新的TCP连接），并实现`std :: io :: Read`和`std :: io :: Write`的非阻塞变体，称为`AsyncRead`和`AsyncWrite`。
 
-Non-blocking reads and writes do not block if, for example, there is no
-more data available. Instead, they return immediately with a
-`WouldBlock` error, along with a guarantee (like `Future::poll`) that
-they have arranged for the current task to be woken up when they can
-later make progress, such as when a network packet arrives.
+例如，如果没有可用的数据，则不会阻止非阻塞读取和写入。相反，它们会立即返回一个`WouldBlock`错误，以及一个保证（如`Future :: poll`），它们已安排当前任务在以后可以取得进展时被唤醒，例如当网络数据包到达时。
 
-By using the non-blocking Tokio I/O types, a future that performs I/O
-no longer blocks execution of other futures if the I/O they wish to
-perform cannot be performed immediately. Instead, it simply returns
-`NotReady`, and relies on a task notification to cause `poll` to be
-called again, and which point its I/O should succeed without blocking.
+通过使用非阻塞的Tokio` I / O`类型，如果不能立即执行他们希望执行的`I / O`，则执行`I / O`的`future`不再阻止执行其他`future`。相反，它只返回`NotReady`，并依赖于任务通知，以便再次调用`poll`，以及它的`I / O`应该成功而不会阻塞。
 
-Behind the scenes, Tokio uses [`mio`] and [`tokio-fs`] to keep track of
-the status of the various I/O resources that different futures are
-waiting for, and is notified by the operating system whenever the status
-of any of them change.
+在幕后，Tokio使用[mio](https://docs.rs/mio/*/mio)和[tokio-fs](https://docs.rs/tokio/0.1/tokio/fs/index.html)来跟踪不同`future`等待的各种`I / O`资源的状态，并在操作系统的任何状态发生变化时通知操作系统。
 
-## An example server
+## 一个示例服务器
 
-To get a sense of how this fits together, consider this [echo
-server](https://tools.ietf.org/html/rfc862) implementation:
+为了了解这是如何组合在一起的，请考虑这个[echo server]（https://tools.ietf.org/html/rfc862）实现：
 
 ```rust
-# extern crate tokio;
 use tokio::prelude::*;
 use tokio::net::TcpListener;
 
-# fn main() {
 // Set up a listening socket, just like in std::net
 let addr = "127.0.0.1:12345".parse().unwrap();
 let listener = TcpListener::bind(&addr)
@@ -104,10 +77,7 @@ let server = incoming
 // done any work yet to set up the server. We need to run it on a Tokio
 // runtime for the server to really get up and running:
 tokio::run(server);
-# }
 ```
 
-More examples can be found [here][examples].
+更多例子可以在[这里](https://github.com/tokio-rs/tokio/tree/master/examples)找到。 
 
-[`std::io::Read`]: https://doc.rust-lang.org/std/io/trait.Read.html
-[examples]: https://github.com/tokio-rs/tokio/tree/master/examples
