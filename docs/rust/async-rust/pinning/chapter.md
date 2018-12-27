@@ -1,6 +1,6 @@
 # 固定
 
-为了对`futures`进行轮询，必须使用名为 Pin<T>的特殊类型固定它们。上一节"执行FutureS和任务"，你会认识 `Pin`来自`Future:poll`方法的定义`self: Pin<&mut Self>`。但它意味着什么，为什么我们需要它呢？
+为了对`futures`进行轮询，必须使用名为 `Pin<T>`的特殊类型固定它们。上一节"执行FutureS和任务"，你会认识 `Pin`来自`Future:poll`方法的定义`self: Pin<&mut Self>`。但它意味着什么，为什么我们需要它呢？
 
 ## Why Pinning
 
@@ -47,7 +47,7 @@ enum State {
 }
 ```
 
-当`poll`第一次调用时，它会轮询`fut_one`。如果`fut_one`无法完成，`AsyncFuture::poll`将返回。将来调用`poll`会在前一个调用停止的地方继续。这个过程一直持续到`Future `能够成功完成。
+当`poll`第一次调用时，它会轮询`fut_one`。如果`fut_one`无法完成，`AsyncFuture::poll`将返回。将来调用`poll`会在前一个调用停止的地方继续。这个过程一直持续到 `Future` 能够成功完成。
 
 但是，如果我们有一个`async`块使用引用会发生什么？例如：
 
@@ -61,7 +61,6 @@ async {
 ```
 
 这个结构编译后是什么？
-
 
 ```rust
 struct ReadIntoBuf<'a> {
@@ -83,7 +82,7 @@ struct ReadIntoBuf<'a> {
 
 大多数类型都没有移动的问题。这些类型实现了一个叫做`Unpin`的特征。`Unpin`类型指针可以自由从`Pin`中放入或取出。例如，`u8`是`Unpin`，所以`Pin<&mut T>`表现得像正常一样`&mut T`。
 
-有些函数需要与`Unpin`合作的`futures`。要使用不是`Unpin`的` Future`或`Stream`与需要`Unpin`类型的函数 ，您首先必须使用`Box::pinned`（创建一个`Pin<Box<T>>`）或`pin_utils::pin_mut!`宏（创建一个`Pin<&mut T>`）来固定值 。`Pin<Box<Fut>>`并且`Pin<&mut Fut>`都可以用作`Future`，并且都实现了`Unpin`。
+有些函数需要与`Unpin`合作的`futures`。要使用不是`Unpin`的`Future`或`Stream`与需要`Unpin`类型的函数 ，您首先必须使用`Box::pinned`（创建一个`Pin<Box<T>>`）或`pin_utils::pin_mut!`宏（创建一个`Pin<&mut T>`）来固定值 。`Pin<Box<Fut>>`并且`Pin<&mut Fut>`都可以用作`Future`，并且都实现了`Unpin`。
 
 For example:
 

@@ -22,7 +22,7 @@ exports.tokio = (title) => {
             'futures/streams',
             'futures/spawning',
             'futures/leaf-futures',
-            'ftutres/runtime-model'
+            'futures/runtime-model'
           ]
         },
         {
