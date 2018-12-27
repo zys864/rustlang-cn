@@ -53,27 +53,27 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
   <div class="feature">
     <h2>命令行</h2>
     <p>使用Rust强大的生态系统快速启动CLI工具。Rust可帮助您放心地维护应用程序并轻松分发</p>
-    <div><a href="/cli/book/">更多</a></div>
+    <div><a href="/cli/book/">阅读更多</a></div>
   </div>
   <div class="feature">
     <h2>WebAssembly</h2>
     <p>使用Rust可以一次为一个模块增加JavaScript。发布到npm，与WebPack捆绑，然后你就参加了比赛</p>
-    <div><a href="/wasm/book/">更多</a></div>
+    <div><a href="/wasm/book/">阅读更多</a></div>
   </div>
   <div class="feature">
     <h2>网络</h2>
     <p>可预测的表现。微小的资源足迹。坚如磐石的可靠性。Rust非常适合网络服务</p>
-    <div><a href="#">更多</a></div>
+    <div><a href="#">阅读更多</a></div>
   </div>
   <div class="feature">
     <h2>嵌入式</h2>
     <p>针对资源匮乏的设备？需要低级控制而不放弃高级便利性？Rust让你满意</p>
-    <div><a href="/iot/book/">更多</a></div>
+    <div><a href="/iot/book/">阅读更多</a></div>
   </div>
   <div class="feature">
     <h2>游戏</h2>
     <p>高性能渲染，实时光线追踪、SIMD</p>
-    <div><a href="/iot/book/">更多</a></div>
+    <div><a href="/iot/book/">阅读更多</a></div>
   </div>
 </div>
 
