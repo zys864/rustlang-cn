@@ -1,40 +1,20 @@
 # 直接使用 AsyncRead 和 AsyncWrite
 
-So far, we have primarily talked about `AsyncRead` and `AsyncWrite` in
-the context of I/O combinators provided by Tokio. While these are [often
-enough], sometimes you need to implement your own combinators that
-want to perform asynchronous reads and writes directly.
+到目前为止，我们主要在Tokio提供的`I/O`组合器的上下文中讨论了`AsyncRead`和`AsyncWrite`。 虽然这些通常已经足够，但有时您需要实现自己的组合器，这些组合器希望直接执行异步读取和写入。
 
-## Reading data with `AsyncRead`
+## 使用AsyncRead读取数据
 
-The heart of `AsyncRead` is the `poll_read` method. It maps the
-`WouldBlock` error that indicates that an I/O `read` operation would
-have blocked into `NotReady`, which in turn lets us interoperate with
-the world of futures. When you write a `Future` (or something like it,
-such as `Stream`) that internally contains an `AsyncRead`, `poll_read`
-is likely the method you will be interacting with.
+`AsyncRead`的核心是`poll_read`方法。它映射了`WouldBlock`错误，指示`I/O`读取操作将阻塞到`NotReady`，这反过来让我们可以与`future`世界互操作。当你编写一个内部包含`AsyncRead`的`Future`（或类似的东西，比如`Stream`）时，`poll_read`可能就是你要与之交互的方法。
 
-The important thing to keep in mind with `poll_read` is that it follows
-the same contract as `Future::poll`. Specifically, it cannot return
-`NotReady` unless it has arranged for the current task to be notified
-when it can make progress again. This fact is what lets us call
-`poll_read` inside of `poll` in our own `Future`s; we know that we are
-upholding the contract of `poll` when we forward a `NotReady` from
-`poll_read`, because `poll_read` follows that same contract!
+要记住`poll_read`的重要一点是它遵循与`Future :: poll`相同的合同。具体来说，它不能返回`NotReady`，除非它已安排当前任务在可以再次进行时得到通知。这个事实让我们在我们自己的`future`中调查`poll_read`;我们知道当我们从`poll_read`转发`NotReady`时，我们正在维护`poll`合同，因为`poll_read`遵循相同的合同！
 
-The exact mechanism Tokio uses to ensure that `poll_read` later notifies
-the current task is out of scope for this section, but you can read more
-about it in the [non-blocking I/O] section of Tokio internals if you're
-interested.
+Tokio用于确保`poll_read`后来通知当前任务的确切机制超出了本节的范围，但如果您感兴趣，可以在Tokio内部的非阻塞I/O部分中阅读更多相关内容。
 
-With that all said, let's look at how we might implement the
-[`read_exact`] method ourselves!
+有了这一切，让我们看看我们如何自己实现[read_exact](https://docs.rs/tokio/0.1/tokio/io/fn.read_exact.html)方法！
 
 ```rust
-# extern crate tokio;
 #[macro_use]
 extern crate futures;
-# fn main() {}
 use std::io;
 use tokio::prelude::*;
 
@@ -127,81 +107,34 @@ where
 }
 ```
 
-## Writing data with `AsyncWrite`
+## 使用AsyncWrite写入数据
 
-Just like `poll_read` is the core piece of `AsyncRead`, `poll_write` is
-the core of `AsyncWrite`. Like `poll_read`, it maps the `WouldBlock`
-error that indicates that an I/O *`write`* operation would have blocked into
-`NotReady`, which again lets us interoperate with the world of
-futures. `AsyncWrite` also has a `poll_flush`, which provides an
-asynchronous analogue to [`Write`]'s `flush` method. The role of
-`poll_flush` is to make sure that any bytes previously written by
-`poll_write` are, well, flushed onto the underlying I/O resource
-(written out in network packets for example). Similar to `poll_write`, it
-wraps around `Write::flush`, and maps a `WouldBlock` error into
-`NotReady` to indicate that the flushing is still ongoing.
+就像`poll_read`是`AsyncRead`的核心部分一样，`poll_write`是`AsyncWrite`的核心。与`poll_read`一样，它映射了`WouldBlock`错误，该错误指示`I / O`写入操作将阻塞到`NotReady`，这再次允许我们与未来世界互操作。 `AsyncWrite`还有一个`poll_flush`，它为`Write的flush`方法提供异步模拟。 `poll_flush`的作用是确保先前由`poll_write`写入的任何字节都被刷新到基础`I/O`资源上（例如，在网络数据包中写出）。与`poll_write`类似，它包装`Write::flush`，并将一个`WouldBlock`错误映射到`NotReady`，以指示刷新仍在进行中。
 
-`AsyncWrite`'s `poll_write` and `poll_flush` follow the same contract as
-`Future::poll` and `AsyncRead::poll_read`, namely that if they return
-`NotReady`, they have arranged for the current task to be notified when
-they can make progress again. Like with `poll_read`, this means that we
-can safely call these methods in our own futures, and know that we are
-also following the contract.
+`AsyncWrite`的`poll_write`和`poll_flush`遵循与`Future :: poll`和`AsyncRead :: poll_read`相同的合同，即如果它们返回`NotReady`，它们已经安排当前任务在他们可以再次进展时得到通知。与`poll_read`一样，这意味着我们可以在我们自己的`future`中安全地调用这些方法，并且知道我们也在遵守合同。
 
-Tokio uses the same mechanism to manage notifications for `poll_write`
-and `poll_flush` as it does for `poll_read`, and you can read more about
-it in the [non-blocking I/O] section of Tokio internals.
+Tokio使用相同的机制来管理`poll_write`和`poll_flush`的通知，就像它对`poll_read`一样，你可以在Tokio内部的非阻塞`I/O`部分中阅读更多相关内容。
 
-### Shutdown
+### 关闭
 
-`AsyncWrite` also adds one method that is *not* part of `Write`:
-`shutdown`. From [its documentation][shutdown]:
+`AsyncWrite`还添加了一个不属于`Write：shutdown`的方法。从其文件：
 
-> Initiates or attempts to shut down this writer, returning success when
-> the I/O connection has completely shut down.
->
-> This method is intended to be used for asynchronous shutdown of I/O
-> connections. For example this is suitable for implementing shutdown of
-> a TLS connection or calling `TcpStream::shutdown` on a proxied
-> connection. Protocols sometimes need to flush out final pieces of data
-> or otherwise perform a graceful shutdown handshake, reading/writing
-> more data as appropriate. This method is the hook for such protocols
-> to implement the graceful shutdown logic.
+启动或尝试关闭此编写器，在`I/O`连接完全关闭时返回成功。
 
-This sums `shutdown` up pretty nicely: it is a way to tell the writer
-that no more data is coming, and that it should indicate in whatever way
-the underlying I/O protocol requires. For TCP connections, for example,
-this usually entails closing the writing side of the TCP channel so that
-the other end receives and end-of-file in the form of a read that
-returns 0 bytes. You can often think of `shutdown` as what you _would_
-have done synchronously in the implementation of `Drop`; it's just that
-in the asynchronous world, you can't easily do something in `Drop`
-because you need to have an executor that keeps polling your writer!
+此方法旨在用于`I/O`连接的异步关闭。例如，这适用于在代理连接上实现TLS连接的关闭或调用`TcpStream :: shutdown`。协议有时需要清除最终的数据或以其他方式执行正常的关闭握手，适当地读取/写入更多数据。此方法是实现正常关闭逻辑的此类协议的钩子。
 
-<!-- // this is a comment
-Somewhere down the line, per outline, we may want to add a paragraph on:
+这总结很好地关闭：它是一种告诉作者不再有数据的方法，并且它应该以底层`I/O`协议所需的任何方式指示。例如，对于TCP连接，这通常需要关闭TCP通道的写入端，以便另一端以读取形式接收和返回0字节的文件结束。您通常可以将关闭视为在`Drop`的实现中同步完成的操作;只是在异步世界中，你不能轻易地在`Drop`中做一些事情，因为你需要有一个继续轮询你的作家的执行者！
 
-  Socket is safely dropped after shutdown returns Ok(Ready).
-  Sometimes it isn't possible:
-    Alternative: spawn task w/ socket to do cleanup work.
--->
+请注意，在实现`AsyncWrite`和`AsyncRead`的类型的写入"half"上调用`shutdown`不会关闭读取"half"。您通常可以继续随意读取数据，直到另一方关闭相应的写入"一半"。
 
-Note that calling `shutdown` on a write "half" of a type that implements
-`AsyncWrite` *and* `AsyncRead` does not shut down the read "half". You
-can usually still continue reading data as you please until the other
-side shuts down their corresponding write "half".
+### 使用AsyncWrite的示例
 
-### An example of using `AsyncWrite`
-
-Without further ado, let's take a look at how we might implement
-[`write_all`]:
+不用多说，让我们来看看我们如何实现
 
 
 ```rust
-# extern crate tokio;
 #[macro_use]
 extern crate futures;
-# fn main() {}
 use std::io;
 use tokio::prelude::*;
 
@@ -294,4 +227,3 @@ where
 }
 ```
 
-[`Write`]: https://doc.rust-lang.org/std/io/trait.Write.html
