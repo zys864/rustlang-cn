@@ -8,7 +8,7 @@
 async fn do_something() { ... }
 ```
 
-`async fn`返回的值是一个`Future`，需要在执行着上运行才能起作用：
+`async fn`返回的值是一个`Future`，需要在执行者上运行才能起作用：
 
 ```rust
 // `block_on` blocks the current thread until the provided future has run to
