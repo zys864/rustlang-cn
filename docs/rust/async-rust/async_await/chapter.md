@@ -47,7 +47,7 @@ fn foo<'a>(x: &'a u8) -> impl Future<Output = ()> + 'a {
 }
 ```
 
-这意味着从`async fn`返回`Future`必须是`await!`，当为非'static参数时仍然有效。常见情况中,在调用函数（如`await!(foo(&x))`）之后立即`await!` `Future`，这不是问题。但是，如果存储`Future`或将其发送到另一个任务或线程，这可能是一个问题。
+这意味着从`async fn`返回`Future`必须`await!`，且当非'static参数时仍然有效。常见情况中,在调用函数之后立即`await!` `Future`（如`await!(foo(&x))`），这不是问题。但是，如果存储`Future`或将其发送到另一个任务或线程，这可能是一个问题。
 
 将带有引用作为参数的 `async fn`转换为`'static` `Future`的一个常见解决方法是将参数与对块`async fn`调用捆绑在一起放进`async`块内：
 
