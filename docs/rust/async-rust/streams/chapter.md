@@ -15,7 +15,7 @@ trait Stream {
 }
 ```
 
-`Stream`的一个常见的例子是 来自`futures`箱子的`Receiver`通道类型。每次从Sender端发送一个值时它都会产生某个值，并且一旦`Sender`端被删除，它就会产生`None`并且收到端暂停所有消息接收：
+`Stream`的一个常见的例子是 来自`futures`箱子的`Receiver`通道类型。每次从`Sender`端发送一个值时它都会产生某个值，并且一旦`Sender`端被删除，它就会产生`None`并且收到端暂停所有消息接收：
 
 ```rust
 use futures::channel::mpsc;
