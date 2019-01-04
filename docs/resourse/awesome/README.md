@@ -301,7 +301,12 @@ Rust 有超过 [2,000 名独立贡献者][authors]，这个数字每周还都在
 
 [Rust中文社区](http://rustlang-cn.org)致力于Rust编程语言中文网络-QQ群:570065685
 
-### [1-Rust中文文档](http://rustlang-cn.org)：
+### [1-Rust阅读](http://rustlang-cn.org)：
+
+- Rust中文专栏
+- Rust中文社刊
+
+### [2-Rust中文文档](http://rustlang-cn.org)：
 
 #### Rust语言
 
@@ -332,15 +337,15 @@ Rust 有超过 [2,000 名独立贡献者][authors]，这个数字每周还都在
 - Embedonomicon
 - 资源
 
-### [2-Rust语言生态](https://github.com/rustlang-cn)
+### [3-Rust语言生态](https://github.com/rustlang-cn)
 
 - Awesome
 - Crates
 - Blogs
 - 书签
 
-### [3-Rust中文社区论坛](https://github.com/rustlang-cn/forum/issues)
+### [4-Rust中文社区论坛](https://github.com/rustlang-cn/forum/issues)
 
-### [4-Rust中文社区Github](https://github.com/rustlang-cn)
+### [5-Rust中文社区Github](https://github.com/rustlang-cn)
 
 让我们一起参与！无论你是参与文档建设，还对社区感兴趣，可以加入[rustlang-cn](https://github.com/rustlang-cn) Github组织一起努力，期待你的加入！
