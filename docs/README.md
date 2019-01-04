@@ -52,7 +52,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 <div class="features">
   <div class="feature">
     <h2>命令行</h2>
-    <p>使用Rust强大的生态系统快速启动CLI工具。Rust可帮助您放心地维护应用程序并轻松分发</p>
+    <p>使用Rust强大的生态系统快速启动CLI工具,Rust可帮助您放心地维护应用程序并轻松分发</p>
     <div><a href="/cli/book/">阅读更多</a></div>
   </div>
   <div class="feature">
