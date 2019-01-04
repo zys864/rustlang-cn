@@ -2,7 +2,7 @@
 
 # Rust内存分配器的不同行为
 
-> 本文同步于[Rust中文社区专栏：Rust内存分配器的不同行为](https://rustlang-cn.org/read/rust/2019/rust-memory-allocator.html) ,本文时间：2019-01-04, 作者：[Pslydhh](https://www.zhihu.com/people/Pslydhh/activities)，简介：Pslydhh
+> 本文出自[Rust内存分配器的不同行为](https://zhuanlan.zhihu.com/p/54066600)，同步于[Rust中文社区专栏：Rust内存分配器的不同行为](https://rustlang-cn.org/read/rust/2019/rust-memory-allocator.html) ,本文时间：2019-01-04, 作者：[Pslydhh](https://www.zhihu.com/people/Pslydhh/activities)，简介：Pslydhh
 
 [欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文社区,共建Rust语言中文网络！欢迎向Rust中文社区专栏投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文在以下地方直接展示, 欢迎访问[Rust中文论坛](https://github.com/rustlang-cn/forum/issues)，QQ群：570065685
 
