@@ -1,6 +1,6 @@
 # rustlang-cn [![Build Status](https://travis-ci.org/rustlang-cn/rustlang-cn.svg?branch=master)](https://travis-ci.org/rustlang-cn/rustlang-cn)
 
-> 因为本repo的修改会自动发布到[rustlang-cn](https://rustlang-cn.org/)网站,请参与时遵循以下步骤，保持构建为成功状态.
+> 因为本repo的修改会自动发布到[rustlang-cn](https://rustlang-cn.org/)网站,请参与时遵循以下步骤，请保持构建为成功状态.
 
 ## 修改文件：
 
