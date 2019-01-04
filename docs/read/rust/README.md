@@ -5,6 +5,9 @@
 <div id="join" style="font-size: 1.5rem;"><a href="https://github.com/rustlang-cn/articles" target="_black">欢迎投稿</a> 共建Rust语言中文网络！</div>
 
 <h4><img src="/imgs/rust.png"/>
+<a href="/read/rust/2019/rust-memory-allocator.html">Rust内存分配器的不同行为</a></h4>
+
+<h4><img src="/imgs/rust.png"/>
 <a href="/read/rust/2018/rust-error-handle.html">Rust错误处理</a></h4>
 
 <h4><img src="/imgs/rust.png"/>

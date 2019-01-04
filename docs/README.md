@@ -11,7 +11,7 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 <div class="features">
   <div class="feature">
     <button class="new"><a href="/read/rust/" >文章专栏</a></button>
-    <p><a href="/read/rust/2018/rust-error-handle.html" ><strong>最新文章：Rust错误处理</strong></a></p>
+    <p><a href="/read/rust/2019/rust-memory-allocator.html" ><strong>最新文章：Rust内存分配器的不同行为</strong></a></p>
   </div>
   <div class="feature">
     <button class="new"><a href="/read/rustlang-cn/" >社刊专栏</a></button>

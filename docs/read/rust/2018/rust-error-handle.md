@@ -4,18 +4,13 @@
 
 > 本文同步于[Rust中文社区专栏文章：Rust错误处理](https://rustlang-cn.org/read/rust/2018/rust-error-handle.html) ,本文时间：2018-12-14, 译者：[krircc](https://krircc.github.io/)，简介：天青色，[原文出处](https://medium.com/learning-rust/rust-error-handling-72a8e036dd3)
 
-欢迎向Rust中文社区投稿,[投稿地址](https://github.com/rustlang-cn/articles) ,好文将在以下地方直接展示
+[欢迎加入]Rust中文社区,共建Rust语言中文网络！欢迎向Rust中文社区专栏投稿,[投稿地址]() ,好文在以下地方直接展示, 欢迎访问[Rust中文论坛](https://github.com/rustlang-cn/forum/issues)，QQ群：570065685
 
 1. [Rust中文社区首页](https://rustlang-cn.org)
-
 2. Rust中文社区[文章栏目](https://rustlang-cn.org/read/rust/)
-
 3. 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
-
 4. 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
-
 5. 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
-
 6. 微博[Rustlang-cn](https://weibo.com/kriry)
 
 ## 智能编译器
