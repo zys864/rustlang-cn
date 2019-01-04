@@ -1,13 +1,12 @@
 # 数据读写
 
-## 非阻塞I / O.
+## 非阻塞I / O
 
 在概述中我们简要提到Tokio的`I / O`类型实现了`std :: io :: Read`和`std :: io :: Write`的非阻塞变体，称为`AsyncRead`和`AsyncWrite`。 这些是Tokio的`I / O`故事中不可或缺的一部分，在使用`I / O`代码时很重要。
 
 > 注意：在本节中，我们将主要讨论[AsyncRead](https://docs.rs/tokio-io/0.1/tokio_io/trait.AsyncRead.html)，但[AsyncWrite](https://docs.rs/tokio-io/0.1/tokio_io/trait.AsyncWrite.html)几乎完全相同，仅用于将数据写入`I / O`资源（如`TCP`套接字）而不是从中读取。
 
 那么，让我们来看看`AsyncRead`，看看所有的大惊小怪：
-
 
 ```rust
 use std::io::Read;
@@ -18,7 +17,7 @@ pub trait AsyncRead: Read {
 }
 ```
 
-呵呵。 这里发生了什么？ 好吧，`AsyncRead`实际上只是从`std :: io`中的Read](https://doc.rust-lang.org/std/io/trait.Read.html)，还有一个额外的合同。 `AsyncRead`的文档如下：
+呵呵。 这里发生了什么？ 好吧，`AsyncRead`实际上只是从`std :: io`中的[Read](https://doc.rust-lang.org/std/io/trait.Read.html)，还有一个额外的合同。 `AsyncRead`的文档如下：
 
 此特征继承自`std :: io :: Read`，表示`I / O`对象是非阻塞的。 **当字节不可用而不是阻塞当前线程时，所有非阻塞`I / O`对象都必须返回错误**。
 
@@ -38,7 +37,7 @@ fn poll_read(&mut self, buf: &mut [u8]) -> Poll<usize, std::io::Error> {
 
 这段代码应该很熟悉。 如果你稍微眯一下，`poll_read`看起来很像`Future :: poll`。 那是因为这几乎就是它的本质！ 实现`AsyncRead`的类型本质上就像您可以尝试从中读取数据的`Future`，并且它将通知您它是否已准备好（并且某些数据已被读取）或`NotReady`（并且您将不得不稍后再次轮询）。
 
-##  使用`Future` `I/O`
+## 使用`Future` `I/O`
 
 由于`AsyncRead`（和`AsyncWrite`）几乎都是`Future`，因此您可以轻松地将它们嵌入到您自己的`Future`中，并像轮询任何其他嵌入式`Future`一样轮询它们。你甚至可以使用`try_ready！`根据需要传播错误和`NotReady`。我们将在下一节中详细讨论直接使用这些特质。但是，为了在许多情况下简化生活，Tokio在[tokio :: io](https://docs.rs/tokio/0.1/tokio/io/index.html)中提供了许多有用的组合器，用于在`AsyncRead`和`AsyncWrite`之上执行常见的`I / O`操作。通常，它们提供围绕实现F`uture`的`AsyncRead`或`AsyncWrite`类型的包装器，并在给定的读取或写入操作完成时完成。
 
@@ -124,7 +123,6 @@ let echo_fut = TcpStream::connect(&addr)
 很简约！
 
 到目前为止我们谈到的组合器都是针对相当低级别的操作：读取这些字节，写入这些字节，复制这些字节。 但是，通常情况下，您希望在更高级别的表示上操作，例如`行`。 Tokio也在那里覆盖！ [lines](https://docs.rs/tokio/0.1/tokio/io/fn.lines.html)接受`AsyncRead`，并返回一个`Stream`，它从输入中产生每一行，直到没有更多行要读取：
-
 
 ```rust
 use tokio::net::tcp::TcpStream;
@@ -270,4 +268,3 @@ impl Decoder for LinesCodec {
     }
 }
 ```
-

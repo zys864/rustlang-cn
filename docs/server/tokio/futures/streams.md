@@ -254,9 +254,9 @@ tokio::run(
 
 [`stream` 模块][mod-dox] 包括一些将已有的值和迭代器转化为流的函数。
 
-- [`once`] 将给定值转化为一个立即就绪的流，它将产生一个值：给定值。
-- [`iter_ok`] 和 [`iter_result`] 都使用 [`IntoIterator`] 值并将它们转化为一个立即就绪的流，该流将遍历产生迭代器的值。
-- [`empty`] 返回一个立即产生 `None` 的流。
+* [`once`] 将给定值转化为一个立即就绪的流，它将产生一个值：给定值。
+* [`iter_ok`] 和 [`iter_result`] 都使用 [`IntoIterator`] 值并将它们转化为一个立即就绪的流，该流将遍历产生迭代器的值。
+* [`empty`] 返回一个立即产生 `None` 的流。
 
 例如:
 
@@ -280,7 +280,7 @@ tokio::run(
 
 像 [`Iterator`] 一样，`Stream` 特质包括各种各样的“适配器”方法。这些方法都会消费当前流，返回一个新流以提供我们请求的行为。使用这些适配组合器，我们可以:
 
-* 改变一个流的类型 ([`map`], [`map_err`], [`and_then`]).
+* 改变一个流的类型 ([`map`], [`map_err`], [`and_then`])
 * 处理流产生的错误 ([`or_else`]).
 * 过滤流产生的值 ([`take`], [`take_while`], [`skip`], [`skip_while`],
   [`filter`], [`filter_map`]).
@@ -299,18 +299,3 @@ tokio::run(
 [`empty`]: https://docs.rs/futures/0.1/futures/stream/fn.empty.html
 [`IntoIterator`]: https://doc.rust-lang.org/std/iter/trait.IntoIterator.html
 [`Iterator`]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
-[`map`]: #
-[`map_err`]: #
-[`and_then`]: #
-[`or_else`]: #
-[`filter`]: #
-[`filter_map`]: #
-[`for_each`]: #
-[`fold`]: #
-[`take`]: #
-[`take_while`]: #
-[`skip`]: #
-[`skip_while`]: #
-[`zip`]: #
-[`chain`]: #
-[`select`]: #

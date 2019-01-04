@@ -46,7 +46,8 @@ impl SimpleFuture for SocketRead<'_> {
     }
 }
 ```
-这种`Futures `模型允许将多个异步操作组合在一起，而无需中间分配。一次运行多个`Futures `或将`Futures `链接在一起可以通过无分配状态机实现，如下所示：
+
+这种`Futures`模型允许将多个异步操作组合在一起，而无需中间分配。一次运行多个`Futures`或将`Futures`链接在一起可以通过无分配状态机实现，如下所示：
 
 ```rust
 /// A SimpleFuture that runs two other futures to completion concurrently.
@@ -138,7 +139,7 @@ trait Future {
     type Output;
     fn poll(
         // note the change from `&mut self` to `Pin<&mut Self>`
-        self: Pin<&mut Self>, 
+        self: Pin<&mut Self>,
         lw: &LocalWaker, // note the change from `wake: fn()`
     ) -> Poll<Self::Output>;
 }
@@ -146,5 +147,4 @@ trait Future {
 
 您将注意到的第一个更改是我们的`self`类型不再`&mut self`，但已更改为`Pin<&mut Self>`。我们将在后面的章节中详细讨论`pinning`，但现在知道它允许我们创建不可移动的`Future`。不可移动的对象可以在它们的字段之间存储指针，例如`struct MyFut { a: i32, ptr_to_a: *const i32 }`。此功能是启用`async / await`所必需的。
 
-其次，`wake: fn()`已改为`LocalWaker`。在`SimpleFuture`，我们使用对函数指针(`fn()`)的调用来告诉`Future`的执行者应该轮询相关的`Future`。但是，由于`fn()`它是零大小的，因此无法存储有关哪个` task`是唤醒了的数据。在实际场景中，像Web服务器这样的复杂应用程序可能有数千个不同的连接，其唤醒应该分别进行管理。这就是`LocalWaker`和它的兄弟类型`Waker` 。
-
+其次，`wake: fn()`已改为`LocalWaker`。在`SimpleFuture`，我们使用对函数指针(`fn()`)的调用来告诉`Future`的执行者应该轮询相关的`Future`。但是，由于`fn()`它是零大小的，因此无法存储有关哪个`task`是唤醒了的数据。在实际场景中，像Web服务器这样的复杂应用程序可能有数千个不同的连接，其唤醒应该分别进行管理。这就是`LocalWaker`和它的兄弟类型`Waker` 。

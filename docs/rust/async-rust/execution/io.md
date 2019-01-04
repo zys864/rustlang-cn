@@ -1,6 +1,5 @@
 # 执行者和系统IO
 
-
 在上一节关于`The Future Trait`的部分中，我们讨论了在套接字上执行异步读取`Future`的示例：
 
 ```rust
@@ -29,7 +28,7 @@ impl SimpleFuture for SocketRead<'_> {
 }
 ```
 
-这个`Future`将读取套接字上的可用数据，如果没有数据可用，它将`yield`于执行者，请求在套接字再次可读时唤醒其任务。但是，从这个例子中不清楚该`Socket`类型是如何实现的，特别是该`set_readable_callback`函数的工作方式并不明显 。一旦套接字变得可读，我们如何安排`lw.wake() `被调用？一种选择是让一个线程不断检查是否`socket`可读，在适当时调用 `wake()`。但是，这将是非常低效的，需要为每个阻塞的`IO``Future`提供单独的线程。这将大大降低异步代码的效率。
+这个`Future`将读取套接字上的可用数据，如果没有数据可用，它将`yield`于执行者，请求在套接字再次可读时唤醒其任务。但是，从这个例子中不清楚该`Socket`类型是如何实现的，特别是该`set_readable_callback`函数的工作方式并不明显 。一旦套接字变得可读，我们如何安排`lw.wake()`被调用？一种选择是让一个线程不断检查是否`socket`可读，在适当时调用 `wake()`。但是，这将是非常低效的，需要为每个阻塞的`IO``Future`提供单独的线程。这将大大降低异步代码的效率。
 
 在实践中，通过与支持`IO`意识的系统阻塞设施集成来解决这个问题，例如`epoll`在Linux上，`kqueue`在FreeBSD和Mac OS上，在Windows上的`IOCP`和`port`在Fuchsia上（所有这些都通过跨平台的Rust [mio](https://github.com/carllerche/mio) crate暴露）。这些原语都允许线程阻塞多个异步IO事件，一旦事件完成就返回。实际上，这些API通常看起来像这样：
 

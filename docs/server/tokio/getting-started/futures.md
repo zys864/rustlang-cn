@@ -32,7 +32,6 @@ let n = socket.read(&mut buf).unwrap();
 
 `Future`是围绕这种轮询模型的抽象。`Future`代表将在“未来某个时刻”提供的值。我们可以轮询`Future`并询问值是否准备就绪。我们来看看更多细节。
 
-
 ## 仔细看看期货
 
 `future`是表示异步计算完成的值。通常，由于系统中其他位置发生的事件使`future`完成。虽然我们从基本`I/O`的角度看待事物，但您可以使用`future`来表示各种事件，例如：
@@ -77,7 +76,6 @@ track_response_success(response_is_ok);
 `futures`箱和`Tokio`都有一系列组合功能，可以用来处理`future`。 到目前为止，我们已经看到`and_then`将两个`future`链接在一起，然后允许将`future`链接到前一个，即使前一个错误，映射只是将`future`的值从一种类型映射到另一种类型。
 
 我们将在本指南后面探索更多的组合器。
-
 
 ## 基于轮询模型的`Future`
 

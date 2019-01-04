@@ -6,13 +6,13 @@ Rust标准库提供对网络和`I/O`的支持，例如`TCP`连接，`UDP`套接�
 
 例如，如果没有可用的数据，则不会阻止非阻塞读取和写入。相反，它们会立即返回一个`WouldBlock`错误，以及一个保证（如`Future :: poll`），它们已安排当前任务在以后可以取得进展时被唤醒，例如当网络数据包到达时。
 
-通过使用非阻塞的Tokio` I / O`类型，如果不能立即执行他们希望执行的`I / O`，则执行`I / O`的`future`不再阻止执行其他`future`。相反，它只返回`NotReady`，并依赖于任务通知，以便再次调用`poll`，以及它的`I / O`应该成功而不会阻塞。
+通过使用非阻塞的Tokio`I / O`类型，如果不能立即执行他们希望执行的`I / O`，则执行`I / O`的`future`不再阻止执行其他`future`。相反，它只返回`NotReady`，并依赖于任务通知，以便再次调用`poll`，以及它的`I / O`应该成功而不会阻塞。
 
 在幕后，Tokio使用[mio](https://docs.rs/mio/*/mio)和[tokio-fs](https://docs.rs/tokio/0.1/tokio/fs/index.html)来跟踪不同`future`等待的各种`I / O`资源的状态，并在操作系统的任何状态发生变化时通知操作系统。
 
 ## 一个示例服务器
 
-为了了解这是如何组合在一起的，请考虑这个[echo server]（https://tools.ietf.org/html/rfc862）实现：
+为了了解这是如何组合在一起的，请考虑这个[echo server](https://tools.ietf.org/html/rfc862)实现：
 
 ```rust
 use tokio::prelude::*;
@@ -79,5 +79,4 @@ let server = incoming
 tokio::run(server);
 ```
 
-更多例子可以在[这里](https://github.com/tokio-rs/tokio/tree/master/examples)找到。 
-
+更多例子可以在[这里](https://github.com/tokio-rs/tokio/tree/master/examples)找到。

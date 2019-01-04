@@ -37,7 +37,7 @@ let fut = async {
 
 ## 模式：迭代和并发
 
-与同步`Iterators` 类似，有许多不同的方法可以迭代和处理`Stream`中的值。有组合子式的方法，如`map`，`filter`和`fold`，和` try_map`，`try_filter`和`try_fold`。
+与同步`Iterators` 类似，有许多不同的方法可以迭代和处理`Stream`中的值。有组合子式的方法，如`map`，`filter`和`fold`，和`try_map`，`try_filter`和`try_fold`。
 
 不幸的是，`for`循环不能用于`Streams`，但是对于命令式代码，`while let`和`for_each`可用：
 

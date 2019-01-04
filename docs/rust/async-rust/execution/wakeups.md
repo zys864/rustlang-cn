@@ -12,7 +12,6 @@
 
 ## 应用：构建计时器
 
-
 为了示例，我们将在创建计时器时启动新线程，在所需时间内休眠，然后在时间窗口结束时给future`计时器发信号。
 
 以下是我们开始时需要的导入：
@@ -77,7 +76,7 @@ impl Future for TimerFuture {
 }
 ```
 
-如果线程已经设置`shared_state.completed = true`，我们就完成了！否则，我们为当前任务克隆`LocalWaker`，将其转换为` Waker`，然后传递给`shared_state.waker`以便线程可以将任务唤醒。
+如果线程已经设置`shared_state.completed = true`，我们就完成了！否则，我们为当前任务克隆`LocalWaker`，将其转换为`Waker`，然后传递给`shared_state.waker`以便线程可以将任务唤醒。
 
 重要的是，我们必须在每次轮询`Future`时更新`Waker`，因为`Future`可能已经转移到另一个不同的任务与`Waker`。`Future`被轮询之后在任务间传递时会发生这种情况。
 

@@ -108,7 +108,8 @@ fn main() {
     run(futures_01_future);
 }
 ```
-如果您现在`cargo run`，您应该在终端上看到"Listening on http://127.0.0.1:300"消息。如果您在所选择的浏览器中打开该URL，您将看到"thread ... panicked at 'not yet implemented'." 现在我们只需要实际处理请求。首先，让我们返回一条静态消息：
+
+如果您现在`cargo run`，您应该在终端上看到`"Listening on http://127.0.0.1:300"`消息。如果您在所选择的浏览器中打开该URL，您将看到"thread ... panicked at 'not yet implemented'." 现在我们只需要实际处理请求。首先，让我们返回一条静态消息：
 
 ```rust
 async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {

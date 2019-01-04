@@ -131,7 +131,6 @@ Tokio使用相同的机制来管理`poll_write`和`poll_flush`的通知，就像
 
 不用多说，让我们来看看我们如何实现
 
-
 ```rust
 #[macro_use]
 extern crate futures;
@@ -226,4 +225,3 @@ where
     }
 }
 ```
-

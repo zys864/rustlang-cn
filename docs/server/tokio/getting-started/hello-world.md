@@ -6,11 +6,13 @@
 
 让我们开始吧。
 
-首先，生成一个新的crate。
+首先，生成一个新的crate
+
 ```bash
-$ cargo new --bin hello-world
-$ cd hello-world
+cargo new --bin hello-world
+cd hello-world
 ```
+
 接下来，在 `Cargo.toml` 中添加必要的依赖项：
 
 ```toml
@@ -27,6 +29,7 @@ use tokio::io;
 use tokio::net::TcpStream;
 use tokio::prelude::*;
 ```
+
 这里我们使用`tokio`自己[`io`]和[`net`]模块。这些模块提供了与标准库中网络和I/O操作相同的抽象，只有一点很小的差别：所有操作都是异步执行的。
 
 ## 创建流
@@ -76,8 +79,6 @@ let client = TcpStream::connect(&addr).and_then(|stream| {
 
 接下来，我们将处理流。
 
-
-
 ## 写入数据
 
 我们的目标是把"hello world\n"写入到流中。
@@ -111,27 +112,27 @@ tokio::run(client);
 println!("Stream has been created and written to.");
 ```
 
-`tokio::run `启动运行时，阻止当前线程，直到所有生成的任务完成并且所有资源（如文件和套接字）都已被删除。
+`tokio::run`启动运行时，阻止当前线程，直到所有生成的任务完成并且所有资源（如文件和套接字）都已被删除。
 
 到目前为止，我们只在执行程序上运行了一个任务，因此该`client`任务是阻止`run`返回的唯一任务。一旦`run`返回，我们可以确定我们的未来已经完成。
 
 你可以在这里[here][full-code]找到完整的例子。
 
 ## 运行代码
+
 [Netcat]是一种从命令行快速创建TCP套接字的工具。以下命令在先前指定的端口上启动侦听TCP套接字。
 
 ```bash
-$ nc -l -p 6142
+nc -l -p 6142
 ```
 
 我们再另开一个终端窗口运行我们的项目。
 
 ```bash
-$ cargo run
+cargo run
 ```
 
 如果一切顺利，你应该看到 `Netcat` 打印出 `hello world`。
-
 
 ## 下一步
 

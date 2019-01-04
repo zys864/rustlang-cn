@@ -74,6 +74,7 @@ impl<U, A, F> Future for Map<A, F>
     }
 }
 ```
+
 把 `Map` 和我们的 `Display` 放在一起比较，就可以明显看出它们的相似性。`Map` 在 `Display` 调用 `println!` 的相同位置把值传给了给定的函数。
 
 ### `and_then`
@@ -170,13 +171,13 @@ fn main() {
 
 就像 [`Iterator`] 那样，`Future` 特质也包含了各种各样的“适配器”方法。 这些方法消费当前 future，返回一个新的 future 以提供我们请求的行为。使用这些适配组合器，我们可以：
 
-* 改变一个 future 的类型 ([`map`], [`map_err`])
-* 在一个 future 完成时执行另一个 ([`then`], [`and_then`],
+- 改变一个 future 的类型 ([`map`], [`map_err`])
+- 在一个 future 完成时执行另一个 ([`then`], [`and_then`],
   [`or_else`])
-* 找出两个 future 中哪个先执行完成 ([`select`])
-* 等待两个 future 都完成 ([`join`])
-* 转化为一个特质对象 ([`Box::new`])
-* 将展开式恐慌转化为错误 ([`catch_unwind`])
+- 找出两个 future 中哪个先执行完成 ([`select`])
+- 等待两个 future 都完成 ([`join`])
+- 转化为一个特质对象 ([`Box::new`])
+- 将展开式恐慌转化为错误 ([`catch_unwind`])
 
 [`Iterator`]: https://doc.rust-lang.org/std/iter/trait.Iterator.html
 [`Box`]: https://doc.rust-lang.org/std/boxed/struct.Box.html
@@ -220,6 +221,7 @@ fn get_ok_data() -> Result<Vec<Data>, io::Error> {
     Ok(dst)
 }
 ```
+
 上面的代码可以工作是因为传递给 `and_then` 的闭包可以获取到 `dst` 的可变借用。Rust 编译器可以保证 `dst` 存活的比闭包更久。
 
 然而使用 future 的话，借用 `dst` 就行不通了，必须改为传递 `dst`。像这样：
@@ -318,9 +320,9 @@ with_future(my_future);
 
 但是当函数返回 future 的时候，就没有这么简单了。这里是一些各有利弊的可选方法:
 
-* [使用 `impl Future`](#use-impl-future)
-* [特质对象](#trait-objects)
-* [手动实现 `Future`](#implement-future-by-hand)
+- [使用 `impl Future`](#use-impl-future)
+- [特质对象](#trait-objects)
+- [手动实现 `Future`](#implement-future-by-hand)
 
 #### 使用 `impl Future`
 
@@ -380,6 +382,7 @@ fn my_operation(arg: String) -> impl Future<Item = String> {
     Either::B(future::err("something went wrong"))
 }
 ```
+
 要在遇到错误时提前返回，必须把错误放到一个 `Either` 变量中。
 
 [`Either`]: https://docs.rs/futures/0.1.25/futures/future/enum.Either.html
@@ -458,7 +461,7 @@ fn my_operation() -> Box<Future<Item = String, Error = &'static str> + Send> {
 
 最后，当所有以上策略都失败时，我们还是可以退回到手动实现 `Future` 的方法。手动实现可以提供完整的控制，但是因为没有组合器函数能用于这种方法，我们得花更多的精力在那些陈词滥调上了。
 
-### 何时使用组合器
+### 何时使用
 
 在你基于 Tokio 的应用程序中，组合器是减少重复代码的有力解决方案，但是就如本章节所述，它们并不是“银弹”。实现定制的future和定制的组合器还是很常见的。这就提出了什么时候使用组合器与手动实现 `Future` 的选择问题。
 

@@ -110,7 +110,6 @@ impl Wake for Task {
 
 当从`Arc<Task>`创建`LocalWaker`时，调用`wake()`会导致`Arc`复制并被发送到任务通道。然后我们的执行者接收任务并进行轮询。让我们实现：
 
-
 ```rust
 impl Executor {
     fn run(&self) {
