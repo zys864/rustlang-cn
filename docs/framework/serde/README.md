@@ -1,7 +1,12 @@
-# [Serde](https://serde.rs/)
+# [Serde](https://serde.rs/)框架
 
-> 本书由Rust中文社区成员[kula](https://github.com/kulasama)贡献发起翻译。欢迎加入！
-> 译者kula介绍: [Github](https://github.com/kulasama) - [知乎](https://www.zhihu.com/people/kula1/activities) 
+-------------------------------------------------------------------------------------------
+
+**本书由Rust中文社区成员[kula](https://github.com/kulasama)贡献发起翻译。欢迎加入！**
+
+**译者kula介绍: [Github](https://github.com/kulasama) - [知乎](https://www.zhihu.com/people/kula1/activities)**
+
+-------------------------------------------------------------------------------------------
 
 `Serde`, 是rust语言用来序列化和反序列化数据的一个非常高效的解决方案。
 
