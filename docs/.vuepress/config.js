@@ -8,6 +8,7 @@ let { actix } = require ('./category/actix.js')
 let { actixweb } = require ('./category/actixweb.js')
 let { diesel } = require ('./category/diesel.js')
 let { discovery } = require ('./category/discovery.js')
+let { serde } = require ('./category/serde.js')
 let { awesome } = require ('./category/awesome.js')
 
 module.exports = {
@@ -77,27 +78,20 @@ module.exports = {
             ]
           },
           { text: '生态', items: [ 
+            { text: 'Serde', link: '/framework/serde/' }
+          ] },
+          { text: '网络', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
             { text: 'Crates', link: '/resourse/crates/' },
             { text: 'Blogs', link: '/resourse/blogs/' },
             { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' },
-            { text: '网络', items: [ 
+            { text: '专栏', items: [ 
               { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
-              { text: '微博', link: 'https://weibo.com/kriry' },
               { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' },
-              { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' }      
+              { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' },
+              { text: '微博', link: 'https://weibo.com/kriry' }      
             ] }
-          ] },
-          { text: '全栈', items: [ 
-            { text: 'Linux', link: '/os/linux/' },
-            { text: 'Bash', link: '/os/bash/' },
-            { text: 'Web', link: '/w3c/webapi/' },
-            { text: 'HTML', link: '/w3c/html/' },
-            { text: 'CSS', link: '/w3c/css/' },
-            { text: 'Ecmascript', link: '/w3c/ecmascript/' },
-            { text: 'DBA', link: '/dba/dba' },
-            { text: 'Postgresql', link: '/dba/postgresql/' },
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
@@ -112,6 +106,7 @@ module.exports = {
           '/server/actix-web/': actixweb('Actix-Web'),
           '/server/diesel/': diesel('Diesel'),
           '/iot/discovery/': discovery('Discovery'),
+          '/framework/serde/': serde('Serde'),
           '/resourse/awesome/': awesome('Awesome'),
           '/work/': work('Work'),
         }
