@@ -2,7 +2,7 @@ exports.serde = (title) => {
     return [
         '',
         'help',
-        'data-mode',
+        'data-model',
         'derive',
         {
           title: '属性',
