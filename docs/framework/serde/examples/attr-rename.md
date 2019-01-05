@@ -1,6 +1,7 @@
 # Serialize fields as camelCase
 
 !PLAYGROUND 493cf44147f5bc3a0e68c074f7c552ec
+
 ```rust
 #[macro_use]
 extern crate serde_derive;

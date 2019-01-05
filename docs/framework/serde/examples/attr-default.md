@@ -1,6 +1,7 @@
 # Default value for a field
 
 !PLAYGROUND 26df8969cb9df94a7d4a0443dcfb712f
+
 ```rust
 #[macro_use]
 extern crate serde_derive;

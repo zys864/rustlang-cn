@@ -11,6 +11,7 @@ hatch to replace the automatically generated bound by one written by the
 programmer.
 
 !PLAYGROUND 5bd0d8d29a9e468fbe96002c0f347565
+
 ```rust
 #[macro_use]
 extern crate serde_derive;

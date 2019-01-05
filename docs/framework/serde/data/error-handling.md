@@ -35,6 +35,7 @@ for its error type for the data structure to use in various situations.
 [data model]: data-model.md
 
 !FILENAME src/error.rs
+
 ```rust
 # extern crate serde;
 #

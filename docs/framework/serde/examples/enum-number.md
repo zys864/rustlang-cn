@@ -1,6 +1,7 @@
 # Serialize enum as number
 
 !PLAYGROUND c25220723092f68882199a383af07d95
+
 ```rust
 extern crate serde;
 extern crate serde_json;

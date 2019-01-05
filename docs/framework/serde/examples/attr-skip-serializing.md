@@ -10,6 +10,7 @@ deserializing (see [Field Attributes: `skip`][attr-skip]). Likewise, use
 [attr-skip]: field-attrs.md#serdeskip
 
 !PLAYGROUND f69adf6a6856d32a13acaa23735feed3
+
 ```rust
 #[macro_use]
 extern crate serde_derive;

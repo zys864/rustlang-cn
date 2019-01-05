@@ -7,7 +7,7 @@ is applied must be a struct or map type.
 
 The `flatten` attribute serves the following two common use cases:
 
-### Factor out frequently grouped keys
+## Factor out frequently grouped keys
 
 Consider a paginated API which returns a page of results along with pagination
 metadata that identifies how many results were requested, how far into the total

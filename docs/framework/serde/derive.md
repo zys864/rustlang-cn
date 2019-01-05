@@ -1,4 +1,4 @@
-# Using derive
+# 使用Derive
 
 Serde provides a derive macro to generate implementations of the `Serialize` and
 `Deserialize` traits for data structures defined in your crate, allowing them to
@@ -17,6 +17,7 @@ bounds. On rare occasions, for an especially convoluted type you may need to
 These derives require a Rust compiler version 1.15 or newer.
 
 !CHECKLIST
+
 - Add `serde = "1.0"` as a dependency in Cargo.toml.
 - Add `serde_derive = "1.0"` as a dependency in Cargo.toml.
 - Ensure that all other Serde-based dependencies (for example serde_json) are on
@@ -30,6 +31,7 @@ These derives require a Rust compiler version 1.15 or newer.
 Here is the `Cargo.toml`:
 
 !FILENAME Cargo.toml
+
 ```toml
 [package]
 name = "my-crate"
@@ -48,6 +50,7 @@ Now the `src/main.rs` which uses Serde's custom derives:
 
 !FILENAME src/main.rs
 !PLAYGROUND 454091616f81d99a48e72d1c5a430f2a
+
 ```rust
 #[macro_use]
 extern crate serde_derive;
@@ -74,17 +77,17 @@ fn main() {
 
 Here is the output:
 
-```
+```bash
 $ cargo run
 serialized = {"x":1,"y":2}
 deserialized = Point { x: 1, y: 2 }
 ```
 
-### Troubleshooting
+## Troubleshooting
 
 Sometimes you may see compile-time errors that tell you:
 
-```
+```text
 the trait `serde::ser::Serialize` is not implemented for `...`
 ```
 

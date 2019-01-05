@@ -15,6 +15,7 @@ is used.
 [Serde data model]: data-model.md
 
 !FILENAME src/ser.rs
+
 ```rust
 # #[macro_use]
 # extern crate serde_derive;

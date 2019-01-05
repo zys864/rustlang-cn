@@ -1,4 +1,4 @@
-# Feature flags
+# Feature标志
 
 The `serde` crate defines some [Cargo features] to enable using Serde in a
 variety of freestanding environments.
@@ -8,7 +8,7 @@ Building Serde with `default-features = false`, you will receive a stock
 
 [Cargo features]: https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section
 
-#### --feature derive
+## --feature derive
 
 Re-export the derive(Serialize, Deserialize) macros. This is intended for
 library crates that provide optional Serde impls behind a Cargo cfg
@@ -48,7 +48,7 @@ struct ...
 # fn main() {}
 ```
 
-#### --feature std
+### --feature std
 
 *This feature is enabled by default.*
 

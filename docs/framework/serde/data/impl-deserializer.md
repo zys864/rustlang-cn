@@ -31,6 +31,7 @@ there is no advantage to that.
 [Serde's data model]: data-model.md
 
 !FILENAME src/de.rs
+
 ```rust
 # #[macro_use]
 # extern crate serde_derive;

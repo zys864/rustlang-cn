@@ -1,4 +1,4 @@
-# No-std support
+# No-std支持
 
 The `serde` crate has a Cargo feature named `"std"` that is enabled by default.
 In order to use Serde in a no\_std context this feature needs to be disabled.
@@ -21,7 +21,7 @@ If you need JSON support without a standard library, please use
 
 [`serde-json-core`]: https://japaric.github.io/serde-json-core/serde_json_core/
 
-### Derive
+## Derive
 
 The `#[derive(Serialize, Deserialize)]` [derive macros] provided by the
 `serde_derive` crate may be used from a no-std crate without any special action.
