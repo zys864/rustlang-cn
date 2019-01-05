@@ -2,9 +2,7 @@
 
 -------------------------------------------------------------------------------------------
 
-**本书由Rust中文社区成员[kula](https://github.com/kulasama)贡献发起翻译。欢迎加入！**
-
-**译者kula介绍: [Github](https://github.com/kulasama) - [知乎](https://www.zhihu.com/people/kula1/activities)**
+**本书由Rust中文社区成员[kula](https://github.com/kulasama)贡献发起翻译，作者kula: [Github](https://github.com/kulasama) - [知乎](https://www.zhihu.com/people/kula1/activities) 欢迎加入！**
 
 -------------------------------------------------------------------------------------------
 
