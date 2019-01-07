@@ -4,6 +4,19 @@ exports.riker = (title) => {
         'actors',
         'protocol',
         'hierarchy',
-        'supervision'
+        'supervision',
+        'selection',
+        'channels',
+        'schedule',
+        'customize',
+        'persistence',
+        'cluster',
+        'config',
+        'logging',
+        'futures',
+        'testing',
+        'pattens',
+        'faq',
+        'api'
     ]
 }
