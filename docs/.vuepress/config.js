@@ -5,6 +5,7 @@ let { std } = require ('./category/std.js')
 let { cookbook } = require ('./category/cookbook.js')
 let { tokio } = require ('./category/tokio.js')
 let { actix } = require ('./category/actix.js')
+let { actixnet } = require ('./category/actixnet.js')
 let { actixweb } = require ('./category/actixweb.js')
 let { diesel } = require ('./category/diesel.js')
 let { discovery } = require ('./category/discovery.js')
@@ -76,6 +77,7 @@ module.exports = {
           },
           { text: '生态', items: [ 
             { text: 'Actix', link: '/crates/actix/' },
+            { text: 'Actix-net', link: '/crates/actix-net/' },
             { text: 'Actix-web', link: '/crates/actix-web/' },
             { text: 'Diesel', link: '/crates/diesel/' },
             { text: 'Serde', link: '/crates/serde/' },
@@ -105,6 +107,7 @@ module.exports = {
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
           '/crates/actix/': actix('Actix'),
+          '/crates/actix-net/': actixnet('Actix-net'),
           '/crates/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
           '/crates/serde/': serde('Serde'),
