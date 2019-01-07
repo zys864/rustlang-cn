@@ -1,6 +1,6 @@
 # [Actix-net](https://actix.rs/actix-net/actix_net/)
 
-Actix net - Rust可组合的网络服务框架。
+Actix-net - Rust可组合的网络服务框架。
 
 ## Crate特性
 

@@ -8,6 +8,7 @@ let { actix } = require ('./category/actix.js')
 let { actixnet } = require ('./category/actixnet.js')
 let { actixweb } = require ('./category/actixweb.js')
 let { diesel } = require ('./category/diesel.js')
+let { riker } = require ('./category/riker.js')
 let { discovery } = require ('./category/discovery.js')
 let { serde } = require ('./category/serde.js')
 let { awesome } = require ('./category/awesome.js')
@@ -80,6 +81,7 @@ module.exports = {
             { text: 'Actix-net', link: '/crates/actix-net/' },
             { text: 'Actix-web', link: '/crates/actix-web/' },
             { text: 'Diesel', link: '/crates/diesel/' },
+            { text: 'Riker', link: '/crates/riker/' },
             { text: 'Serde', link: '/crates/serde/' },
             { text: 'Tokio', link: '/crates/tokio/' }
           ] },
@@ -110,6 +112,7 @@ module.exports = {
           '/crates/actix-net/': actixnet('Actix-net'),
           '/crates/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
+          '/crates/riker/': riker('Riker'),
           '/crates/serde/': serde('Serde'),
           '/resourse/awesome/': awesome('Awesome'),
           '/work/': work('Work'),
