@@ -44,42 +44,42 @@ module.exports = {
             { text: '社刊', link: '/read/rustlang-cn/' }
           ] },
           { text: '文档', items: [
-              { text: '官方书籍大全', link: '/rust/' },
+              { text: '官方书籍大全', link: '/office/rust/' },
               { text: 'Rust语言', items: [
-                  { text: '深入Rust语言', link: '/rust/book/' },
-                  { text: 'Rust异步编程', link: '/rust/async-rust/' },
-                  { text: 'Rust标准库', link: '/rust/std/' },
-                  { text: '参考规范', link: '/rust/reference/' },
-                  { text: 'Rust食谱', link: '/rust/cookbook/' }
+                  { text: '深入Rust语言', link: '/office/rust/book/' },
+                  { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
+                  { text: 'Rust标准库', link: '/office/rust/std/' },
+                  { text: '参考规范', link: '/office/rust/reference/' },
+                  { text: 'Rust食谱', link: '/office/rust/cookbook/' }
                 ]
               },
               { text: 'Server', items: [ 
-                  { text: 'Futures', link: '/server/futures/' }
+                  { text: 'Futures', link: '/office/server/futures/' }
                 ] 
               },
               { text: 'Wasm', items: [ 
-                  { text: 'Book', link: '/wasm/book/' },
-                  { text: 'Wasm-bindgen', link: '/wasm/wasm-bindgen/' }
+                  { text: 'Book', link: '/office/wasm/book/' },
+                  { text: 'Wasm-bindgen', link: '/office/wasm/wasm-bindgen/' }
                 ] 
               },
               { text: 'CLI', items: [ 
-                  { text: 'book', link: '/cli/book/' }
+                  { text: 'book', link: '/office/cli/book/' }
                 ] 
               },
               { text: 'IOT', items: [ 
-                  { text: 'book', link: '/iot/book/' },
-                  { text: 'Discovery', link: '/iot/discovery/' },
-                  { text: 'Embedonomicon', link: '/iot/embedonomicon/' }
+                  { text: 'book', link: '/office/iot/book/' },
+                  { text: 'Discovery', link: '/office/iot/discovery/' },
+                  { text: 'Embedonomicon', link: '/office/iot/embedonomicon/' }
                 ] 
               }
             ]
           },
           { text: '生态', items: [ 
-            { text: 'Actix', link: '/server/actix/' },
-            { text: 'Actix-web', link: '/server/actix-web/' },
-            { text: 'Diesel', link: '/server/diesel/' },
-            { text: 'Serde', link: '/framework/serde/' },
-            { text: 'Tokio', link: '/server/tokio/' }
+            { text: 'Actix', link: '/crates/actix/' },
+            { text: 'Actix-web', link: '/crates/actix-web/' },
+            { text: 'Diesel', link: '/crates/diesel/' },
+            { text: 'Serde', link: '/crates/serde/' },
+            { text: 'Tokio', link: '/crates/tokio/' }
           ] },
           { text: '网络', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
@@ -98,16 +98,16 @@ module.exports = {
           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
         ],
         sidebar: {
-          '/rust/book/': book('Rust'),
-          '/rust/async-rust/': asyncrust('Async-Rust'),
-          '/rust/std/': std('Std'),
-          '/rust/cookbook/': cookbook('Cookbook'),
-          '/server/tokio/': tokio('Tokio'),
-          '/server/actix/': actix('Actix'),
-          '/server/actix-web/': actixweb('Actix-Web'),
-          '/server/diesel/': diesel('Diesel'),
-          '/iot/discovery/': discovery('Discovery'),
-          '/framework/serde/': serde('Serde'),
+          '/office/rust/book/': book('Rust'),
+          '/office/rust/async-rust/': asyncrust('Async-Rust'),
+          '/office/rust/std/': std('Std'),
+          '/office/rust/cookbook/': cookbook('Cookbook'),
+          '/office/iot/discovery/': discovery('Discovery'),
+          '/crates/tokio/': tokio('Tokio'),
+          '/crates/actix/': actix('Actix'),
+          '/crates/actix-web/': actixweb('Actix-Web'),
+          '/crates/diesel/': diesel('Diesel'),
+          '/crates/serde/': serde('Serde'),
           '/resourse/awesome/': awesome('Awesome'),
           '/work/': work('Work'),
         }
