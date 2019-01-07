@@ -13,7 +13,6 @@
 5. 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
 6. 微博[Rustlang-cn](https://weibo.com/kriry)
 
-
 对于如下的代码，采用nightly version：
 
 ```rust
