@@ -1,4 +1,4 @@
-exports.actixnet = (title) => {
+exports.riker = (title) => {
     return [
         ''
     ]
