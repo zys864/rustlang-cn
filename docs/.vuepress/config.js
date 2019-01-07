@@ -48,16 +48,13 @@ module.exports = {
               { text: 'Rust语言', items: [
                   { text: '深入Rust语言', link: '/rust/book/' },
                   { text: 'Rust异步编程', link: '/rust/async-rust/' },
-                  { text: '标准库', link: '/rust/std/' },
+                  { text: 'Rust标准库', link: '/rust/std/' },
                   { text: '参考规范', link: '/rust/reference/' },
                   { text: 'Rust食谱', link: '/rust/cookbook/' }
                 ]
               },
               { text: 'Server', items: [ 
-                  { text: 'Tokio', link: '/server/tokio/' },
-                  { text: 'Actix', link: '/server/actix/' },
-                  { text: 'Actix-web', link: '/server/actix-web/' },
-                  { text: 'Diesel', link: '/server/diesel/' }
+                  { text: 'Futures', link: '/server/futures/' }
                 ] 
               },
               { text: 'Wasm', items: [ 
@@ -78,7 +75,11 @@ module.exports = {
             ]
           },
           { text: '生态', items: [ 
-            { text: 'Serde', link: '/framework/serde/' }
+            { text: 'Actix', link: '/server/actix/' },
+            { text: 'Actix-web', link: '/server/actix-web/' },
+            { text: 'Diesel', link: '/server/diesel/' },
+            { text: 'Serde', link: '/framework/serde/' },
+            { text: 'Tokio', link: '/server/tokio/' }
           ] },
           { text: '网络', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
