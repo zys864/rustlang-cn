@@ -83,7 +83,7 @@ ActorRef始终引用actor的特定实例。 当同一个Actor的两个实例启�
 
 ```rust
 let my_actor = sys.actor_of(props, "my-actor");
-myactor.tell("Hello my actor!".into(), None);
+my_actor.tell("Hello my actor!".into(), None);
 ```
 
 这里我们向MyActor actor发送了一个String类型的消息。 第二个参数让我们将发件人指定为`Option <ActorRef>`。 由于我们从主节点发送消息而不是从`Actor`的接收节点发送消息，因此我们将发送方设置为无。
