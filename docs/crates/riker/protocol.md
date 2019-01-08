@@ -2,7 +2,7 @@
 
 在Riker中，单个actor系统具有定义的消息类型，即协议。 协议可以是简单类型，例如String。 简单的String协议在大多数现实世界的应用程序中都没有用，在这些应用程序中可能有多个actor，每个actor都有自己专门的消息类型要求
 
-任何Rust类型都可以用作消息协议，只要它是克隆和发送即可。 此外，必须实现`Into` trait，特别是`Into <ActorMsg>`.
+任何Rust类型都可以用作消息协议，只要它是Clone`和`Send`即可。 此外，必须实现`Into` trait，特别是`Into <ActorMsg>`.
 
 ```rust
 enum Protocol {
