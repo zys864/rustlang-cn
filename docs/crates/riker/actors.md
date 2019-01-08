@@ -73,7 +73,7 @@ let my_actor = sys.actor_of(props, "my-actor");
 
 ActorRef始终引用actor的特定实例。 当同一个Actor的两个实例启动时，它们仍然被认为是单独的actor，每个actor都有不同的ActorRef。
 
-> 注意 : ActorRef很轻量，可以克隆（它们实现Clone）而不必过多关注资源。 引用也可以在`Props`中用作另一个actor的工厂方法中的一个字段，一种称为禀赋的模式。 ActorRef也是Send，因此它可以作为消息发送给另一个actor。
+> 注意 : ActorRef很轻量，可以克隆（它们实现Clone）而不必过多关注资源。 引用也可以在`Props`中用作另一个actor的工厂方法中的一个字段，一种称为天赋的模式。 ActorRef也是Send，因此它可以作为消息发送给另一个actor。
 
 ## 发送消息
 
@@ -90,7 +90,7 @@ myactor.tell("Hello my actor!".into(), None);
 
 Riker在处理消息时提供某些保证：
 
-* 消息传递是“最多一次”。 消息将无法传递或传递一次。 没有重复传递相同的消息。
+* 消息传递是“最多一次”： 消息将传递失败或传递一次， 没有重复传递相同的消息。
 * `Actor`随时处理一条消息
 * 消息存储在actor的邮箱中，以便接收它们
 
