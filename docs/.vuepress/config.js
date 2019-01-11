@@ -99,7 +99,9 @@ module.exports = {
             ] }
           ] },
           { text: '工作', link: '/work/2018/rustwork-2018-11-21' },
-          { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }
+//           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }，
+          { text: '论坛', link: 'http://47.104.146.58' }
+          
         ],
         sidebar: {
           '/office/rust/book/': book('Rust'),
