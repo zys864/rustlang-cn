@@ -2,6 +2,8 @@
 
 > **本书同步于官方 [TheRustProgrammingLanguage](https://doc.rust-lang.org/book/) 仓库[地址](https://github.com/rust-lang/book)！**
 
+> 本书初始基于[trpl-zh-cn](https://kaisery.github.io/trpl-zh-cn/foreword.html) 2019-01-11版本,感谢作者。
+
 ## Why Rust
 
 **Rust** 是一种安全、并发、实用的编程语言，有着惊人的运行速度，能够防止段错误，并保证线程安全,使每个人都能够构建
