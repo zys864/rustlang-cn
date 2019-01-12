@@ -1,5 +1,6 @@
 let { work } = require ('./category/work.js')
 let { book } = require ('./category/rust.js')
+let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
 let { std } = require ('./category/std.js')
 let { cookbook } = require ('./category/cookbook.js')
@@ -49,6 +50,7 @@ module.exports = {
               { text: '官方书籍大全', link: '/office/rust/' },
               { text: 'Rustlang', items: [
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
+                  { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
                   { text: 'Rust标准库', link: '/office/rust/std/' },
                   { text: 'Rust参考规范', link: '/office/rust/reference/' },
@@ -105,6 +107,7 @@ module.exports = {
         ],
         sidebar: {
           '/office/rust/book/': book('Rust'),
+          '/office/rust/advrust/': advrust('AdvRust'),
           '/office/rust/async-rust/': asyncrust('Async-Rust'),
           '/office/rust/std/': std('Std'),
           '/office/rust/cookbook/': cookbook('Cookbook'),
