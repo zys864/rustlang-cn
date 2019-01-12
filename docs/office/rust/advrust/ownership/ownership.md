@@ -1,4 +1,4 @@
-# Ownership and Lifetimes
+# 所有权与生命周期
 
 > 原文跟踪[ownership.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/ownership.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
