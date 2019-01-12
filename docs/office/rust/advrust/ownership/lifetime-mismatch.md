@@ -1,4 +1,4 @@
-# Limits of Lifetimes
+# 生命周期限制
 
 > 原文跟踪[lifetime-mismatch.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetime-mismatch.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
