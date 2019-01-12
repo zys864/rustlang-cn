@@ -1,4 +1,4 @@
-# Higher-Rank Trait Bounds (HRTBs)
+# 高阶特质界限(HRTBs)
 
 > 原文跟踪[hrtb.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/hrtb.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
