@@ -1,5 +1,7 @@
 # The Rustonomicon
 
+> **本书同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！**
+
 > 原文跟踪[README.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &emsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
 
 ## The Dark Arts of Advanced and Unsafe Rust Programming
