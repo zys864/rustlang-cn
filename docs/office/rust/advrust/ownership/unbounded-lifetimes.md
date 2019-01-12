@@ -23,15 +23,6 @@ unbounded. For instance:
 fn get_str<'a>() -> &'a str;
 ```
 
-will produce an `&str` with an unbounded lifetime. The easiest way to avoid
-unbounded lifetimes is to use lifetime elision at the function boundary.
-If an output lifetime is elided, then it *must* be bounded by an input lifetime.
-Of course it might be bounded by the *wrong* lifetime, but this will usually
-just cause a compiler error, rather than allow memory safety to be trivially
-violated.
+会产生无限的生命周期。 避免无限生命期的最简单方法是在函数边界使用生命周期遗漏。 如果省略输出生命周期，则必须受输入生命周期的限制。 当然它可能受到错误生命周期的限制，但这通常只会导致编译器错误，而不是简单地违反内存安全性。
 
-Within a function, bounding lifetimes is more error-prone. The safest and easiest
-way to bound a lifetime is to return it from a function with a bound lifetime.
-However if this is unacceptable, the reference can be placed in a location with
-a specific lifetime. Unfortunately it's impossible to name all lifetimes involved
-in a function.
+在函数内，边界生命周期更容易出错。 绑定生命周期的最安全和最简单的方法是从具有绑定生存期的函数返回它。 但是，如果这是不可接受的，您可以将引用放在具有特定生命周期的位置。 遗憾的是，无法命名函数中涉及的所有生命周期。
