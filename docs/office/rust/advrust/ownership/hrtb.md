@@ -30,7 +30,7 @@ fn main() {
 If we try to naively desugar this code in the same way that we did in the
 lifetimes section, we run into some trouble:
 
-```rust,ignore
+```rust
 struct Closure<F> {
     data: (u8, u16),
     func: F,
@@ -62,7 +62,7 @@ named until we enter the body of `call`! Also, that isn't some fixed lifetime;
 This job requires The Magic of Higher-Rank Trait Bounds (HRTBs). The way we
 desugar this is as follows:
 
-```rust,ignore
+```rust
 where for<'a> F: Fn(&'a (u8, u16)) -> &'a u8,
 ```
 

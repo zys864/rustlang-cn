@@ -10,12 +10,12 @@ when we talked about `'a: 'b`, it was ok for `'a` to live *exactly* as long as
 gets dropped at the same time as another, right? This is why we used the
 following desugaring of `let` statements:
 
-```rust,ignore
+```rust
 let x;
 let y;
 ```
 
-```rust,ignore
+```rust
 {
     let x;
     {
@@ -27,7 +27,7 @@ let y;
 Each creates its own scope, clearly establishing that one drops before the
 other. However, what if we do the following?
 
-```rust,ignore
+```rust
 let (x, y) = (vec![], vec![]);
 ```
 
@@ -63,7 +63,7 @@ is alive, so is days.
 
 However if we add a destructor, the program will no longer compile!
 
-```rust,ignore
+```rust
 struct Inspector<'a>(&'a u8);
 
 impl<'a> Drop for Inspector<'a> {
@@ -123,7 +123,7 @@ though their type gives them the capability for such access.
 For example, this variant of the above `Inspector` example will never
 access borrowed data:
 
-```rust,ignore
+```rust
 struct Inspector<'a>(&'a u8, &'static str);
 
 impl<'a> Drop for Inspector<'a> {
@@ -144,7 +144,7 @@ fn main() {
 
 Likewise, this variant will also never access borrowed data:
 
-```rust,ignore
+```rust
 use std::fmt;
 
 struct Inspector<T: fmt::Display>(T, &'static str);
@@ -177,7 +177,7 @@ of an inspector's destructor might access that borrowed data.
 Therefore, the drop checker forces all borrowed data in a value to
 strictly outlive that value.
 
-# An Escape Hatch
+## An Escape Hatch
 
 The precise rules that govern drop checking may be less restrictive in
 the future.
@@ -198,7 +198,7 @@ to do so.
 That attribute is called `may_dangle` and was introduced in [RFC 1327][rfc1327].
 To deploy it on the `Inspector` example from above, we would write:
 
-```rust,ignore
+```rust
 struct Inspector<'a>(&'a u8, &'static str);
 
 unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
@@ -218,7 +218,7 @@ lifetime `'b` and that the only uses of `T` will be moves or drops, but omit
 the attribute from `'a` and `U`, because we do access data with that lifetime
 and that type:
 
-```rust,ignore
+```rust
 use std::fmt::Display;
 
 struct Inspector<'a, 'b, T, U: Display>(&'a u8, &'b u8, T, U);
@@ -232,17 +232,17 @@ unsafe impl<'a, #[may_dangle] 'b, #[may_dangle] T, U: Display> Drop for Inspecto
 
 It is sometimes obvious that no such access can occur, like the case above.
 However, when dealing with a generic type parameter, such access can
-occur indirectly. Examples of such indirect access are:
+occur indirectly. Examples of such indirect access are
 
- * invoking a callback,
- * via a trait method call.
+ * invoking a callback
+ * via a trait method call
 
 (Future changes to the language, such as impl specialization, may add
 other avenues for such indirect access.)
 
 Here is an example of invoking a callback:
 
-```rust,ignore
+```rust
 struct Inspector<T>(T, &'static str, Box<for <'r> fn(&'r T) -> String>);
 
 impl<T> Drop for Inspector<T> {
@@ -256,7 +256,7 @@ impl<T> Drop for Inspector<T> {
 
 Here is an example of a trait method call:
 
-```rust,ignore
+```rust
 use std::fmt;
 
 struct Inspector<T: fmt::Display>(T, &'static str);
@@ -281,7 +281,7 @@ attribute makes the type vulnerable to misuse that the borrower
 checker will not catch, inviting havoc. It is better to avoid adding
 the attribute.
 
-# Is that all about drop checker?
+## Is that all about drop checker
 
 It turns out that when writing unsafe code, we generally don't need to
 worry at all about doing the right thing for the drop checker. However there

@@ -1,6 +1,6 @@
-# Meet Safe and Unsafe
+# 遇见Safe与Unsafe 
 
-> > 原文跟踪[meet-safe-and-unsafe.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/meet-safe-and-unsafe.md) &emsp; Commit: a08085479b674bcac6e41bdc00dbee798ea9854e
+> 原文跟踪[meet-safe-and-unsafe.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/meet-safe-and-unsafe.md) &emsp; Commit: a08085479b674bcac6e41bdc00dbee798ea9854e
 
 ![safe and unsafe](../img/safeandunsafe.svg)
 

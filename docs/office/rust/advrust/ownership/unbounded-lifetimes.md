@@ -19,7 +19,7 @@ boundaries.
 Given a function, any output lifetimes that don't derive from inputs are
 unbounded. For instance:
 
-```rust,ignore
+```rust
 fn get_str<'a>() -> &'a str;
 ```
 
@@ -35,4 +35,3 @@ way to bound a lifetime is to return it from a function with a bound lifetime.
 However if this is unacceptable, the reference can be placed in a location with
 a specific lifetime. Unfortunately it's impossible to name all lifetimes involved
 in a function.
-

@@ -39,7 +39,7 @@ let z = &y;
 The borrow checker always tries to minimize the extent of a lifetime, so it will
 likely desugar to the following:
 
-```rust,ignore
+```rust
 // NOTE: `'a: {` and `&'b x` is not valid syntax!
 'a: {
     let x: i32 = 0;
@@ -66,7 +66,7 @@ let y = &x;
 z = y;
 ```
 
-```rust,ignore
+```rust
 'a: {
     let x: i32 = 0;
     'b: {
@@ -81,9 +81,7 @@ z = y;
 }
 ```
 
-
-
-# Example: references that outlive referents
+## Example: references that outlive referents
 
 Alright, let's look at some of those examples from before:
 
@@ -96,7 +94,7 @@ fn as_str(data: &u32) -> &str {
 
 desugars to:
 
-```rust,ignore
+```rust
 fn as_str<'a>(data: &'a u32) -> &'a str {
     'b: {
         let s = format!("{}", data);
@@ -123,7 +121,7 @@ up in our face.
 
 To make this more clear, we can expand the example:
 
-```rust,ignore
+```rust
 fn as_str<'a>(data: &'a u32) -> &'a str {
     'b: {
         let s = format!("{}", data);
@@ -163,22 +161,18 @@ we could have returned an `&'a str` would have been if it was in a field of the
 can be considered to reside at the bottom of the stack; though this limits
 our implementation *just a bit*.)
 
-
-
-
-
-# Example: aliasing a mutable reference
+## Example: aliasing a mutable reference
 
 How about the other example:
 
-```rust,ignore
+```rust
 let mut data = vec![1, 2, 3];
 let x = &data[0];
 data.push(4);
 println!("{}", x);
 ```
 
-```rust,ignore
+```rust
 'a: {
     let mut data: Vec<i32> = vec![1, 2, 3];
     'b: {

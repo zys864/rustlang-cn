@@ -17,7 +17,6 @@ we will then relate it back to how subtyping actually occurs in Rust.
 
 So here's our simple extension, *Objective Rust*, featuring three new types:
 
-
 ```rust
 trait Animal {
     fn snuggle(&self);
@@ -37,7 +36,7 @@ But unlike normal traits, we can use them as concrete and sized types, just like
 
 Now, say we have a very simple function that takes an Animal, like this:
 
-```rust,ignore
+```rust
 fn love(pet: Animal) {
     pet.snuggle();
 }
@@ -46,7 +45,7 @@ fn love(pet: Animal) {
 By default, static types must match *exactly* for a program to compile. As such,
 this code won't compile:
 
-```rust,ignore
+```rust
 let mr_snuggles: Cat = ...;
 love(mr_snuggles);         // ERROR: expected Animal, found Cat
 ```
@@ -81,7 +80,7 @@ of our static type system, making it worse than useless (and leading to Undefine
 Here's a simple example of this happening when we apply subtyping in a completely naive
 "find and replace" way.
 
-```rust,ignore
+```rust
 fn evil_feeder(pet: &mut Animal) {
     let spike: Dog = ...;
 
@@ -135,10 +134,7 @@ because nothing ever has type `'a`. Lifetimes only occur as part of some larger 
 like `&'a u32` or `IterMut<'a, u32>`. To apply lifetime subtyping, we need to know
 how to compose subtyping. Once again, we need *variance*.
 
-
-
-
-# Variance
+## Variance
 
 Variance is where things get a bit complicated.
 
@@ -172,7 +168,7 @@ to trying to explain:
 
 |   |                 |     'a    |         T         |     U     |
 |---|-----------------|:---------:|:-----------------:|:---------:|
-| * | `&'a T `        | covariant | covariant         |           |
+| * | `&'a T`        | covariant | covariant         |           |
 | * | `&'a mut T`     | covariant | invariant         |           |
 | * | `Box<T>`        |           | covariant         |           |
 |   | `Vec<T>`        |           | covariant         |           |
@@ -201,7 +197,7 @@ and look at some examples.
 
 First off, let's revisit the meowing dog example:
 
-```rust,ignore
+```rust
 fn evil_feeder(pet: &mut Animal) {
     let spike: Dog = ...;
 
@@ -267,7 +263,7 @@ enough into the place expecting something long-lived.
 
 Here it is:
 
-```rust,ignore
+```rust
 fn evil_feeder<T>(input: &mut T, val: T) {
     *input = val;
 }
@@ -345,7 +341,7 @@ are guaranteed to be the only one with access to it.
 
 Consider the following code:
 
-```rust,ignore
+```rust
 let mr_snuggles: Box<Cat> = ..;
 let spike: Box<Dog> = ..;
 
@@ -370,14 +366,14 @@ Only one thing left to explain: function pointers.
 
 To see why `fn(T) -> U` should be covariant over `U`, consider the following signature:
 
-```rust,ignore
+```rust
 fn get_animal() -> Animal;
 ```
 
 This function claims to produce an Animal. As such, it is perfectly valid to
 provide a function with the following signature instead:
 
-```rust,ignore
+```rust
 fn get_animal() -> Cat;
 ```
 
@@ -389,13 +385,13 @@ just forget that fact.
 
 However, the same logic does not apply to *arguments*. Consider trying to satisfy:
 
-```rust,ignore
+```rust
 fn handle_animal(Animal);
 ```
 
 with
 
-```rust,ignore
+```rust
 fn handle_animal(Cat);
 ```
 
@@ -444,4 +440,3 @@ struct MyType<'a, 'b, A: 'a, B: 'b, C, D, E, F, G, H, In, Out, Mixed> {
     k2: Mixed,              // invariant over Mixed, because invariance wins all conflicts
 }
 ```
-

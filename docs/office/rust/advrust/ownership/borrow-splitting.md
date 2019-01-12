@@ -28,7 +28,7 @@ println!("{} {} {} {}", a, b, c, c2);
 However borrowck doesn't understand arrays or slices in any way, so this doesn't
 work:
 
-```rust,ignore
+```rust
 let mut x = [1, 2, 3];
 let a = &mut x[0];
 let b = &mut x[1];
@@ -62,7 +62,7 @@ the left of the index, and one for everything to the right. Intuitively we know
 this is safe because the slices don't overlap, and therefore alias. However
 the implementation requires some unsafety:
 
-```rust,ignore
+```rust
 fn split_at_mut(&mut self, mid: usize) -> (&mut [T], &mut [T]) {
     let len = self.len();
     let ptr = self.as_mut_ptr();
@@ -144,7 +144,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 Here's a mutable slice:
 
 ```rust
-# fn main() {}
+fn main() {}
 use std::mem;
 
 pub struct IterMut<'a, T: 'a>(&'a mut[T]);
@@ -178,7 +178,7 @@ impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
 And here's a binary tree:
 
 ```rust
-# fn main() {}
+fn main() {}
 use std::collections::VecDeque;
 
 type Link<T> = Option<Box<Node<T>>>;

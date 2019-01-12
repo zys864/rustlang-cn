@@ -7,7 +7,7 @@ In order to make common patterns more ergonomic, Rust allows lifetimes to be
 
 A *lifetime position* is anywhere you can write a lifetime in a type:
 
-```rust,ignore
+```rust
 &'a T
 &'a mut T
 T<'a>
@@ -40,7 +40,7 @@ Elision rules are as follows:
 
 Examples:
 
-```rust,ignore
+```rust
 fn print(s: &str);                                      // elided
 fn print<'a>(s: &'a str);                               // expanded
 

@@ -30,7 +30,7 @@ and add `extern crate libc;` to your crate root.
 The following is a minimal example of calling a foreign function which will
 compile if snappy is installed:
 
-```rust,ignore
+```rust
 extern crate libc;
 use libc::size_t;
 
@@ -63,7 +63,7 @@ of keeping the binding correct at runtime.
 
 The `extern` block can be extended to cover the entire snappy API:
 
-```rust,ignore
+```rust
 extern crate libc;
 use libc::{c_int, size_t};
 
@@ -84,10 +84,10 @@ extern {
     fn snappy_validate_compressed_buffer(compressed: *const u8,
                                          compressed_length: size_t) -> c_int;
 }
-# fn main() {}
+fn main() {}
 ```
 
-# Creating a safe interface
+## Creating a safe interface
 
 The raw C API needs to be wrapped to provide memory safety and make use of higher-level concepts
 like vectors. A library can choose to expose only the safe, high-level interface and hide the unsafe
@@ -98,11 +98,10 @@ vectors as pointers to memory. Rust's vectors are guaranteed to be a contiguous 
 length is the number of elements currently contained, and the capacity is the total size in elements of
 the allocated memory. The length is less than or equal to the capacity.
 
-```rust,ignore
-# extern crate libc;
-# use libc::{c_int, size_t};
-# unsafe fn snappy_validate_compressed_buffer(_: *const u8, _: size_t) -> c_int { 0 }
-# fn main() {}
+```rust
+use libc::{c_int, size_t};
+unsafe fn snappy_validate_compressed_buffer(_: *const u8, _: size_t) -> c_int { 0 }
+fn main() {}
 pub fn validate_compressed_buffer(src: &[u8]) -> bool {
     unsafe {
         snappy_validate_compressed_buffer(src.as_ptr(), src.len() as size_t) == 0
@@ -122,13 +121,12 @@ required capacity to hold the compressed output. The vector can then be passed t
 `snappy_compress` function as an output parameter. An output parameter is also passed to retrieve
 the true length after compression for setting the length.
 
-```rust,ignore
-# extern crate libc;
-# use libc::{size_t, c_int};
-# unsafe fn snappy_compress(a: *const u8, b: size_t, c: *mut u8,
-#                           d: *mut size_t) -> c_int { 0 }
-# unsafe fn snappy_max_compressed_length(a: size_t) -> size_t { a }
-# fn main() {}
+```rust
+use libc::{size_t, c_int};
+unsafe fn snappy_compress(a: *const u8, b: size_t, c: *mut u8,
+                          d: *mut size_t) -> c_int { 0 }
+unsafe fn snappy_max_compressed_length(a: size_t) -> size_t { a }
+fn main() {}
 pub fn compress(src: &[u8]) -> Vec<u8> {
     unsafe {
         let srclen = src.len() as size_t;
@@ -148,17 +146,16 @@ pub fn compress(src: &[u8]) -> Vec<u8> {
 Decompression is similar, because snappy stores the uncompressed size as part of the compression
 format and `snappy_uncompressed_length` will retrieve the exact buffer size required.
 
-```rust,ignore
-# extern crate libc;
-# use libc::{size_t, c_int};
-# unsafe fn snappy_uncompress(compressed: *const u8,
-#                             compressed_length: size_t,
-#                             uncompressed: *mut u8,
-#                             uncompressed_length: *mut size_t) -> c_int { 0 }
-# unsafe fn snappy_uncompressed_length(compressed: *const u8,
-#                                      compressed_length: size_t,
-#                                      result: *mut size_t) -> c_int { 0 }
-# fn main() {}
+```rust
+use libc::{size_t, c_int};
+unsafe fn snappy_uncompress(compressed: *const u8,
+                            compressed_length: size_t,
+                            uncompressed: *mut u8,
+                            uncompressed_length: *mut size_t) -> c_int { 0 }
+unsafe fn snappy_uncompressed_length(compressed: *const u8,
+                                     compressed_length: size_t,
+                                     result: *mut size_t) -> c_int { 0 }
+fn main() {}
 pub fn uncompress(src: &[u8]) -> Option<Vec<u8>> {
     unsafe {
         let srclen = src.len() as size_t;
@@ -182,28 +179,27 @@ pub fn uncompress(src: &[u8]) -> Option<Vec<u8>> {
 
 Then, we can add some tests to show how to use them.
 
-```rust,ignore
-# extern crate libc;
-# use libc::{c_int, size_t};
-# unsafe fn snappy_compress(input: *const u8,
-#                           input_length: size_t,
-#                           compressed: *mut u8,
-#                           compressed_length: *mut size_t)
-#                           -> c_int { 0 }
-# unsafe fn snappy_uncompress(compressed: *const u8,
-#                             compressed_length: size_t,
-#                             uncompressed: *mut u8,
-#                             uncompressed_length: *mut size_t)
-#                             -> c_int { 0 }
-# unsafe fn snappy_max_compressed_length(source_length: size_t) -> size_t { 0 }
-# unsafe fn snappy_uncompressed_length(compressed: *const u8,
-#                                      compressed_length: size_t,
-#                                      result: *mut size_t)
-#                                      -> c_int { 0 }
-# unsafe fn snappy_validate_compressed_buffer(compressed: *const u8,
-#                                             compressed_length: size_t)
-#                                             -> c_int { 0 }
-# fn main() { }
+```rust
+use libc::{c_int, size_t};
+unsafe fn snappy_compress(input: *const u8,
+                          input_length: size_t,
+                          compressed: *mut u8,
+                          compressed_length: *mut size_t)
+                          -> c_int { 0 }
+unsafe fn snappy_uncompress(compressed: *const u8,
+                            compressed_length: size_t,
+                            uncompressed: *mut u8,
+                            uncompressed_length: *mut size_t)
+                            -> c_int { 0 }
+unsafe fn snappy_max_compressed_length(source_length: size_t) -> size_t { 0 }
+unsafe fn snappy_uncompressed_length(compressed: *const u8,
+                                     compressed_length: size_t,
+                                     result: *mut size_t)
+                                     -> c_int { 0 }
+unsafe fn snappy_validate_compressed_buffer(compressed: *const u8,
+                                            compressed_length: size_t)
+                                            -> c_int { 0 }
+fn main() { }
 
 #[cfg(test)]
 mod tests {
@@ -236,7 +232,7 @@ mod tests {
 }
 ```
 
-# Destructors
+## Destructors
 
 Foreign libraries often hand off ownership of resources to the calling code.
 When this occurs, we must use Rust's destructors to provide safety and guarantee
@@ -244,7 +240,7 @@ the release of these resources (especially in the case of panic).
 
 For more about destructors, see the [Drop trait](../std/ops/trait.Drop.html).
 
-# Callbacks from C code to Rust functions
+## Callbacks from C code to Rust functions
 
 Some external libraries require the usage of callbacks to report back their
 current state or intermediate data to the caller.
@@ -259,7 +255,7 @@ A basic example is:
 
 Rust code:
 
-```rust,no_run
+```rust
 extern fn callback(a: i32) {
     println!("I'm called from C with value {0}", a);
 }
@@ -297,7 +293,6 @@ void trigger_callback() {
 In this example Rust's `main()` will call `trigger_callback()` in C,
 which would, in turn, call back to `callback()` in Rust.
 
-
 ## Targeting callbacks to Rust objects
 
 The former example showed how a global function can be called from C code.
@@ -312,7 +307,7 @@ referenced Rust object.
 
 Rust code:
 
-```rust,no_run
+```rust
 #[repr(C)]
 struct RustObject {
     a: i32,
@@ -386,7 +381,7 @@ This can be achieved by unregistering the callback in the object's
 destructor and designing the library in a way that guarantees that no
 callback will be performed after deregistration.
 
-# Linking
+## Linking
 
 The `link` attribute on `extern` blocks provides the basic building block for
 instructing rustc how it will link to native libraries. There are two accepted
@@ -435,7 +430,7 @@ A few examples of how this model can be used are:
 
 On macOS, frameworks behave with the same semantics as a dynamic library.
 
-# Unsafe blocks
+## Unsafe blocks
 
 Some operations, like dereferencing raw pointers or calling functions that have been marked
 unsafe are only allowed inside unsafe blocks. Unsafe blocks isolate unsafety and are a promise to
@@ -450,13 +445,13 @@ unsafe fn kaboom(ptr: *const i32) -> i32 { *ptr }
 
 This function can only be called from an `unsafe` block or another `unsafe` function.
 
-# Accessing foreign globals
+## Accessing foreign globals
 
 Foreign APIs often export a global variable which could do something like track
 global state. In order to access these variables, you declare them in `extern`
 blocks with the `static` keyword:
 
-```rust,ignore
+```rust
 extern crate libc;
 
 #[link(name = "readline")]
@@ -474,7 +469,7 @@ Alternatively, you may need to alter global state provided by a foreign
 interface. To do this, statics can be declared with `mut` so we can mutate
 them.
 
-```rust,ignore
+```rust
 extern crate libc;
 
 use std::ffi::CString;
@@ -500,13 +495,13 @@ fn main() {
 Note that all interaction with a `static mut` is unsafe, both reading and
 writing. Dealing with global mutable state requires a great deal of care.
 
-# Foreign calling conventions
+## Foreign calling conventions
 
 Most foreign code exposes a C ABI, and Rust uses the platform's C calling convention by default when
 calling foreign functions. Some foreign functions, most notably the Windows API, use other calling
 conventions. Rust provides a way to tell the compiler which convention to use:
 
-```rust,ignore
+```rust
 extern crate libc;
 
 #[cfg(all(target_os = "win32", target_arch = "x86"))]
@@ -526,7 +521,9 @@ are:
 * `cdecl`
 * `fastcall`
 * `vectorcall`
+
 This is currently hidden behind the `abi_vectorcall` gate and is subject to change.
+
 * `Rust`
 * `rust-intrinsic`
 * `system`
@@ -542,7 +539,7 @@ however, windows uses the `C` calling convention, so `C` would be used. This
 means that in our previous example, we could have used `extern "system" { ... }`
 to define a block for all windows systems, not only x86 ones.
 
-# Interoperability with foreign code
+## Interoperability with foreign code
 
 Rust guarantees that the layout of a `struct` is compatible with the platform's
 representation in C only if the `#[repr(C)]` attribute is applied to it.
@@ -567,12 +564,12 @@ The [`libc` crate on crates.io][libc] includes type aliases and function
 definitions for the C standard library in the `libc` module, and Rust links
 against `libc` and `libm` by default.
 
-# Variadic functions
+## Variadic functions
 
 In C, functions can be 'variadic', meaning they accept a variable number of arguments. This can
 be achieved in Rust by specifying `...` within the argument list of a foreign function declaration:
 
-```no_run
+```rust
 extern {
     fn foo(x: i32, ...);
 }
@@ -586,13 +583,13 @@ fn main() {
 
 Normal Rust functions can *not* be variadic:
 
-```ignore
+```rust
 // This will not compile
 
 fn foo(x: i32, ...) { }
 ```
 
-# The "nullable pointer optimization"
+## The "nullable pointer optimization"
 
 Certain Rust types are defined to never be `null`. This includes references (`&T`,
 `&mut T`), boxes (`Box<T>`), and function pointers (`extern "abi" fn()`). When
@@ -617,18 +614,17 @@ callback, which gets called in certain situations. The callback is passed a func
 and an integer and it is supposed to run the function with the integer as a parameter. So
 we have function pointers flying across the FFI boundary in both directions.
 
-```rust,ignore
-extern crate libc;
+```rust
 use libc::c_int;
 
-# #[cfg(hidden)]
+#[cfg(hidden)]
 extern "C" {
     /// Registers the callback.
     fn register(cb: Option<extern "C" fn(Option<extern "C" fn(c_int) -> c_int>, c_int) -> c_int>);
 }
-# unsafe fn register(_: Option<extern "C" fn(Option<extern "C" fn(c_int) -> c_int>,
-#                                            c_int) -> c_int>)
-# {}
+unsafe fn register(_: Option<extern "C" fn(Option<extern "C" fn(c_int) -> c_int>,
+                                           c_int) -> c_int>)
+{}
 
 /// This fairly useless function receives a function pointer and an integer
 /// from C, and returns the result of calling the function with the integer.
@@ -657,7 +653,7 @@ void register(void (*f)(void (*)(int), int)) {
 
 No `transmute` required!
 
-# Calling Rust code from C
+## Calling Rust code from C
 
 You may wish to compile Rust code in a way so that it can be called from C. This is
 fairly easy, but requires a few things:
@@ -667,7 +663,7 @@ fairly easy, but requires a few things:
 pub extern fn hello_rust() -> *const u8 {
     "Hello, world!\0".as_ptr()
 }
-# fn main() {}
+fn main() {}
 ```
 
 The `extern` makes this function adhere to the C calling convention, as
@@ -675,7 +671,7 @@ discussed above in "[Foreign Calling
 Conventions](ffi.html#foreign-calling-conventions)". The `no_mangle`
 attribute turns off Rust's name mangling, so that it is easier to link to.
 
-# FFI and panics
+## FFI and panics
 
 It’s important to be mindful of `panic!`s when working with FFI. A `panic!`
 across an FFI boundary is undefined behavior. If you’re writing code that may
@@ -704,7 +700,7 @@ for more information.
 
 [`catch_unwind`]: ../std/panic/fn.catch_unwind.html
 
-# Representing opaque structs
+## Representing opaque structs
 
 Sometimes, a C library wants to provide a pointer to something, but not let you
 know the internal details of the thing it wants. The simplest way is to use a
@@ -717,14 +713,14 @@ void bar(void *arg);
 
 We can represent this in Rust with the `c_void` type:
 
-```rust,ignore
+```rust
 extern crate libc;
 
 extern "C" {
     pub fn foo(arg: *mut libc::c_void);
     pub fn bar(arg: *mut libc::c_void);
 }
-# fn main() {}
+fn main() {}
 ```
 
 This is a perfectly valid way of handling the situation. However, we can do a bit
@@ -749,10 +745,10 @@ extern "C" {
     pub fn foo(arg: *mut Foo);
     pub fn bar(arg: *mut Bar);
 }
-# fn main() {}
+fn main() {}
 ```
 
-By including a private field and no constructor, 
+By including a private field and no constructor,
 we create an opaque type that we can't instantiate outside of this module.
 (A struct with no field could be instantiated by anyone.)
 We also want to use this type in FFI, so we have to add `#[repr(C)]`.

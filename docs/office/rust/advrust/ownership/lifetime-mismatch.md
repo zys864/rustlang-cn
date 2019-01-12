@@ -4,7 +4,7 @@
 
 Given the following code:
 
-```rust,ignore
+```rust
 struct Foo;
 
 impl Foo {
@@ -41,7 +41,7 @@ What happened? Well, we got the exact same reasoning as we did for
 [Example 2 in the previous section][ex2]. We desugar the program and we get
 the following:
 
-```rust,ignore
+```rust
 struct Foo;
 
 impl Foo {
@@ -50,14 +50,14 @@ impl Foo {
 }
 
 fn main() {
-	'b: {
-    	let mut foo: Foo = Foo;
-    	'c: {
-    		let loan: &'c Foo = Foo::mutate_and_share::<'c>(&'c mut foo);
-    		'd: {
-    			Foo::share::<'d>(&'d foo);
-    		}
-    	}
+    'b: {
+        let mut foo: Foo = Foo;
+        'c: {
+            let loan: &'c Foo = Foo::mutate_and_share::<'c>(&'c mut foo);
+            'd: {
+                Foo::share::<'d>(&'d foo);
+            }
+        }
     }
 }
 ```
@@ -70,10 +70,6 @@ blows up in our face!
 This program is clearly correct according to the reference semantics we actually
 care about, but the lifetime system is too coarse-grained to handle that.
 
-
 TODO: other common problems? SEME regions stuff, mostly?
-
-
-
 
 [ex2]: lifetimes.html#example-aliasing-a-mutable-reference

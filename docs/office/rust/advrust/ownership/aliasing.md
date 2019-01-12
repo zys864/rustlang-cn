@@ -4,22 +4,14 @@
 
 First off, let's get some important caveats out of the way:
 
-* We will be using the broadest possible definition of aliasing for the sake
-of discussion. Rust's definition will probably be more restricted to factor
-in mutations and liveness.
+* We will be using the broadest possible definition of aliasing for the sake of discussion. Rust's definition will probably be more restricted to factor in mutations and liveness.
 
-* We will be assuming a single-threaded, interrupt-free, execution. We will also
-be ignoring things like memory-mapped hardware. Rust assumes these things
-don't happen unless you tell it otherwise. For more details, see the
-[Concurrency Chapter](concurrency.html).
+* We will be assuming a single-threaded, interrupt-free, execution. We will also be ignoring things like memory-mapped hardware. Rust assumes these things don't happen unless you tell it otherwise. For more details, see the [Concurrency Chapter](concurrency.html).
 
 With that said, here's our working definition: variables and pointers *alias*
 if they refer to overlapping regions of memory.
 
-
-
-
-# Why Aliasing Matters
+## Why Aliasing Matters
 
 So why should we care about aliasing?
 
@@ -57,7 +49,7 @@ and `output` overlap, such as `compute(&x, &mut x)`.
 
 With that input, we could get this execution:
 
-```rust,ignore
+```rust
                     //  input ==  output == 0xabad1dea
                     // *input == *output == 20
 if *input > 10 {    // true  (*input == 20)
@@ -132,6 +124,3 @@ Of course, a full aliasing model for Rust must also take into consideration thin
 function calls (which may mutate things we don't see), raw pointers (which have
 no aliasing requirements on their own), and UnsafeCell (which lets the referent
 of an `&` be mutated).
-
-
-
