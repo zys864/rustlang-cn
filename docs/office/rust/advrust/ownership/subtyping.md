@@ -1,4 +1,4 @@
-# Subtyping and Variance
+# 子类型与转换
 
 > 原文跟踪[subtyping.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/subtyping.md) &emsp; Commit: a805a667ba8534b78b9587ba7644dac53ce0ab98
 
