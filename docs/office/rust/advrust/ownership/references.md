@@ -1,4 +1,4 @@
-# References
+# 引用
 
 > 原文跟踪[references.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/references.md) &emsp; Commit: c4822cd9077591c73e3a80ad7386b7e554a90f61
 
