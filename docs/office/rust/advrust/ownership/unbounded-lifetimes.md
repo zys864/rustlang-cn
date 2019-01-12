@@ -2,22 +2,11 @@
 
 > 原文跟踪[unbounded-lifetimes.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/unbounded-lifetimes.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Unsafe code can often end up producing references or lifetimes out of thin air.
-Such lifetimes come into the world as *unbounded*. The most common source of this
-is dereferencing a raw pointer, which produces a reference with an unbounded lifetime.
-Such a lifetime becomes as big as context demands. This is in fact more powerful
-than simply becoming `'static`, because for instance `&'static &'a T`
-will fail to typecheck, but the unbound lifetime will perfectly mold into
-`&'a &'a T` as needed. However for most intents and purposes, such an unbounded
-lifetime can be regarded as `'static`.
+不安全的代码通常最终会凭空产生引用或生命周期。 这样的生命周期进入世界是无限的。 最常见的来源是解引用原始指针，该指针生成具有无限生命周期的引用。 这样的生命周期变得与上下文需求一样大。 这实际上比简单地变成`'static` 更强大，因为例如`'static＆'T`将无法进行类型检查，但是未绑定的生命周期将完全塑造成所需的`&'a&'aT`。 然而，对于大多数意图和目的，这种无限的生命周期可以被视为`'static`。
 
-Almost no reference is `'static`, so this is probably wrong. `transmute` and
-`transmute_copy` are the two other primary offenders. One should endeavor to
-bound an unbounded lifetime as quickly as possible, especially across function
-boundaries.
+几乎没有引用是`'static`，所以这可能是错误的。 `transmuteand`, `transmute_copy`是另外两个风险。 人们应尽可能快地限制无限生命，尤其是跨越函数边界。
 
-Given a function, any output lifetimes that don't derive from inputs are
-unbounded. For instance:
+给定一个函数，任何不是从输入派生的输出生命周期都是无限的。 例如：
 
 ```rust
 fn get_str<'a>() -> &'a str;
