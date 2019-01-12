@@ -6,7 +6,6 @@ actionText: 学习Rust语言
 actionLink: /office/rust/book/
 footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 ---
-<br>
 
 <div class="features">
   <div class="feature">
@@ -24,8 +23,6 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 </div>
 
 <div id="join"><a href="https://github.com/rustlang-cn/Important/issues/1" target="_black">欢迎加入</a> 共建Rust语言中文网络！</div>
-
-<hr>
 
 # Why Rust
 
