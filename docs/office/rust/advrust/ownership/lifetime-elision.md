@@ -1,4 +1,4 @@
-# Lifetime Elision
+# 生命周期省略
 
 > 原文跟踪[lifetime-elision.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetime-elision.md) &emsp; Commit: 9cc14cd6a46b2e4385f94b86fb9f1281327e8adc
 
