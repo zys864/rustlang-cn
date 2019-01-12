@@ -130,7 +130,7 @@ let world = &s[6..=10];
 
 图 4-6 展示了一个图例。
 
-<img alt="world containing a pointer to the 6th byte of String s and a length 5" src="img/trpl04-06.svg" class="center" style="width: 50%;" />
+<img alt="world containing a pointer to the 6th byte of String s and a length 5" src="../img/trpl04-06.svg" class="center" style="width: 50%;" />
 
 <span class="caption">图 4-6：引用了部分 `String` 的字符串 slice</span>
 

@@ -28,7 +28,7 @@ fn calculate_length(s: &String) -> usize {
 
 这些 & 符号就是 **引用**，它们允许你使用值但不获取其所有权。图 4-5 展示了一张示意图。
 
-<img alt="&String s pointing at String s1" src="img/trpl04-05.svg" class="center" />
+<img alt="&String s pointing at String s1" src="../img/trpl04-05.svg" class="center" />
 
 <span class="caption">图 4-5：`&String s` 指向 `String s1` 示意图</span>
 
@@ -64,7 +64,7 @@ fn calculate_length(s: &String) -> usize { // s 是对 String 的引用
 
 <span class="filename">文件名: src/main.rs</span>
 
-```rust,ignore,does_not_compile
+```rust
 fn main() {
     let s = String::from("hello");
 
@@ -116,7 +116,7 @@ fn change(some_string: &mut String) {
 
 <span class="filename">文件名: src/main.rs</span>
 
-```rust,ignore,does_not_compile
+```rust
 let mut s = String::from("hello");
 
 let r1 = &mut s;
@@ -165,7 +165,7 @@ let r2 = &mut s;
 
 类似的规则也存在于同时使用可变与不可变引用中。这些代码会导致一个错误：
 
-```rust,ignore,does_not_compile
+```rust
 let mut s = String::from("hello");
 
 let r1 = &s; // no problem
@@ -203,7 +203,7 @@ error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immuta
 
 <span class="filename">文件名: src/main.rs</span>
 
-```rust,ignore,does_not_compile
+```rust
 fn main() {
     let reference_to_nothing = dangle();
 }
@@ -238,7 +238,7 @@ for it to be borrowed from.
 
 让我们仔细看看我们的 `dangle` 代码的每一步到底发生了什么：
 
-```rust,ignore
+```rust
 fn dangle() -> &String { // dangle 返回一个字符串的引用
 
     let s = String::from("hello"); // s 是一个新字符串

@@ -1,4 +1,4 @@
-# Rust程序设计语言
+# Rust编程语言
 
 > **本书同步于官方 [TheRustProgrammingLanguage](https://doc.rust-lang.org/book/) 仓库[地址](https://github.com/rust-lang/book)！**
 
