@@ -1,4 +1,4 @@
-# Aliasing
+# 别名
 
 > 原文跟踪[aliasing.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/aliasing.md) &emsp; Commit: 9e1c1703ec8947fe4bc327242d62731257eb3fd4
 
