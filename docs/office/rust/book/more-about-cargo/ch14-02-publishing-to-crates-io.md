@@ -37,7 +37,7 @@ pub fn add_one(x: i32) -> i32 {
 
 为了方便起见，运行 `cargo doc --open` 会构建当前 crate 文档（同时还有所有 crate 依赖的文档）的 HTML 并在浏览器中打开。导航到 `add_one` 函数将会发现文档注释的文本是如何渲染的，如图 14-1 所示：
 
-<img alt="`my_crate` 的 `add_one` 函数所渲染的文档注释 HTML" src="img/trpl14-01.png" class="center" />
+<img alt="`my_crate` 的 `add_one` 函数所渲染的文档注释 HTML" src="../img/trpl14-01.png" class="center" />
 
 <span class="caption">图 14-1：`add_one` 函数的文档注释 HTML</span>
 
@@ -90,7 +90,7 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 如果运行 `cargo doc --open`，将会发现这些注释显示在 `my_crate` 文档的首页，位于 crate 中公有项列表之上，如图 14-2 所示：
 
-<img alt="crate 整体注释所渲染的 HTML 文档" src="img/trpl14-02.png" class="center" />
+<img alt="crate 整体注释所渲染的 HTML 文档" src="../img/trpl14-02.png" class="center" />
 
 <span class="caption">图 14-2：包含 `my_crate` 整体描述的注释所渲染的文档</span>
 
@@ -144,7 +144,7 @@ pub mod utils {
 
 `cargo doc` 所生成的 crate 文档首页如图 14-3 所示：
 
-<img alt="包含 `kinds` 和 `utils` 模块的 `art`" src="img/trpl14-03.png" class="center" />
+<img alt="包含 `kinds` 和 `utils` 模块的 `art`" src="../img/trpl14-03.png" class="center" />
 
 <span class="caption">图 14-3：包含 `kinds` 和 `utils` 模块的库 `art` 的文档首页</span>
 
@@ -195,7 +195,7 @@ pub mod utils {
 
 现在此 crate 由 `cargo doc` 生成的 API 文档会在首页列出重导出的项以及其链接，如图 14-4 所示，这就使得这些类型易于查找。
 
-<img alt="Rendered documentation for the `art` crate with the re-exports on the front page" src="img/trpl14-04.png" class="center" />
+<img alt="Rendered documentation for the `art` crate with the re-exports on the front page" src="../img/trpl14-04.png" class="center" />
 
 <span class="caption">图 14-10：`art` 文档的首页，这里列出了重导出的项</span>
 
