@@ -4,42 +4,19 @@
 
 > 原文跟踪[README.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &emsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
 
-## The Dark Arts of Advanced and Unsafe Rust Programming
+## 高级和不安全的Rust编程的黑暗艺术
 
-> Instead of the programs I had hoped for, there came only a shuddering blackness
-and ineffable loneliness; and I saw at last a fearful truth which no one had
-ever dared to breathe before — the unwhisperable secret of secrets — The fact
-that this language of stone and stridor is not a sentient perpetuation of Rust
-as London is of Old London and Paris of Old Paris, but that it is in fact
-quite `unsafe`, its sprawling body imperfectly embalmed and infested with queer
-animate things which have nothing to do with it as it was in compilation.
+不是我所期望的程序，只有一种黑暗和不可言喻的孤独; 我终于看到了一个以前从未有人敢说过的可怕的真相 - 这个无法泄露的秘密。
 
-This book digs into all the awful details that you need to understand when
-writing Unsafe Rust programs.
+本书深入介绍了编写`Unsafe Rust`程序时需要了解的所有细节。
 
-> THE KNOWLEDGE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF UNLEASHING INDESCRIBABLE HORRORS THAT
-SHATTER YOUR PSYCHE AND SET YOUR MIND ADRIFT IN THE UNKNOWABLY INFINITE COSMOS.
+> 知识是“按原样”提供的，不提供任何形式的明示或暗示保证，包括但不限于释放您的心灵并将您的心灵转移到不可知的无限COSMOS中的不可饶恕的嫌疑人的保证。
 
-Should you wish a long and happy career of writing Rust programs, you should
-turn back now and forget you ever saw this book. It is not necessary. However
-if you intend to write unsafe code — or just want to dig into the guts of the
-language — this book contains lots of useful information.
+如果你想要写一个Rust程序或漫长而愉快的事业，你现在应该回头忘记你曾经看过这本书。没有必要。但是，如果您打算编写不安全的代码 - 或者只是想深入研究语言的内容 - 本书包含许多有用的信息。
 
-Unlike *[The Rust Programming Language][trpl]*, we will be assuming considerable
-prior knowledge. In particular, you should be comfortable with basic systems
-programming and Rust. If you don't feel comfortable with these topics, you
-should consider [reading The Book][trpl] first. That said, we won't assume you
-have read it, and we will take care to occasionally give a refresher on the
-basics where appropriate. You can skip straight to this book if you want;
-just know that we won't be explaining everything from the ground up.
+与[Rust编程语言](https://rustlang-cn.org/office/rust/book/)一书不同，我们将假设相当多的经验知识。特别是，您应该熟悉基本的系统编程和Rust。如果您对这些主题感到不舒服，则应首先考虑阅读`Rust编程语言`一书。也就是说，我们不会假设您已经阅读过，我们会在适当的情况下偶尔回顾一下基础知识。如果你愿意，你可以直接跳到这; 我们不会从头开始解释一切。
 
-We're going to dig into exception-safety, pointer aliasing, memory models,
-compiler and hardware implementation details, and even some type-theory.
-Much text will be devoted to exotic corner cases that no one *should* ever have
-to care about, but suddenly become important because we wrote `unsafe`.
+我们将深入研究`异常安全`，`指针别名`，`内存模型`，`编译器`和硬件实现细节，甚至一些`类型理论`。很多文本内容都将用于边缘案例，通常无人应该关心，但突然变得重要，因为我们写了`unsafe`。
 
-We will also be spending a lot of time talking about the different kinds of
-safety and guarantees that programs could care about.
+我们还将花费大量时间讨论程序可以关注的各种安全性和保证。
 
-[trpl]: https://rustlang-cn.org/office/rust/book/
