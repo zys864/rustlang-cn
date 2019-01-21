@@ -4,67 +4,37 @@
 
 ![safe and unsafe](../img/safeandunsafe.svg)
 
-It would be great to not have to worry about low-level implementation details.
-Who could possibly care how much space the empty tuple occupies? Sadly, it
-sometimes matters and we need to worry about it. The most common reason
-developers start to care about implementation details is performance, but more
-importantly, these details can become a matter of correctness when interfacing
-directly with hardware, operating systems, or other languages.
+不必担心低级实现细节会很棒。谁会关心空元组占用多少空间？可悲的是，它有时很重要，我们需要担心它。开发人员开始关注实现细节的最常见原因是性能，但更重要的是，当直接与硬件，操作系统或其他语言连接时，这些细节可能成为正确的问题。
 
-When implementation details start to matter in a safe programming language,
-programmers usually have three options:
+当实现细节开始以安全的编程语言开始时，程序员通常有三个选择：
 
-* fiddle with the code to encourage the compiler/runtime to perform an optimization
-* adopt a more unidiomatic or cumbersome design to get the desired implementation
-* rewrite the implementation in a language that lets you deal with those details
+- 调整代码以鼓励编译器/运行时执行优化
+- 采用更加单一或繁琐的设计来实现所需的实施
+- 用一种让您处理这些细节的语言重写实现
 
-For that last option, the language programmers tend to use is *C*. This is often
-necessary to interface with systems that only declare a C interface.
+对于最后一个选项，语言程序员倾向于使用C语言。这通常需要与仅声明C接口的系统进行交互。
 
-Unfortunately, C is incredibly unsafe to use (sometimes for good reason),
-and this unsafety is magnified when trying to interoperate with another
-language. Care must be taken to ensure C and the other language agree on
-what's happening, and that they don't step on each other's toes.
+不幸的是，C使用起来非常不安全（有时是有充分理由的），并且当试图与另一种语言进行互操作时，这种不安全性会被放大。必须注意确保C和其他语言就正在发生的事情达成一致，并且他们不会互相踩到对方的脚趾。
 
-So what does this have to do with Rust?
+那么这与Rust有什么关系呢？
 
-Well, unlike C, Rust is a safe programming language.
+好吧，与C不同，Rust是一种安全的编程语言。
 
-But, like C, Rust is an unsafe programming language.
+但是，像C一样，Rust是一种不安全的编程语言。
 
-More accurately, Rust *contains* both a safe and unsafe programming language.
+更准确地说，Rust是包含安全和不安全的编程语言。
 
-Rust can be thought of as a combination of two programming languages: *Safe
-Rust* and *Unsafe Rust*. Conveniently, these names mean exactly what they say:
-Safe Rust is Safe. Unsafe Rust is, well, not. In fact, Unsafe Rust lets us
-do some *really* unsafe things. Things the Rust authors will implore you not to
-do, but we'll do anyway.
+Rust可以被认为是两种编程语言的组合：Safe Rust和Unsafe Rust。方便的是，这些名称正是他们所说的：Safe Rust是安全的。不安全的Rust，不是。事实上，Unsafe Rust让我们做了一些非常不安全的事情。 Rust作者会恳求你不要做的事情，但无论如何我们都会做。
 
-Safe Rust is the *true* Rust programming language. If all you do is write Safe
-Rust, you will never have to worry about type-safety or memory-safety. You will
-never endure a dangling pointer, a use-after-free, or any other kind of
-Undefined Behavior.
+Safe Rust是真正的Rust编程语言。如果您所做的只是编写Safe Rust，您将永远不必担心类型安全或内存安全。你永远不会忍受悬空指针，免费使用或任何其他类型的未定义行为。
 
-The standard library also gives you enough utilities out of the box that you'll
-be able to write high-performance applications and libraries in pure idiomatic
-Safe Rust.
+标准库还为您提供了足够的实用工具，您可以用纯正惯用的Safe Rust编写高性能的应用程序和库。
 
-But maybe you want to talk to another language. Maybe you're writing a
-low-level abstraction not exposed by the standard library. Maybe you're
-*writing* the standard library (which is written entirely in Rust). Maybe you
-need to do something the type-system doesn't understand and just *frob some dang
-bits*. Maybe you need Unsafe Rust.
+但也许你想和另一种语言交谈。也许你正在编写一个低级抽象，而不是标准库所暴露的。也许你正在编写标准库（完全用Rust编写）。也许你需要做一些类型系统不能理解的东西，只是鼓励一些dang位。也许你需要不安全的Rust。
 
-Unsafe Rust is exactly like Safe Rust with all the same rules and semantics.
-It just lets you do some *extra* things that are Definitely Not Safe
-(which we will define in the next section).
+不安全的Rust与Safe Rust完全相同，具有相同的规则和语义。它只是让你做一些绝对不安全的事情（我们将在下一节中定义）。
 
-The value of this separation is that we gain the benefits of using an unsafe
-language like C — low level control over implementation details — without most
-of the problems that come with trying to integrate it with a completely
-different safe language.
+这种分离的价值在于我们可以获得使用C等不安全语言的好处 - 对实现细节的低级别控制 - 没有尝试将其与完全不同的安全语言集成的大多数问题。
 
-There are still some problems — most notably, we must become aware of properties
-that the type system assumes and audit them in any code that interacts with
-Unsafe Rust. That's the purpose of this book: to teach you about these assumptions
-and how to manage them.
+仍然存在一些问题 - 最值得注意的是，我们必须了解类型系统所采用的属性，并在与Unsafe Rust交互的任何代码中对它们进行审计。这就是本书的目的：教你这些假设以及如何管理它们。
+
