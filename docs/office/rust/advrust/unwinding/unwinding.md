@@ -1,51 +1,22 @@
-# Unwinding
+# 展开
 
 > 原文跟踪[unwinding.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/unwinding.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Rust has a *tiered* error-handling scheme:
+Rust有一个**分层**错误处理方案：
 
-* If something might reasonably be absent, Option is used.
-* If something goes wrong and can reasonably be handled, Result is used.
-* If something goes wrong and cannot reasonably be handled, the thread panics.
-* If something catastrophic happens, the program aborts.
+* 如果可能合理地缺少某些东西，则使用`Option`。
+* 如果出现问题并且可以合理地处理，则使用`Result`。
+* 如果出现问题且无法合理处理，则线程会发生`panics`。
+* 如果发生灾难性事件，程序就会中止(`abort`)。
 
-Option and Result are overwhelmingly preferred in most situations, especially
-since they can be promoted into a panic or abort at the API user's discretion.
-Panics cause the thread to halt normal execution and unwind its stack, calling
-destructors as if every function instantly returned.
+在大多数情况下，`Option`和`Result`绝对是首选，因为它们可以被API用户自行决定提升为恐慌(`panics`)或中止(`abort`)。恐慌导致线程停止正常执行并解除其堆栈，调用析构函数就像每个函数都立即返回。
 
-As of 1.0, Rust is of two minds when it comes to panics. In the long-long-ago,
-Rust was much more like Erlang. Like Erlang, Rust had lightweight tasks,
-and tasks were intended to kill themselves with a panic when they reached an
-untenable state. Unlike an exception in Java or C++, a panic could not be
-caught at any time. Panics could only be caught by the owner of the task, at which
-point they had to be handled or *that* task would itself panic.
+从1.0开始，Rust在恐慌方面有两种想法。在很久很久以前，Rust更像是Erlang。像Erlang一样，Rust有轻量级的任务，当他们到达时，任务的目的是恐慌自杀站不住脚的状态。与Java或C ++中的异常不同，恐慌不可能随时都能被捕获。恐慌只能由任务的所有者捕获，在那里他们必须处理或**任务本身**会`panic`。
 
-Unwinding was important to this story because if a task's
-destructors weren't called, it would cause memory and other system resources to
-leak. Since tasks were expected to die during normal execution, this would make
-Rust very poor for long-running systems!
+展开(`unwinding`)对于这个故事很重要，因为如果有任务的话没有调用析构函数，它会导致内存和其他系统资源泄漏。由于预期任务会在正常执行期间死亡，因此可以实现对于长时间运行的系统，Rust非常差！
 
-As the Rust we know today came to be, this style of programming grew out of
-fashion in the push for less-and-less abstraction. Light-weight tasks were
-killed in the name of heavy-weight OS threads. Still, on stable Rust as of 1.0
-panics can only be caught by the parent thread. This means catching a panic
-requires spinning up an entire OS thread! This unfortunately stands in conflict
-to Rust's philosophy of zero-cost abstractions.
+正如我们今天所知道的Rust那样，这种在追求越来越少的抽象方面编程风格不再流行。轻量级的任务被以重量级OS线程杀死。仍然，在1.0的稳定Rust恐慌只能由父线程捕获。这意味着恐慌需要启动整个OS线程！不幸的是，这与有关Rust的零成本抽象哲学冲突。
 
-There is an unstable API called `catch_panic` that enables catching a panic
-without spawning a thread. Still, we would encourage you to only do this
-sparingly. In particular, Rust's current unwinding implementation is heavily
-optimized for the "doesn't unwind" case. If a program doesn't unwind, there
-should be no runtime cost for the program being *ready* to unwind. As a
-consequence, actually unwinding will be more expensive than in e.g. Java.
-Don't build your programs to unwind under normal circumstances. Ideally, you
-should only panic for programming errors or *extreme* problems.
+有一个名为`catch_panic`的不稳定的API可以引起恐慌没有产生一个线程。尽管如此，我们还是鼓励你在这里谨慎地做。 特别是，Rust的当前展开实现针对"doesn't unwind" 的情况进行了大量优化。如果程序没有展开，那么对于准备好展开的程序不应该有运行时成本。结果，实际上展开将更昂贵。 Java在正常情况下，不构建您的程序来展开。理想情况下，你应该只对编程错误或**极端**问题`panic`。
 
-Rust's unwinding strategy is not specified to be fundamentally compatible
-with any other language's unwinding. As such, unwinding into Rust from another
-language, or unwinding into another language from Rust is Undefined Behavior.
-You must *absolutely* catch any panics at the FFI boundary! What you do at that
-point is up to you, but *something* must be done. If you fail to do this,
-at best, your application will crash and burn. At worst, your application *won't*
-crash and burn, and will proceed with completely clobbered state.
+Rust的展开策略并未从根本上与任何其他语言的展开兼容。因此，从另一个语言展开Rust，或从Rust展开另一种语言是Undefined Behavior。你必须**绝对**捕获FFI边界的任何`panics`！做了什么这取决于你，但**必须做**这些。如果你没有这样做，充其量，你的应用程序将崩溃。在最坏的情况下，您的应用**不会**崩溃，但会继续完全破坏的状态。
