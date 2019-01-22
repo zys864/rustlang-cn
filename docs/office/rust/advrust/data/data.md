@@ -1,4 +1,4 @@
-# Data Representation in Rust
+# Rust数据布局
 
 > 原文跟踪[data.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/data.md) &emsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
 
