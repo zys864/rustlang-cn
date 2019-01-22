@@ -1,9 +1,8 @@
-# Constructors
+# 构造函数
 
 > 原文跟踪[constructors.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/constructors.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-There is exactly one way to create an instance of a user-defined type: name it,
-and initialize all its fields at once:
+只有一种方法可以创建用户定义类型的实例：命名它，并立即初始化其所有字段：
 
 ```rust
 struct Foo {
@@ -24,38 +23,12 @@ let bar = Bar::X(0);
 let empty = Unit;
 ```
 
-That's it. Every other way you make an instance of a type is just calling a
-totally vanilla function that does some stuff and eventually bottoms out to The
-One True Constructor.
+你创建一个类型实例的每一种方式都只是调用一个完全是`vanilla`函数来做一些事情并最终触及`The One True Constructor`。
 
-Unlike C++, Rust does not come with a slew of built-in kinds of constructor.
-There are no Copy, Default, Assignment, Move, or whatever constructors. The
-reasons for this are varied, but it largely boils down to Rust's philosophy of
-*being explicit*.
+与C ++不同，Rust没有一大堆内置的构造函数。没有`Copy`，`Default`, `Assignment`, `Move`,或任何构造函数。造成这种情况的原因是多种多样的，但它很大程度上归结为Rust的明确的哲学。
 
-Move constructors are meaningless in Rust because we don't enable types to
-"care" about their location in memory. Every type must be ready for it to be
-blindly memcopied to somewhere else in memory. This means pure on-the-stack-but-
-still-movable intrusive linked lists are simply not happening in Rust (safely).
+`Move`构造函数在Rust中没有意义，因为我们不允许类型"关心"它们在内存中的位置。每种类型都必须准备好将它盲目地存储到内存中的其他地方。这意味着纯粹在堆栈但仍然可移动的`intrusive linked`根本不会发生在 Rust（safely）中。
 
-Assignment and copy constructors similarly don't exist because move semantics
-are the only semantics in Rust. At most `x = y` just moves the bits of y into
-the x variable. Rust does provide two facilities for providing C++'s copy-
-oriented semantics: `Copy` and `Clone`. Clone is our moral equivalent of a copy
-constructor, but it's never implicitly invoked. You have to explicitly call
-`clone` on an element you want to be cloned. Copy is a special case of Clone
-where the implementation is just "copy the bits". Copy types *are* implicitly
-cloned whenever they're moved, but because of the definition of Copy this just
-means not treating the old copy as uninitialized -- a no-op.
+类似的赋值和复制构造函数也不存在，因为移动语义是Rust中唯一的语义。最多`x = y`只是将`y`的位移动到`x`变量中。 Rust确实提供了两种用于提供`C ++`面向`copy-oriented`的工具：`Copy`与`Clone`。`Clone`是我们在复制构造函数中的等价物，但它永远不会被隐式调用。您必须在要克隆的元素上显式调用`clone`。复制是`Clone`的一个特例，其实现只是"复制位"。复制类型在移动时会被隐式克隆，但由于`Copy`的定义，这意味着不将旧`copy`视为未初始化 。
 
-While Rust provides a `Default` trait for specifying the moral equivalent of a
-default constructor, it's incredibly rare for this trait to be used. This is
-because variables [aren't implicitly initialized][uninit]. Default is basically
-only useful for generic programming. In concrete contexts, a type will provide a
-static `new` method for any kind of "default" constructor. This has no relation
-to `new` in other languages and has no special meaning. It's just a naming
-convention.
-
-TODO: talk about "placement new"?
-
-[uninit]: uninitialized.html
+虽然Rust提供了一个`Default`特质来指定默认构造函数的等价物，但使用这个特性却极为罕见。这是因为变量未被隐式初始化。默认基本上只对泛型编程有用。在具体的上下文中，类型将为任何类型的"默认"构造函数提供静态`new`方法。这与其他语言中的`new`无关，没有特殊含义。这只是一个命名惯例。
