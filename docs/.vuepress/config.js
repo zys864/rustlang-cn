@@ -2,7 +2,6 @@ let { work } = require ('./category/work.js')
 let { book } = require ('./category/rust.js')
 let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
-let { std } = require ('./category/std.js')
 let { cookbook } = require ('./category/cookbook.js')
 let { tokio } = require ('./category/tokio.js')
 let { actix } = require ('./category/actix.js')
@@ -52,7 +51,6 @@ module.exports = {
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
-                  { text: 'Rust标准库', link: '/office/rust/std/' },
                   { text: 'Rust参考规范', link: '/office/rust/reference/' },
                   { text: 'Rust食谱', link: '/office/rust/cookbook/' }
                 ]
@@ -90,8 +88,6 @@ module.exports = {
           { text: '网络', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
             { text: 'Crates', link: '/resourse/crates/' },
-            { text: 'Blogs', link: '/resourse/blogs/' },
-            { text: '书签', link: '/resourse/mark/' },
             { text: '资源', link: '/resourse/resourse/' },
             { text: '专栏', items: [ 
               { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
@@ -109,7 +105,6 @@ module.exports = {
           '/office/rust/book/': book('Rust'),
           '/office/rust/advrust/': advrust('AdvRust'),
           '/office/rust/async-rust/': asyncrust('Async-Rust'),
-          '/office/rust/std/': std('Std'),
           '/office/rust/cookbook/': cookbook('Cookbook'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
