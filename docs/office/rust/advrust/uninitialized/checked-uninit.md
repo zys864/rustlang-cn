@@ -2,28 +2,22 @@
 
 > 原文跟踪[checked-uninit.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/checked-uninit.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
-Like C, all stack variables in Rust are uninitialized until a value is
-explicitly assigned to them. Unlike C, Rust statically prevents you from ever
-reading them until you do:
+与C一样，Rust中的所有堆栈变量都是未初始化的，直到明确赋值给它们为止。 与C不同，Rust会在您执行以下操作之前静态地阻止您读它们：
 
-```rust,ignore
+```rust
 fn main() {
     let x: i32;
     println!("{}", x);
 }
 ```
 
-```text
+```rust
   |
 3 |     println!("{}", x);
   |                    ^ use of possibly uninitialized `x`
 ```
 
-This is based off of a basic branch analysis: every branch must assign a value
-to `x` before it is first used. Interestingly, Rust doesn't require the variable
-to be mutable to perform a delayed initialization if every branch assigns
-exactly once. However the analysis does not take advantage of constant analysis
-or anything like that. So this compiles:
+这基于一个基本的分支分析：每个分支必须在第一次使用之前为x赋值。 有趣的是，如果每个分支只分配一次，则Rust不要求变量是可变的来执行延迟初始化。 然而，分析没有利用常数分析或类似的东西。 所以这个编译：
 
 ```rust
 fn main() {
@@ -39,9 +33,9 @@ fn main() {
 }
 ```
 
-but this doesn't:
+但这不行：
 
-```rust,ignore
+```rust
 fn main() {
     let x: i32;
     if true {
@@ -51,13 +45,13 @@ fn main() {
 }
 ```
 
-```text
+```rust
   |
 6 |     println!("{}", x);
   |                    ^ use of possibly uninitialized `x`
 ```
 
-while this does:
+这样可以:
 
 ```rust
 fn main() {
@@ -71,9 +65,7 @@ fn main() {
 }
 ```
 
-Of course, while the analysis doesn't consider actual values, it does
-have a relatively sophisticated understanding of dependencies and control
-flow. For instance, this works:
+当然，虽然分析不考虑实际值，但它确实对依赖关系和控制流有了相对复杂的理解。 例如，这有效：
 
 ```rust
 let x: i32;
@@ -94,8 +86,7 @@ loop {
 println!("{}", x);
 ```
 
-If a value is moved out of a variable, that variable becomes logically
-uninitialized if the type of the value isn't Copy. That is:
+如果某个值移出变量作用域，那么如果值的类型不是Copy，则该变量在逻辑上将变为未初始化。 那是：
 
 ```rust
 fn main() {
@@ -106,8 +97,7 @@ fn main() {
 }
 ```
 
-However reassigning `y` in this example *would* require `y` to be marked as
-mutable, as a Safe Rust program could observe that the value of `y` changed:
+但是，在此示例中重新分配`y`将需要将`y`标记为可变，因为`Safe Rust`程序可以观察到`y`的值已更改：
 
 ```rust
 fn main() {
@@ -117,4 +107,4 @@ fn main() {
 }
 ```
 
-Otherwise it's like `y` is a brand new variable.
+否则就像`y`是一个全新的变量。
