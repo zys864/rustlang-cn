@@ -2,48 +2,26 @@
 
 > 原文跟踪[send-and-sync.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/send-and-sync.md) &emsp; Commit: b0275ab6fd268e470114216f8b0b83481814c713
 
-Not everything obeys inherited mutability, though. Some types allow you to
-have multiple aliases of a location in memory while mutating it. Unless these types use
-synchronization to manage this access, they are absolutely not thread-safe. Rust
-captures this through the `Send` and `Sync` traits.
+并非一切都遵循继承的可变性。 某些类型允许您在变异时，在内存中有多个别名的位置。 除非这些类型使用同步来管理这种访问，否则它们绝对不是线程安全的。 Rust通过`Send`和`Sync`特质做到这一点。
 
-* A type is Send if it is safe to send it to another thread.
-* A type is Sync if it is safe to share between threads (`&T` is Send).
+* 如果可以安全地将类型发送到另一个线程，则类型为`Send`。
+* 如果在线程之间共享是安全的，则类型为`Sync`（`＆T`为`Send`）。
 
-Send and Sync are fundamental to Rust's concurrency story. As such, a
-substantial amount of special tooling exists to make them work right. First and
-foremost, they're [unsafe traits]. This means that they are unsafe to
-implement, and other unsafe code can assume that they are correctly
-implemented. Since they're *marker traits* (they have no associated items like
-methods), correctly implemented simply means that they have the intrinsic
-properties an implementor should have. Incorrectly implementing Send or Sync can
-cause Undefined Behavior.
+`Send`和`Sync`是Rust的并发故事的基础。 因此，存在大量特殊工具以使其正常工作。 首先和最重要的是，它们是**unsafe traits**。 这意味着它们是不安全实现，和其他不安全的代码可以假设它们是正确的实现。 因为它们是**标记特质**（它们没有相关的项，如方法），正确实施只是意味着它们具有内在的实现者应具有的属性。 错误地实现`Send`和`Sync`可以导致未定义的行为。
 
-Send and Sync are also automatically derived traits. This means that, unlike
-every other trait, if a type is composed entirely of Send or Sync types, then it
-is Send or Sync. Almost all primitives are Send and Sync, and as a consequence
-pretty much all types you'll ever interact with are Send and Sync.
+`Send`和`Sync`也是自动派生的特质。 这意味着，与其他所有特质不同，如果类型完全由`Send`和`Sync`类型组成，则它是`Send`或`Sync`。 几乎所有原语都是`Send`和`Sync`，因此几乎所有与之交互的类型都是`Send`和`Sync`。
 
-Major exceptions include:
+主要例外包括：
 
-* raw pointers are neither Send nor Sync (because they have no safety guards).
-* `UnsafeCell` isn't Sync (and therefore `Cell` and `RefCell` aren't).
-* `Rc` isn't Send or Sync (because the refcount is shared and unsynchronized).
+* 原始指针既不是`Send`也不是`Sync`（因为它们没有安全防护）。
+* `UnsafeCell`不是`Sync`（因此`Cell`和`RefCell`也不是）。
+* `Rc`不是`Send`或`Sync`（因为`refcount`是共享和不同步的）。
 
-`Rc` and `UnsafeCell` are very fundamentally not thread-safe: they enable
-unsynchronized shared mutable state. However raw pointers are, strictly
-speaking, marked as thread-unsafe as more of a *lint*. Doing anything useful
-with a raw pointer requires dereferencing it, which is already unsafe. In that
-sense, one could argue that it would be "fine" for them to be marked as thread
-safe.
+`Rc`和`UnsafeCell`基本上不是线程安全的：它们启用了不同步的共享可变状态。 然而，严格来说，原始指针被标记为线程不安全，因为更多的是*lint*。 对原始指针执行任何有用的操作都需要取消引用它，这已经是不安全的。 从这个意义上讲，人们可以争辩说，将它们标记为线程安全是"很好的"。
 
-However it's important that they aren't thread-safe to prevent types that
-contain them from being automatically marked as thread-safe. These types have
-non-trivial untracked ownership, and it's unlikely that their author was
-necessarily thinking hard about thread safety. In the case of `Rc`, we have a nice
-example of a type that contains a `*mut` that is definitely not thread-safe.
+但是，重要的是它们不是线程安全的，以防止包含它们的类型被自动标记为线程安全。 这些类型具有非普通的未经跟踪的所有权，并且他们的作者不太可能思考线程安全性。 在`Rc`的情况下，我们有一个很好的例子，其中包含一个绝对不是线程安全的`* mut`。
 
-Types that aren't automatically derived can simply implement them if desired:
+如果需要，非自动派生的类型可以简单地实现它们：
 
 ```rust
 struct MyBox(*mut u8);
@@ -52,8 +30,7 @@ unsafe impl Send for MyBox {}
 unsafe impl Sync for MyBox {}
 ```
 
-In the *incredibly rare* case that a type is inappropriately automatically
-derived to be Send or Sync, then one can also unimplement Send and Sync:
+在非常罕见的情况下，类型被不适当地自动派生为`Send`或`Sync`，那么人们也可以实现`Send`和`Sync`：
 
 ```rust
 #![feature(optin_builtin_traits)]
@@ -65,18 +42,6 @@ impl !Send for SpecialThreadToken {}
 impl !Sync for SpecialThreadToken {}
 ```
 
-Note that *in and of itself* it is impossible to incorrectly derive Send and
-Sync. Only types that are ascribed special meaning by other unsafe code can
-possible cause trouble by being incorrectly Send or Sync.
+请注意，它本身不可能错误地导出`Send`和`Sync`。 只有被其他不安全代码赋予特殊含义的类型才可能因错误`Send`或`Sync`而导致问题。
 
-Most uses of raw pointers should be encapsulated behind a sufficient abstraction
-that Send and Sync can be derived. For instance all of Rust's standard
-collections are Send and Sync (when they contain Send and Sync types) in spite
-of their pervasive use of raw pointers to manage allocations and complex ownership.
-Similarly, most iterators into these collections are Send and Sync because they
-largely behave like an `&` or `&mut` into the collection.
-
-TODO: better explain what can or can't be Send or Sync. Sufficient to appeal
-only to data races?
-
-[unsafe traits]: safe-unsafe-meaning.html
+原始指针的大多数用法应该封装在足够的抽象之后，可以导出`Send`和`Sync`。 例如，Rust的所有标准集合都是`Send`和`Sync`（当它们包含`Send`和`Sync`类型时），尽管它们普遍使用原始指针来管理分配和复杂的所有权。 类似地，进入这些集合的大多数迭代器都是`Send`和`Sync`，因为它们在很大程度上表现为集合中的`＆`或`＆mut`。
