@@ -1,4 +1,4 @@
-# Send and Sync
+# `Send`和`Sync`
 
 > 原文跟踪[send-and-sync.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/send-and-sync.md) &emsp; Commit: b0275ab6fd268e470114216f8b0b83481814c713
 
