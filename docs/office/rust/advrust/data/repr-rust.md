@@ -6,7 +6,7 @@
 
 基元通常与它们的大小一致，尽管如此特定于平台的行为。 例如，在x86上，`u64`和`f64`经常出现对齐到4个字节（32位）。
 
-类型的大小必须始终是其对齐的倍数。 这确保了该类型的数组可以始终通过偏移其倍数来索引尺寸。 请注意，可能不知道类型的大小和对齐方式在[动态大小的类型] (https://rustlang-cn.org/office/rust/advrust/data/exotic-sizes.html#dynamically-sized-types-dsts)的情况下。
+类型的大小必须始终是其对齐的倍数。 这确保了该类型的数组可以始终通过偏移其倍数来索引尺寸。 请注意，可能不知道类型的大小和对齐方式在[动态大小的类型](https://rustlang-cn.org/office/rust/advrust/data/exotic-sizes.html#dynamically-sized-types-dsts)的情况下。
 
 Rust为您提供了以下布置复合数据的方法：
 
