@@ -1,4 +1,4 @@
-# Checked Uninitialized Memory
+# 检查未初始化的内存
 
 > 原文跟踪[checked-uninit.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/checked-uninit.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
