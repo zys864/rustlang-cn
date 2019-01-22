@@ -1,4 +1,4 @@
-# Data Races and Race Conditions
+# 数据竞争与竞争条件
 
 > 原文跟踪[races.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/races.md) &emsp; Commit: bb75621e3a62d14302c8f09239aab42132530446
 
