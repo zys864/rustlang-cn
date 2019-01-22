@@ -1,4 +1,4 @@
-# Working With Uninitialized Memory
+# 使用未初始化的内存
 
 > 原文跟踪[uninitialized.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/uninitialized.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
