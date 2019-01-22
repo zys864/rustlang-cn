@@ -1,16 +1,7 @@
-# The Perils Of Ownership Based Resource Management (OBRM)
+# 基于所有权的资源管理(OBRM)
 
 > 原文跟踪[obrm.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/obrm.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-OBRM (AKA RAII: Resource Acquisition Is Initialization) is something you'll
-interact with a lot in Rust. Especially if you use the standard library.
+OBRM（AKA RAII：资源获取即初始化）是您在Rust中通常与之交互的东西。 特别是如果您使用标准库。
 
-Roughly speaking the pattern is as follows: to acquire a resource, you create an
-object that manages it. To release the resource, you simply destroy the object,
-and it cleans up the resource for you. The most common "resource" this pattern
-manages is simply *memory*. `Box`, `Rc`, and basically everything in
-`std::collections` is a convenience to enable correctly managing memory. This is
-particularly important in Rust because we have no pervasive GC to rely on for
-memory management. Which is the point, really: Rust is about control. However we
-are not limited to just memory. Pretty much every other system resource like a
-thread, file, or socket is exposed through this kind of API.
+粗略地说，模式如下：要获取资源，您需要创建一个管理它的对象。 要释放资源，只需销毁对象，它就会为您清理资源。 这种模式管理的最常见的“资源”就是内存。 `Box`，`Rc`，以及`std :: collections`中的所有内容都可以方便地正确管理内存。 这在Rust中尤为重要，因为我们没有普遍的依赖GC来内存管理。 真正重点是：Rust是关于控制的。 但是，我们并不仅限于内存。 几乎所有其他系统资源（如线程，文件或套接字）都通过这种API公开。
