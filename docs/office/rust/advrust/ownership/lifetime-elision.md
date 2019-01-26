@@ -2,10 +2,9 @@
 
 > 原文跟踪[lifetime-elision.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetime-elision.md) &emsp; Commit: 9cc14cd6a46b2e4385f94b86fb9f1281327e8adc
 
-In order to make common patterns more ergonomic, Rust allows lifetimes to be
-*elided* in function signatures.
+为了使常见的模式更符合人体工程学，Rust允许在函数签名中省略生命周期 。
 
-A *lifetime position* is anywhere you can write a lifetime in a type:
+你可以一个类型写生命周期的任何地方都有一个生命周期的位置：
 
 ```rust
 &'a T
@@ -13,32 +12,23 @@ A *lifetime position* is anywhere you can write a lifetime in a type:
 T<'a>
 ```
 
-Lifetime positions can appear as either "input" or "output":
+生命周期位置可以显示为“输入”或“输出”：
 
-* For `fn` definitions, input refers to the types of the formal arguments
-  in the `fn` definition, while output refers to
-  result types. So `fn foo(s: &str) -> (&str, &str)` has elided one lifetime in
-  input position and two lifetimes in output position.
-  Note that the input positions of a `fn` method definition do not
-  include the lifetimes that occur in the method's `impl` header
-  (nor lifetimes that occur in the trait header, for a default method).
+* 对于`fn`定义，`input`是指`fn`定义中形式参数的类型，而`output`是指返回结果类型。因此`fn foo(s: &str) -> (&str, &str)`在输入位置省略了一个生命周期，在输出位置省略了两个生命周期。请注意，`fn`方法定义的输入位置不包括方法`impl`声明中出现的生命周期（对于默认方法，也不包括特质声明中出现的生命周期）。
 
-* In the future, it should be possible to elide `impl` headers in the same manner.
+* 将来，应该可以以相同的方式在`impl`声明中实现隐式。
 
-Elision rules are as follows:
+省略规则如下：
 
-* Each elided lifetime in input position becomes a distinct lifetime
-  parameter.
+- 输入位置中的每个隐式生命周期都有不同的生命周期参数。
 
-* If there is exactly one input lifetime position (elided or not), that lifetime
-  is assigned to *all* elided output lifetimes.
+- 如果只有一个输入生命周期位置（省略或未省略），则将该生命周期分配给所有省略的输出生命周期。
 
-* If there are multiple input lifetime positions, but one of them is `&self` or
-  `&mut self`, the lifetime of `self` is assigned to *all* elided output lifetimes.
+- 如果存在多个输入生命周期位置，但其中一个是`&self`或 `&mut self`，则将生命周期`self`分配给所有省略的输出生命周期。
 
-* Otherwise, it is an error to elide an output lifetime.
+- 否则，忽略输出生命周期是错误的。
 
-Examples:
+例子：
 
 ```rust
 fn print(s: &str);                                      // elided
