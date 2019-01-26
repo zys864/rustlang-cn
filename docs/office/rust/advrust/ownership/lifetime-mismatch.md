@@ -2,7 +2,7 @@
 
 > 原文跟踪[lifetime-mismatch.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetime-mismatch.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
-Given the following code:
+给出以下代码：
 
 ```rust
 struct Foo;
@@ -19,13 +19,11 @@ fn main() {
 }
 ```
 
-One might expect it to compile. We call `mutate_and_share`, which mutably borrows
-`foo` temporarily, but then returns only a shared reference. Therefore we
-would expect `foo.share()` to succeed as `foo` shouldn't be mutably borrowed.
+人们可能期望它能够编译。我们称之为mutate_and_share临时借用 foo，但后来只返回共享引用。因此，我们期望foo.share()成功，因为foo不应该可变地借用。
 
-However when we try to compile it:
+但是当我们尝试编译它时：
 
-```text
+```rust
 error[E0502]: cannot borrow `foo` as immutable because it is also borrowed as mutable
   --> src/lib.rs:11:5
    |
@@ -37,9 +35,7 @@ error[E0502]: cannot borrow `foo` as immutable because it is also borrowed as mu
    | - mutable borrow ends here
 ```
 
-What happened? Well, we got the exact same reasoning as we did for
-[Example 2 in the previous section][ex2]. We desugar the program and we get
-the following:
+发生了什么？好吧，我们得到以下内容：
 
 ```rust
 struct Foo;
@@ -62,6 +58,9 @@ fn main() {
 }
 ```
 
+由于`loan`的生命周期和`mutate_and_share`的签名, 生命周期系统强制扩展`&mut foo`的生命周期为`'c`，然后当我们试着调用`share`的时候，它说我们正试图别名`&'c mut foo`！
+
+根据我们实际关注的引用语义，这个程序显然是正确的，但是生命周期系统太粗糙而无法处理。
 The lifetime system is forced to extend the `&mut foo` to have lifetime `'c`,
 due to the lifetime of `loan` and mutate_and_share's signature. Then when we
 try to call `share`, and it sees we're trying to alias that `&'c mut foo` and
