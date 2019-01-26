@@ -61,14 +61,3 @@ fn main() {
 由于`loan`的生命周期和`mutate_and_share`的签名, 生命周期系统强制扩展`&mut foo`的生命周期为`'c`，然后当我们试着调用`share`的时候，它说我们正试图别名`&'c mut foo`！
 
 根据我们实际关注的引用语义，这个程序显然是正确的，但是生命周期系统太粗糙而无法处理。
-The lifetime system is forced to extend the `&mut foo` to have lifetime `'c`,
-due to the lifetime of `loan` and mutate_and_share's signature. Then when we
-try to call `share`, and it sees we're trying to alias that `&'c mut foo` and
-blows up in our face!
-
-This program is clearly correct according to the reference semantics we actually
-care about, but the lifetime system is too coarse-grained to handle that.
-
-TODO: other common problems? SEME regions stuff, mostly?
-
-[ex2]: lifetimes.html#example-aliasing-a-mutable-reference
