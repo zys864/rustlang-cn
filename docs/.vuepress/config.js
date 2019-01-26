@@ -46,7 +46,7 @@ module.exports = {
             { text: '社刊', link: '/read/rustlang-cn/' }
           ] },
           { text: '文档', items: [
-              { text: '官方书籍大全', link: '/office/rust/' },
+              { text: '官方Rust书-中文版', link: '/office/rust/' },
               { text: 'Rustlang', items: [
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
