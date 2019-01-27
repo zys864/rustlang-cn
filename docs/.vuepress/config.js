@@ -113,8 +113,7 @@ module.exports = {
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),
           '/crates/serde/': serde('Serde'),
-          '/resourse/awesome/': awesome('Awesome'),
-          '/work/': work('Work'),
+          '/resourse/awesome/': awesome('Awesome')
         }
     }
 }
