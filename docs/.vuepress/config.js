@@ -1,4 +1,3 @@
-let { work } = require ('./category/work.js')
 let { book } = require ('./category/rust.js')
 let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
