@@ -97,17 +97,13 @@ synchronize"
 
 
 
-# Sequentially Consistent
+# Sequentially Consistent 顺序一致性
 
-Sequentially Consistent is the most powerful of all, implying the restrictions
-of all other orderings. Intuitively, a sequentially consistent operation
-cannot be reordered: all accesses on one thread that happen before and after a
-SeqCst access stay before and after it. A data-race-free program that uses
-only sequentially consistent atomics and data accesses has the very nice
-property that there is a single global execution of the program's instructions
-that all threads agree on. This execution is also particularly nice to reason
-about: it's just an interleaving of each thread's individual executions. This
-does not hold if you start using the weaker atomic orderings.
+A data-race-free program that uses only sequentially consistent atomics and data accesses has the very nice property that there is a single global execution of the program's instructions that all threads agree on.
+This execution is also particularly nice to reason about: it's just an interleaving of each thread's individual executions.
+This does not hold if you start using the weaker atomic orderings.
+
+顺序一致性是最强大的, 意味着限制也是最大的. 直观的说, 顺序一致的操作是不能被重新排序的: 一个线程上的所有 SeqCst 访问必须按照访问的先后顺序进行访问.
 
 The relative developer-friendliness of sequential consistency doesn't come for
 free. Even on strongly-ordered platforms sequential consistency involves
