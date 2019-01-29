@@ -2,34 +2,18 @@
 
 > 原文跟踪[atomics.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/atomics.md) &emsp; Commit: 6dd445b8e72bcbc502cf28240830be52d2a8240d
 
-Rust pretty blatantly just inherits C11's memory model for atomics. This is not
-due to this model being particularly excellent or easy to understand. Indeed,
-this model is quite complex and known to have [several flaws][C11-busted].
-Rather, it is a pragmatic concession to the fact that *everyone* is pretty bad
-at modeling atomics. At very least, we can benefit from existing tooling and
-research around C.
+在内存原子性(atomics)模型上, rust 就公然的直接继承了 C11 的模型, 这不是因为这个模型多好或者多容易懂, 相反这个模型挺复杂的, 还有若干已知[缺陷](http://plv.mpi-sws.org/c11comp/popl15.pdf). 但事实上不是每个都善于去给内存原子性建模, 所以似乎这样也不错的. 至少我们可以从 C 现有的工具和研究中学到店什么.
 
-Trying to fully explain the model in this book is fairly hopeless. It's defined
-in terms of madness-inducing causality graphs that require a full book to
-properly understand in a practical way. If you want all the nitty-gritty
-details, you should check out [C's specification (Section 7.17)][C11-model].
-Still, we'll try to cover the basics and some of the problems Rust developers
-face.
+本文不会尝试完全充分的解释这个模型. 它是用令人发狂的因果关系图定义的, 需要用一整本书去尽可能的解释的清楚. 想知道更多细节可以看下 [C 语言的规范(第 7.17 章节部分)](http://www.open-std.org/jtc1/sc22/wg14/www/standards.html#9899). 不过本文会尝试把基本的概念和一些 Rust 开发者碰到的一些问题都覆盖到.
 
-The C11 memory model is fundamentally about trying to bridge the gap between the
-semantics we want, the optimizations compilers want, and the inconsistent chaos
-our hardware wants. *We* would like to just write programs and have them do
-exactly what we said but, you know, fast. Wouldn't that be great?
+C11 内存模型本质上来说, 是为了在桥接对人来说的语义性, 对编译器来说优化性, 对硬件来说的非一致混乱性. 简单说就是希望我们写的程序, 按照我们的想法跑的又快又好.
 
 
 
 
-# Compiler Reordering
+# Compiler Reordering 编译器重新排序
 
-Compilers fundamentally want to be able to do all sorts of complicated
-transformations to reduce data dependencies and eliminate dead code. In
-particular, they may radically change the actual order of events, or make events
-never occur! If we write something like
+编译器本质上希望能够通过进行一些复杂的转换和减少数据依赖, 来消除死代码(dead code). 特别是, 它可以从根本上改变代码的运行的顺序, 或者让一些代码的逻辑永远不再出现. 举个例子, 如果有如下代码:
 
 ```rust,ignore
 x = 1;
@@ -37,44 +21,25 @@ y = 3;
 x = 2;
 ```
 
-The compiler may conclude that it would be best if your program did
+编译器可能推断出, 改成如下可能更好:
 
 ```rust,ignore
 x = 2;
 y = 3;
 ```
 
-This has inverted the order of events and completely eliminated one event.
-From a single-threaded perspective this is completely unobservable: after all
-the statements have executed we are in exactly the same state. But if our
-program is multi-threaded, we may have been relying on `x` to actually be
-assigned to 1 before `y` was assigned. We would like the compiler to be
-able to make these kinds of optimizations, because they can seriously improve
-performance. On the other hand, we'd also like to be able to depend on our
-program *doing the thing we said*.
+这样的顺序倒转, 就消除了第一条赋值事件. 从单线程的角度, 这样的变化是完全无法察觉的: 所有语句执行完之后的状态完全相同. 但是如果程序是多线程的, 第一句赋值在 y 分配之前的逻辑, 就完全可能真的是有逻辑依赖的. 我们希望编译器有能力进行这样类型的优化, 毕竟这样做可以大幅提升性能. 另一方面, 我们也希望程序能够完全按照*我们的意愿*执行.
 
 
 
 
-# Hardware Reordering
+# Hardware Reordering 硬件重新排序
 
-On the other hand, even if the compiler totally understood what we wanted and
-respected our wishes, our hardware might instead get us in trouble. Trouble
-comes from CPUs in the form of memory hierarchies. There is indeed a global
-shared memory space somewhere in your hardware, but from the perspective of each
-CPU core it is *so very far away* and *so very slow*. Each CPU would rather work
-with its local cache of the data and only go through all the anguish of
-talking to shared memory only when it doesn't actually have that memory in
-cache.
+话说就算编译器完全按照我们的意愿去执行理解我们的代码, 还有硬件也会出来给你使绊子. 主要原因是多级高速缓存的结构对 CPU 的影响. 全局共享内存对 cpu 来说*又远又慢*. 每个 cpu 核心宁可使用本地数据缓存, 只有当本地缓存没数据时, 才会去找全局共享内存找.
 
-After all, that's the whole point of the cache, right? If every read from the
-cache had to run back to shared memory to double check that it hadn't changed,
-what would the point be? The end result is that the hardware doesn't guarantee
-that events that occur in the same order on *one* thread, occur in the same
-order on *another* thread. To guarantee this, we must issue special instructions
-to the CPU telling it to be a bit less smart.
+所以这个问题主要是在 cpu 的多级缓存上, 如果每次读取缓存都要去共享内存立检查下数据有没有改变, 那缓存就没存在意义了. 结果就是硬件层面上, 不同线程不能保证程序逻辑相同. 为此, 我们必须通过发出特殊的 cpu 指令, 让他不要这么聪明.
 
-For instance, say we convince the compiler to emit this logic:
+举个例子, 我们保证编译器编译结果逻辑如下:
 
 ```text
 initial state: x = 0, y = 1
@@ -85,31 +50,22 @@ x = 1;              y *= 2;
                 }
 ```
 
-Ideally this program has 2 possible final states:
+理想情况下这段程序有这样 2 个分支:
 
-* `y = 3`: (thread 2 did the check before thread 1 completed)
-* `y = 6`: (thread 2 did the check after thread 1 completed)
+* `y = 3`: (线程 2 先于线程 1 执行)
+* `y = 6`: (线程 2 后于线程 1 执行)
 
-However there's a third potential state that the hardware enables:
+但是还有第 3 个潜在的分支:
 
-* `y = 2`: (thread 2 saw `x = 1`, but not `y = 3`, and then overwrote `y = 3`)
+* `y = 2`: (线程 2 取到 x 时 `x = 1`, 但此时 y 还没有被赋值为 3)
 
-It's worth noting that different kinds of CPU provide different guarantees. It
-is common to separate hardware into two categories: strongly-ordered and weakly-
-ordered. Most notably x86/64 provides strong ordering guarantees, while ARM
-provides weak ordering guarantees. This has two consequences for concurrent
-programming:
+注意不同类型的 CPU 提供不同的保证, 通常将硬件分为两类: 强排序(strongly-ordered)和弱排序(weakly-ordered).
+X86/64 架构提供强排序保证, ARM 架构提供弱排序排序保证.
+这对并发编程产生了两个影响:
 
-* Asking for stronger guarantees on strongly-ordered hardware may be cheap or
-  even free because they already provide strong guarantees unconditionally.
-  Weaker guarantees may only yield performance wins on weakly-ordered hardware.
+* 在强排序保证机器上要求强排序保证, 代价极低, 低到可以忽略不计, 因为硬件提供了无条件的强排序保证. 弱排序保证可能在弱排序机器上有性能优势.
 
-* Asking for guarantees that are too weak on strongly-ordered hardware is
-  more likely to *happen* to work, even though your program is strictly
-  incorrect. If possible, concurrent algorithms should be tested on
-  weakly-ordered hardware.
-
-
+* 多数情况下, 是在强排序保证机器上要求极弱的保证, 即使你的程序严格的不正确. 如果可能, 应该在弱排序保证的机器上测试并发算法的性能
 
 
 
