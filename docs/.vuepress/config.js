@@ -57,17 +57,17 @@ module.exports = {
                   { text: 'Futures', link: '/office/server/futures/' }
                 ] 
               },
+              { text: 'CLI', items: [ 
+                  { text: 'Book', link: '/office/cli/book/' }
+                ] 
+              },
               { text: 'Wasm', items: [ 
                   { text: 'Book', link: '/office/wasm/book/' },
                   { text: 'Wasm-bindgen', link: '/office/wasm/wasm-bindgen/' }
                 ] 
               },
-              { text: 'CLI', items: [ 
-                  { text: 'book', link: '/office/cli/book/' }
-                ] 
-              },
               { text: 'IOT', items: [ 
-                  { text: 'book', link: '/office/iot/book/' },
+                  { text: 'Book', link: '/office/iot/book/' },
                   { text: 'Discovery', link: '/office/iot/discovery/' },
                   { text: 'Embedonomicon', link: '/office/iot/embedonomicon/' }
                 ] 

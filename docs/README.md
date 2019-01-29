@@ -26,8 +26,11 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
 
 # Why Rust
 
+<div>
 <strong>Rust</strong> 是一种安全、并发、实用的编程语言，有着惊人的运行速度，能够防止段错误，并保证线程安全,使每个人都能够构建
 可靠，高效的软件
+</div><br>
+<div ><a href="/office/rust.html"><strong>Why-Rust 阅读更多</strong></a></div>
 
 <div class="features">
   <div class="feature">
@@ -68,9 +71,14 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
     <div><a href="/office/iot/">阅读更多</a></div>
   </div>
   <div class="feature">
+    <h2>客户端</h2>
+    <p>低内存,CPU占用，高性能速度，全功能GUI,大型客户端.Rust是优秀</p>
+    <div><a href="/office/client/">阅读更多</a></div>
+  </div>
+  <div class="feature">
     <h2>游戏</h2>
     <p>高性能渲染，实时光线追踪、SIMD</p>
-    <div><a href="/crates/game/">阅读更多</a></div>
+    <div><a href="/office/game/">阅读更多</a></div>
   </div>
 </div>
 
