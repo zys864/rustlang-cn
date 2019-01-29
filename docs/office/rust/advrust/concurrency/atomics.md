@@ -65,48 +65,32 @@ X86/64 架构提供强排序保证, ARM 架构提供弱排序排序保证.
 
 * 在强排序保证机器上要求强排序保证, 代价极低, 低到可以忽略不计, 因为硬件提供了无条件的强排序保证. 弱排序保证可能在弱排序机器上有性能优势.
 
-* 多数情况下, 是在强排序保证机器上要求极弱的保证, 即使你的程序严格的不正确. 如果可能, 应该在弱排序保证的机器上测试并发算法的性能
+* 即使程序确实有问题, 多数情况下, 是在强排序保证机器上, 要求极弱顺序的保证是有可能正常工作的. 如果可能, 应该在弱排序保证的机器上测试并发算法的性能
 
 
 
-# Data Accesses
+# Data Accesses 数据访问
 
-The C11 memory model attempts to bridge the gap by allowing us to talk about the
-*causality* of our program. Generally, this is by establishing a *happens
-before* relationship between parts of the program and the threads that are
-running them. This gives the hardware and compiler room to optimize the program
+C11 内存模型试图通过让我们讨论程序*因果关系*, 来拉近我们和程序底层的逻辑. 通常, 这是通过在程序的各个部分与运行它们的线程之间建立*之前的*关系. 这样就给了硬件和编译器优化的空间, 可以更加激进的优化"发生前"关系建立之前, 但是强制它们在关系建立后更加谨慎. 我们通过*数据访问(data acesses)*和*原子性访问(atomic accesses)*来和这些关系联系起来.
+> The C11 memory model attempts to bridge the gap by allowing us to talk about the
+*causality* of our program. Generally, this is by establishing a *happens before* relationship between parts of the program and the threads that are running them. This gives the hardware and compiler room to optimize the program
 more aggressively where a strict happens-before relationship isn't established,
 but forces them to be more careful where one is established. The way we
-communicate these relationships are through *data accesses* and *atomic
-accesses*.
+communicate these relationships are through *data accesses* and *atomicaccesses*.
 
-Data accesses are the bread-and-butter of the programming world. They are
-fundamentally unsynchronized and compilers are free to aggressively optimize
-them. In particular, data accesses are free to be reordered by the compiler on
-the assumption that the program is single-threaded. The hardware is also free to
-propagate the changes made in data accesses to other threads as lazily and
-inconsistently as it wants. Most critically, data accesses are how data races
-happen. Data accesses are very friendly to the hardware and compiler, but as
-we've seen they offer *awful* semantics to try to write synchronized code with.
-Actually, that's too weak.
 
-**It is literally impossible to write correct synchronized code using only data
-accesses.**
+数据访问是编程世界的面包和黄油. 它们本质上失败非同步的, 编译器可以自由激进的优化它们. 尤其是当程序是单线程的, 编译器可以自由的重新排序所有数据访问. 硬件层面上也可以将数据的改动惰性的非一致的随意传播. 关键是, 数据访问会产生数据竞争. 数据访问对硬件和编译非常友好, 但是在代码语义上, 数据访问提供了极为*弱鸡*的语法, 事实上简直弱爆了.
 
-Atomic accesses are how we tell the hardware and compiler that our program is
-multi-threaded. Each atomic access can be marked with an *ordering* that
-specifies what kind of relationship it establishes with other accesses. In
-practice, this boils down to telling the compiler and hardware certain things
-they *can't* do. For the compiler, this largely revolves around re-ordering of
-instructions. For the hardware, this largely revolves around how writes are
-propagated to other threads. The set of orderings Rust exposes are:
+**仅用数据访问来写正确同步代码是不可能的**
+
+使用原子性的数据访问(atomic accesses)正是我们在告诉编译器和硬件, 我们现在写的程序是多线程的. 每个原子访问可以用*顺序*标记, 以指定它与其他访问建立的关系类型. 实际上, 这其实就是在告诉编译器和硬件, 哪些优化你*别做*, 哪些事情你*不能做*. 对编译器来说, 主要是内容就是围绕指令的重新排序(re-ordering). 对硬件来说, 主要内容就是围绕数据传播到其他线程的写入方式. Rust 暴露这几种:
 
 * Sequentially Consistent (SeqCst)
 * Release
 * Acquire
 * Relaxed
 
-(Note: We explicitly do not expose the C11 *consume* ordering)
+(Note: Rust 明确不暴露 C11 的 *consume* 顺序)
 
 TODO: negative reasoning vs positive reasoning? TODO: "can't forget to
 synchronize"
