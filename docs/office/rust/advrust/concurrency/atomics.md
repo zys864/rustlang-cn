@@ -105,27 +105,16 @@ synchronize"
 实际实践里, 在一个正确的程序中, 顺序一致的访问只在很少的情况是必须的. 但是, 如果你不确定要怎么选内存读写顺序, 顺序一致的数据访问肯定是最正确的选择. 让程序逻辑正确但是跑的慢一点, 总比程序有 bug 要好的多. 就算只后需要对原子访问顺序降级, 也不是很麻烦的. 只要把 `SeqCst` 改成 `Relaxed` 就完成了! 当然, 证明这个改动是*正确*的改动, 那就是另外一回事儿了.
 
 
-# Acquire-Release 获取-释放
-Acquire and Release are largely intended to be paired.
-Their names hint at their use case: they're perfectly suited for acquiring and releasing locks, and ensuring that critical sections don't overlap.
+# Acquire-Release 获取-释放顺序
+获取和释放的内存访问顺序, 大部分情况下是设计成成对使用的. 就和它的名字一样, 它非常适合获取和释放锁, 并确保关键的那部分不重叠.
 
+直观的说, 获取访问(acquire access)保证每次访问都在获取(acquire)之后. 但是在获取之前的操作可以在其之后自由的重新排序.
+同样的, 释放访问(release access)保证都在释放(release)之前, 但是在释放之后的操作可以在其之前自用的重新排序.
 
+当线程 A 释放了某个位置的内存访问控制, 随后线程 B 获取了内存中*相同*位置的访问控制, 因果关系就建立起来了. 在 A 每次释放前的写操作, 都可以在 B 获取访问控制后观察到. 但是其他的线程访问不会建立这样的因果关系. 同样, *不同*内存位置的访问也不会建立这样的因果关系.
 
-Intuitively, an acquire access ensures that every access after it stays after
-it. However operations that occur before an acquire are free to be reordered to
-occur after it. Similarly, a release access ensures that every access before it
-stays before it. However operations that occur after a release are free to be
-reordered to occur before it.
-
-When thread A releases a location in memory and then thread B subsequently
-acquires *the same* location in memory, causality is established. Every write
-that happened before A's release will be observed by B after its acquisition.
-However no causality is established with any other threads. Similarly, no
-causality is established if A and B access *different* locations in memory.
-
-Basic use of release-acquire is therefore simple: you acquire a location of
-memory to begin the critical section, and then release that location to end it.
-For instance, a simple spinlock might look like:
+获取-释放的访问顺序控制的基础使用很简单: 获取某个内存位置后, 开始关键代码逻辑(避免数据争用)部分, 然后释放这个位置的访问控制就结束了.
+举个例子, 一个简单的自选锁(spinlock)看起来就像这样:
 
 ```rust
 use std::sync::Arc;
@@ -133,44 +122,29 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 
 fn main() {
-    let lock = Arc::new(AtomicBool::new(false)); // value answers "am I locked?"
+    let lock = Arc::new(AtomicBool::new(false)); // lock 值代表访问是否被锁定
 
-    // ... distribute lock to threads somehow ...
+    // ... 进行一些给不同线程分配锁的操作 ...
 
-    // Try to acquire the lock by setting it to true
+    // 尝试获取锁并赋值为 true
     while lock.compare_and_swap(false, true, Ordering::Acquire) { }
-    // broke out of the loop, so we successfully acquired the lock!
+    // 结束循环我们就成功的获取了锁
 
-    // ... scary data accesses ...
+    // ... 进行谨慎的数据访问操作 ...
 
-    // ok we're done, release the lock
+    // 到这里操作结束了就释放锁
     lock.store(false, Ordering::Release);
 }
 ```
 
-On strongly-ordered platforms most accesses have release or acquire semantics,
-making release and acquire often totally free. This is not the case on
-weakly-ordered platforms.
-
-
+在强顺序的平台上, 多数访问都具有释放和获取的语义, 意味着释放获取常常几乎没有性能损耗. 但是在弱顺序平台上就不是这样得了.
 
 
 # Relaxed
 
-Relaxed accesses are the absolute weakest. They can be freely re-ordered and
-provide no happens-before relationship. Still, relaxed operations are still
-atomic. That is, they don't count as data accesses and any read-modify-write
-operations done to them occur atomically. Relaxed operations are appropriate for
-things that you definitely want to happen, but don't particularly otherwise care
-about. For instance, incrementing a counter can be safely done by multiple
-threads using a relaxed `fetch_add` if you're not using the counter to
-synchronize any other accesses.
+Relaxed 访问绝对是最弱的访问顺序控制. 它们可以自由的重新排序, 不提供线性事件的发生关系. 尽管这样 Relaxed 操作仍是原子性的. 就是说, 它不能算是数据访问控制, 但是在读写操作时, 是以原子性的方式进行的. Relaxed 方式的操作适合在你明确希望某个操作一定会"发生", 但是其他就不管的场景下. 举个例子, 在只有异步的情形下, 多个线程对一个计数器使用 Relaxed 的 `fetch_add` 操作是安全的.
 
-There's rarely a benefit in making an operation relaxed on strongly-ordered
-platforms, since they usually provide release-acquire semantics anyway. However
-relaxed operations can be cheaper on weakly-ordered platforms.
-
-
+在强顺序一致性的机器上用 Relaxed 操作很少会有太大的收益, 因为强顺序一致的机器本身就提供了获取-释放的语义支持. 但是 Relaxed 操作在弱顺序一致性的机器上会有较高的性能收益.
 
 
 
