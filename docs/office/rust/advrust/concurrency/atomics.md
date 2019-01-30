@@ -98,33 +98,18 @@ synchronize"
 
 
 # Sequentially Consistent 顺序一致性
+顺序一致性是最强大的, 意味着限制也是最大的. 直观的说, 顺序一致的操作是不能被重新排序的: 一个线程上的所有 SeqCst 访问必须按照访问的先后顺序进行访问. 如果一个无数据竞争的程序来只用顺序一致的原子性访问和数据访问, 那它有个优秀的特点, 所有线程有了一个全局唯一的执行空间. 本质上来说这个全局唯一的执行空间是是所有线程交错独立的去进入并执行的. 但前提是没有使用更弱的原子访问顺序
 
-A data-race-free program that uses only sequentially consistent atomics and data accesses has the very nice property that there is a single global execution of the program's instructions that all threads agree on.
-This execution is also particularly nice to reason about: it's just an interleaving of each thread's individual executions.
-This does not hold if you start using the weaker atomic orderings.
+这个对开发人员友好的顺序一致的特性, 并不是没有代价的. 即使在强顺序一致(strongly-ordered)的平台上, 就涉及到了通过使用内存栅栏(memory fences)而实现顺序一致的访问特性.
 
-顺序一致性是最强大的, 意味着限制也是最大的. 直观的说, 顺序一致的操作是不能被重新排序的: 一个线程上的所有 SeqCst 访问必须按照访问的先后顺序进行访问.
-
-The relative developer-friendliness of sequential consistency doesn't come for
-free. Even on strongly-ordered platforms sequential consistency involves
-emitting memory fences.
-
-In practice, sequential consistency is rarely necessary for program correctness.
-However sequential consistency is definitely the right choice if you're not
-confident about the other memory orders. Having your program run a bit slower
-than it needs to is certainly better than it running incorrectly! It's also
-mechanically trivial to downgrade atomic operations to have a weaker
-consistency later on. Just change `SeqCst` to `Relaxed` and you're done! Of
-course, proving that this transformation is *correct* is a whole other matter.
+实际实践里, 在一个正确的程序中, 顺序一致的访问只在很少的情况是必须的. 但是, 如果你不确定要怎么选内存读写顺序, 顺序一致的数据访问肯定是最正确的选择. 让程序逻辑正确但是跑的慢一点, 总比程序有 bug 要好的多. 就算只后需要对原子访问顺序降级, 也不是很麻烦的. 只要把 `SeqCst` 改成 `Relaxed` 就完成了! 当然, 证明这个改动是*正确*的改动, 那就是另外一回事儿了.
 
 
+# Acquire-Release 获取-释放
+Acquire and Release are largely intended to be paired.
+Their names hint at their use case: they're perfectly suited for acquiring and releasing locks, and ensuring that critical sections don't overlap.
 
 
-# Acquire-Release
-
-Acquire and Release are largely intended to be paired. Their names hint at their
-use case: they're perfectly suited for acquiring and releasing locks, and
-ensuring that critical sections don't overlap.
 
 Intuitively, an acquire access ensures that every access after it stays after
 it. However operations that occur before an acquire are free to be reordered to
