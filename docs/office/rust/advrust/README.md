@@ -1,6 +1,6 @@
 # Rust高级编程
 
-## 注意：本书的翻译和校对尚未完成，存在大量未翻译的文章和不准确的翻译。
+### 注意：本书的翻译和校对尚未完成，存在大量未翻译的文章和不准确的翻译。
 
 > **本书同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！**
 
