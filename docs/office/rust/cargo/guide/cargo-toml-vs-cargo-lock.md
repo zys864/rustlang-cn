@@ -12,8 +12,7 @@ If you’re building a library that other packages will depend on, put
 `Cargo.lock` in your `.gitignore`. If you’re building an executable like a
 command-line tool or an application, check `Cargo.lock` into `git`. If you're
 curious about why that is, see ["Why do binaries have `Cargo.lock` in version
-control, but not libraries?" in the
-FAQ](faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries).
+control, but not libraries?" in the **FAQ**.
 
 Let’s dig in a little bit more.
 
@@ -93,11 +92,11 @@ When we’re ready to opt in to a new version of the library, Cargo can
 re-calculate the dependencies and update things for us:
 
 ```console
-$ cargo update           # updates all dependencies
-$ cargo update -p rand   # updates just “rand”
+cargo update           # updates all dependencies
+cargo update -p rand   # updates just “rand”
 ```
 
 This will write out a new `Cargo.lock` with the new version information. Note
 that the argument to `cargo update` is actually a
-[Package ID Specification](reference/pkgid-spec.html) and `rand` is just a short
+**Package ID Specification** and `rand` is just a short
 specification.

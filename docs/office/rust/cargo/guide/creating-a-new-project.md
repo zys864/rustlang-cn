@@ -3,7 +3,7 @@
 To start a new package with Cargo, use `cargo new`:
 
 ```console
-$ cargo new hello_world --bin
+cargo new hello_world --bin
 ```
 
 We’re passing `--bin` because we’re making a binary program: if we

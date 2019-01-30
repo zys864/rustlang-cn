@@ -16,7 +16,7 @@ account (required for now). After this, visit your [Account
 Settings](https://crates.io/me) page and run the `cargo login` command
 specified.
 
-```console
+```bash
 cargo login abcdefghijklmnopqrstuvwxyz012345
 ```
 
@@ -37,7 +37,7 @@ The next step is to package up your crate into a format that can be uploaded to
 our entire crate and package it all up into a `*.crate` file in the
 `target/package` directory.
 
-```console
+```bash
 cargo package
 ```
 
@@ -87,7 +87,7 @@ Now that we’ve got a `*.crate` file ready to go, it can be uploaded to
 [crates.io] with the `cargo publish` command. And that’s it, you’ve now published
 your first crate!
 
-```console
+```bash
 cargo publish
 ```
 
@@ -119,9 +119,9 @@ being broken for one reason or another (syntax error, forgot to include a file,
 etc.). For situations such as this, Cargo supports a “yank” of a version of a
 crate.
 
-```console
-$ cargo yank --vers 1.0.1
-$ cargo yank --vers 1.0.1 --undo
+```bash
+cargo yank --vers 1.0.1
+cargo yank --vers 1.0.1 --undo
 ```
 
 A yank **does not** delete any code. This feature is not intended for deleting
@@ -142,11 +142,11 @@ A crate is often developed by more than one person, or the primary maintainer
 may change over time! The owner of a crate is the only person allowed to publish
 new versions of the crate, but an owner may designate additional owners.
 
-```console
-$ cargo owner --add my-buddy
-$ cargo owner --remove my-buddy
-$ cargo owner --add github:rust-lang:owners
-$ cargo owner --remove github:rust-lang:owners
+```bash
+cargo owner --add my-buddy
+cargo owner --remove my-buddy
+cargo owner --add github:rust-lang:owners
+cargo owner --remove github:rust-lang:owners
 ```
 
 The owner IDs given to these commands must be GitHub user names or GitHub teams.

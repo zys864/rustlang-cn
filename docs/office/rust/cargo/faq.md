@@ -50,7 +50,7 @@ Cargo handles compiling Rust code, but we know that many Rust packages
 link against C code. We also know that there are decades of tooling
 built up around compiling languages other than Rust.
 
-Our solution: Cargo allows a package to [specify a script](reference/build-scripts.html)
+Our solution: Cargo allows a package to **specify a script**
 (written in Rust) to run before invoking `rustc`. Rust is leveraged to
 implement platform-specific configuration and refactor out common build
 functionality among packages.
@@ -70,20 +70,16 @@ will continue to prioritize.
 ### Does Cargo handle multi-platform packages or cross-compilation`?`
 
 Rust itself provides facilities for configuring sections of code based
-on the platform. Cargo also supports [platform-specific
-dependencies][target-deps], and we plan to support more per-platform
+on the platform. Cargo also supports **platform-specific
+dependencies**, and we plan to support more per-platform
 configuration in `Cargo.toml` in the future.
-
-[target-deps]: reference/specifying-dependencies.html#platform-specific-dependencies
 
 In the longer-term, we’re looking at ways to conveniently cross-compile
 packages using Cargo.
 
 ### Does Cargo support environments, like `production` or `test``?`
 
-We support environments through the use of [profiles][profile] to support:
-
-[profile]: reference/manifest.html#the-profile-sections
+We support environments through the use of **profiles** to support:
 
 * environment-specific flags (like `-g --opt-level=0` for development
   and `--opt-level=3` for production).
@@ -187,7 +183,5 @@ not change the behavior of Cargo*, it simply asserts that Cargo shouldn't touch
 the network as a previous command has been run to ensure that network activity
 shouldn't be necessary.
 
-For more information about vendoring, see documentation on [source
-replacement][replace].
-
-[replace]: reference/source-replacement.html
+For more information about vendoring, see documentation on **source
+replacement**

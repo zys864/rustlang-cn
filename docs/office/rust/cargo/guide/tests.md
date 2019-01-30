@@ -26,7 +26,7 @@ tests.
 You can also run a specific test by passing a filter:
 
 ```console
-$ cargo test foo
+cargo test foo
 ```
 
 This will run any test with `foo` in its name.

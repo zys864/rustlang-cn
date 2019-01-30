@@ -3,7 +3,7 @@
 To start a new package with Cargo, use `cargo new`:
 
 ```console
-$ cargo new hello_world
+cargo new hello_world
 ```
 
 Cargo defaults to `--bin` to make a binary program. To make a library, we'd
@@ -12,8 +12,8 @@ pass `--lib`.
 Let’s check out what Cargo has generated for us:
 
 ```console
-$ cd hello_world
-$ tree .
+cd hello_world
+tree .
 .
 ├── Cargo.toml
 └── src
@@ -48,21 +48,21 @@ fn main() {
 Cargo generated a “hello world” for us. Let’s compile it:
 
 ```console
-$ cargo build
+cargo build
    Compiling hello_world v0.1.0 (file:///path/to/package/hello_world)
 ```
 
 And then run it:
 
 ```console
-$ ./target/debug/hello_world
+./target/debug/hello_world
 Hello, world!
 ```
 
 We can also use `cargo run` to compile and then run it, all in one step:
 
 ```console
-$ cargo run
+cargo run
      Fresh hello_world v0.1.0 (file:///path/to/package/hello_world)
    Running `target/hello_world`
 Hello, world!

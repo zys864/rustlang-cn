@@ -73,11 +73,8 @@ examples, etc.
 
 #### The `build` field (optional)
 
-This field specifies a file in the package root which is a [build script][1] for
-building native code. More information can be found in the build script
-[guide][1].
-
-[1]: reference/build-scripts.html
+This field specifies a file in the package root which is a **build script** for
+building native code. More information can be found in the build script guide.
 
 ```toml
 [package]
@@ -88,10 +85,8 @@ build = "build.rs"
 #### The `links` field (optional)
 
 This field specifies the name of a native library that is being linked to.
-More information can be found in the [`links`][links] section of the build
+More information can be found in the **`links`** section of the build
 script guide.
-
-[links]: reference/build-scripts.html#the-links-manifest-key
 
 ```toml
 [package]

@@ -219,7 +219,7 @@ First thing we'll do is to clone the [`uuid` repository][uuid-repository]
 locally via:
 
 ```console
-$ git clone https://github.com/rust-lang-nursery/uuid
+git clone https://github.com/rust-lang-nursery/uuid
 ```
 
 Next we'll edit the manifest of `my-library` to contain:
