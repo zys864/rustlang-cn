@@ -1,7 +1,7 @@
 let { book } = require ('./category/rust.js')
 let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
-let { cookbook } = require ('./category/cookbook.js')
+let { cargo } = require ('./category/cargo.js')
 let { tokio } = require ('./category/tokio.js')
 let { actix } = require ('./category/actix.js')
 let { actixnet } = require ('./category/actixnet.js')
@@ -50,7 +50,7 @@ module.exports = {
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
                   { text: 'Rust参考规范', link: '/office/rust/reference/' },
-                  { text: 'Rust食谱', link: '/office/rust/cookbook/' }
+                  { text: 'Cargo教程', link: '/office/rust/cargo/' }
                 ]
               },
               { text: 'Server', items: [ 
@@ -100,9 +100,9 @@ module.exports = {
         ],
         sidebar: {
           '/office/rust/book/': book('Rust'),
+          '/office/rust/cargo/': cargo('Cargo'),
           '/office/rust/advrust/': advrust('AdvRust'),
           '/office/rust/async-rust/': asyncrust('Async-Rust'),
-          '/office/rust/cookbook/': cookbook('Cookbook'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
           '/crates/actix/': actix('Actix'),
