@@ -1,7 +1,7 @@
 let { book } = require ('./category/rust.js')
 let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
-let { cargo } = require ('./category/cargo.js')
+let { reference } = require ('./category/reference.js')
 let { tokio } = require ('./category/tokio.js')
 let { actix } = require ('./category/actix.js')
 let { actixnet } = require ('./category/actixnet.js')
@@ -49,8 +49,7 @@ module.exports = {
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
-                  { text: 'Rust参考规范', link: '/office/rust/reference/' },
-                  { text: 'Cargo教程', link: '/office/rust/cargo/' }
+                  { text: 'Rust参考规范', link: '/office/rust/reference/' }
                 ]
               },
               { text: 'Server', items: [ 
@@ -94,15 +93,14 @@ module.exports = {
               { text: '微博', link: 'https://weibo.com/kriry' }      
             ] }
           ] },
-//           { text: '论坛', link: 'https://github.com/rustlang-cn/forum/issues' }，
           { text: '论坛', link: 'http://47.104.146.58' }
           
         ],
         sidebar: {
           '/office/rust/book/': book('Rust'),
-          '/office/rust/cargo/': cargo('Cargo'),
           '/office/rust/advrust/': advrust('AdvRust'),
           '/office/rust/async-rust/': asyncrust('Async-Rust'),
+          '/office/rust/reference/': reference('Reference'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
           '/crates/actix/': actix('Actix'),
