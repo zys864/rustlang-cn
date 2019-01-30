@@ -1,5 +1,7 @@
 # 官方Rust书-中文版
 
+> **欢迎参与翻译以下官方书籍，贡献Rust中文内容网络！**
+
 ## Rustlang
 
 - [The Rust Programming Language](https://doc.rust-lang.org/book/index.html) - [中文版《Rust编程语言》](https://rustlang-cn.org/office/rust/book/)
