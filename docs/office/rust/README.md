@@ -5,7 +5,7 @@
 ## Rustlang
 
 - [The Rust Programming Language](https://doc.rust-lang.org/book/index.html) - [中文版《Rust编程语言》](https://rustlang-cn.org/office/rust/book/)
-- [The Rust-2018 Book](https://rust-lang-nursery.github.io/edition-guide/introduction.html)
+- [The Rust Edition Book](https://rust-lang-nursery.github.io/edition-guide/introduction.html)
 - [Rust By Example](https://doc.rust-lang.org/rust-by-example/index.html)
 - [The Rustc Book](https://doc.rust-lang.org/rustc/index.html)
 - [The Rustdoc Book](https://doc.rust-lang.org/rustdoc/index.html)
