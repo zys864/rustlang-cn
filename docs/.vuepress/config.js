@@ -2,6 +2,7 @@ let { book } = require ('./category/rust.js')
 let { advrust } = require ('./category/advrust.js')
 let { asyncrust } = require ('./category/asyncrust.js')
 let { reference } = require ('./category/reference.js')
+let { cargo } = require ('./category/cargo.js')
 let { tokio } = require ('./category/tokio.js')
 let { actix } = require ('./category/actix.js')
 let { actixnet } = require ('./category/actixnet.js')
@@ -49,7 +50,8 @@ module.exports = {
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
-                  { text: 'Rust参考规范', link: '/office/rust/reference/' }
+                  { text: 'Rust参考规范', link: '/office/rust/reference/' },
+                  { text: 'Cargo教程', link: '/office/rust/cargo/' }
                 ]
               },
               { text: 'Server', items: [ 
@@ -101,6 +103,7 @@ module.exports = {
           '/office/rust/advrust/': advrust('AdvRust'),
           '/office/rust/async-rust/': asyncrust('Async-Rust'),
           '/office/rust/reference/': reference('Reference'),
+          '/office/rust/cargo/': cargo('Cargo'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
           '/crates/actix/': actix('Actix'),
