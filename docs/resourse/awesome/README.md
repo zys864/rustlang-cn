@@ -2,7 +2,7 @@
 
 > 源跟踪[awesome-rust](https://github.com/rust-unofficial/awesome-rust/blob/master/README.md) &emsp; Commit: 27755d8748a14607523dcdcac53c0873385423ee
 
-## Table of contents
+## Awesome-Rust内容目录
 
 - [Rust](#rust)
   - [Table of contents](#table-of-contents)
