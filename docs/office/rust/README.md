@@ -18,7 +18,7 @@
 
 ## Cargo 
 
-- [The Cargo Book](https://doc.rust-lang.org/cargo/index.html)
+- [The Cargo Book](https://doc.rust-lang.org/cargo/index.html) - [中文版《Cargo教程》](https://rustlang-cn.org/office/rust/cargo/)
 
 ## STD
 
@@ -26,7 +26,7 @@
 
 ## Crates
 
-- [The Rust-cookbook](https://rust-lang-nursery.github.io/rust-cookbook/) - [中文版《Rust食谱》](https://rustlang-cn.org/office/rust/cookbook/)
+- [The Rust-cookbook](https://rust-lang-nursery.github.io/rust-cookbook/)
 
 ## Server
 
