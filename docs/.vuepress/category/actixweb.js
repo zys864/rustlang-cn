@@ -50,6 +50,6 @@ exports.actixweb = (title) => {
             'sentry'
           ]
         },
-        'api'
+        'resource'
     ]
 }

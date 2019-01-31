@@ -17,6 +17,6 @@ exports.riker = (title) => {
         'testing',
         'pattens',
         'faq',
-        'api'
+        'resource'
     ]
 }

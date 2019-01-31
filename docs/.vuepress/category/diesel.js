@@ -8,6 +8,6 @@ exports.diesel = (title) => {
         'schema-in-depth',
         'extending-diesel',
         'configuring-diesel-CLI',
-        'api'
+        'resource'
     ]
 }

@@ -76,6 +76,7 @@ module.exports = {
             ]
           },
           { text: '生态', items: [ 
+            { text: 'Rust生态库-中文版', link: '/crates/main/' },
             { text: 'Actix', link: '/crates/actix/' },
             { text: 'Actix-net', link: '/crates/actix-net/' },
             { text: 'Actix-web', link: '/crates/actix-web/' },

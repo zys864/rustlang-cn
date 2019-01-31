@@ -62,6 +62,6 @@ exports.tokio = (title) => {
             'internals/net'
           ]
         },
-        'api'
+        'resource'
     ]
 }

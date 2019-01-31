@@ -1,4 +1,6 @@
-# API文档
+# 资源
+
+[官网](https://serde.rs/)
 
 [API文档](https://docs.serde.rs/serde/index.html)
 

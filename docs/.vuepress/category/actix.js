@@ -13,7 +13,7 @@ exports.actix = (title) => {
         'supervisor',
         'registry',
         'helper-actors',
-        'api'
+        'resource'
 
     ]
 }

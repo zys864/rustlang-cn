@@ -62,6 +62,6 @@ exports.serde = (title) => {
         },
         'no-std',
         'feature-flags',
-        'api'
+        'resource'
     ]
 }

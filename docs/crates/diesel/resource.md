@@ -1,4 +1,6 @@
-# API文档
+# 资源
+
+[官网](https://diesel.rs/)
 
 [API文档](http://docs.diesel.rs/diesel/index.html)
 
