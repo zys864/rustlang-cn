@@ -1,6 +1,6 @@
 # Rust
 
-> 源跟踪[awesome-rust](https://github.com/rust-unofficial/awesome-rust/blob/master/README.md) &emsp; Commit: 27755d8748a14607523dcdcac53c0873385423ee
+> **源** [awesome-rust](https://github.com/rust-unofficial/awesome-rust/blob/master/README.md) **Commit** 27755d8748a14607523dcdcac53c0873385423ee
 
 ## Awesome-Rust内容目录
 
