@@ -39,11 +39,6 @@ Rust safe/unsafe 的拆分设计, 意味着它们之间存在着不对称的信�
 
 `BTreeMap` 对只实现了偏序关系(partially-ordered)的类型来说毫无意义, 它要求类型实现关键 trait `Ord`. 但是, `BTreeMap` 内部的实现包含 Unsafe Rust 代码. 因为一个不合格的 `Ord` 实现(但是是 Safe 的)而导致未定义的行为是不可接受的, BTreeMap 内部编写了 Unsafe Rust 代码用来保证 `Ord` 实现是真正的全序关系顺序, 提升了代码健壮性, 即使它只有 `Ord` trait 的约束.
 
-The Unsafe Rust code just can't trust the Safe Rust code to be written correctly.
-That said, `BTreeMap` will still behave completely erratically if you feed in
-values that don't have a total ordering. It just won't ever cause Undefined
-Behavior.
-
 Unsafe Rust 代码通常假定 Safe Rust 代码不一定正确. 也就是说, `BTreeMap` 仍然会表现的不正常如果你传入的值不是全序关系顺序的. 但是它永远不会导致未定义的行为.
 
 One may wonder, if `BTreeMap` cannot trust `Ord` because it's Safe, why can it
