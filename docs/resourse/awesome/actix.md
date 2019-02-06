@@ -43,6 +43,7 @@
 - [hearth](https://github.com/aheart/hearth) ： 通过SSH进行Linux资源监控
 - [actix-telegram](https://github.com/jeizsm/actix-telegram) : telegram bot library on actix
 - [actix-web-jaeger](https://github.com/OutThereLabs/actix-web-jaeger)
+- [actix-diesel](https://github.com/mehcode/actix-diesel) - Integrate Diesel into Actix (and Actix Web) cleanly and efficiently.
 
 
 **社区项目 :**
