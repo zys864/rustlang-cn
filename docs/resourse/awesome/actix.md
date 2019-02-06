@@ -31,7 +31,7 @@
 
 - [actix-mq-network](https://github.com/irony-rust/actix-mq-network) - Message queue distributed network based on Actix
 - [amqp-transport](https://github.com/fafhrd91/amqp-transport) - AMQP 1.0 Transport
-- [https://github.com/fafhrd91/amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
+- [amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
 - [actix-nats](https://github.com/YellowInnovation/actix-nats) : Actix的NATS Message Broker(异步消息队列客户端)
 - [actix-lua](https://github.com/poga/actix-lua) : Actix的安全Lua脚本环境
 - [torchbear](https://github.com/foundpatterns/torchbear) : Rust中的应用程序框架，具有Lua脚本环境
