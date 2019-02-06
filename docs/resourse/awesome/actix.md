@@ -31,6 +31,7 @@
 
 - [actix-redis-cluster](https://github.com/Idein/actix-redis-cluster) - actix-redis-cluster
 - [actix-mq-network](https://github.com/irony-rust/actix-mq-network) - Message queue distributed network based on Actix
+- [actix-rate-limit](https://github.com/Idein/actix-rate-limit) - actix-rate-limit
 - [amqp-transport](https://github.com/fafhrd91/amqp-transport) - AMQP 1.0 Transport
 - [amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
 - [actix-nats](https://github.com/YellowInnovation/actix-nats) : Actix的NATS Message Broker(异步消息队列客户端)
