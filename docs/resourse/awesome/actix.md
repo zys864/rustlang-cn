@@ -29,6 +29,7 @@
 
 **社区库 :**
 
+- [actix-redis-cluster](https://github.com/Idein/actix-redis-cluster) - actix-redis-cluster
 - [actix-mq-network](https://github.com/irony-rust/actix-mq-network) - Message queue distributed network based on Actix
 - [amqp-transport](https://github.com/fafhrd91/amqp-transport) - AMQP 1.0 Transport
 - [amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
