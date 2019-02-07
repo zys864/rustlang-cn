@@ -31,9 +31,6 @@
 
 但是, 违反这些约束通常只会导致上述问题的其中一个. 一些额外的约束也可以源自编译器内部, 并可以对如何优化代码做出特殊的假设. 举个例子, Vec 和 Box 使用编译器内部预置的函数, 要求它们的指针始终为非 null.
 
-Rust is otherwise quite permissive with respect to other dubious operations.
-Rust considers it "safe" to:
-
 对另一些可以的操作, Rust 也可以相当宽容. Rust 认为以下都是"安全"的:
 
 * 死锁
@@ -43,9 +40,6 @@ Rust considers it "safe" to:
 * 整型溢出
 * 中止程序
 * 删除生产环境数据库
-
-However any program that actually manages to do such a thing is *probably* incorrect.
-Rust provides lots of tools to make these things rare, but these problems are considered impractical to categorically prevent.
 
 但是, 真这么做了可能就不太好了, 尤其最后一条. Rust 提供了很多工具去阻止或减少这些事情的发生. 但是如果要完全避免这些问题是不切实际的.
 
