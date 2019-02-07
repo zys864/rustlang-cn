@@ -2,60 +2,53 @@
 
 > 原文跟踪[what-unsafe-does.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/what-unsafe-does.md) &emsp; Commit: dd8054bef8c654aaa27ca7979e21aa984fd2abc6
 
-The only things that are different in Unsafe Rust are that you can:
+区别在于, Usafe Rust 可以让且只让你多做如下这些事情:
 
-* Dereference raw pointers
-* Call `unsafe` functions (including C functions, compiler intrinsics, and the raw allocator)
-* Implement `unsafe` traits
-* Mutate statics
-* Access fields of `union`s
+* 解引用原始指针
+* 调用 `unsafe` 函数（包括 C 语言的函数, 编译器内部预置的和原始内存分配器）
+* 实现 `unsafe` trait
+* 修改静态（static）值
+* 访问 `union` 的字段
 
-That's it. The reason these operations are relegated to Unsafe is that misusing
-any of these things will cause the ever dreaded Undefined Behavior. Invoking
-Undefined Behavior gives the compiler full rights to do arbitrarily bad things
-to your program. You definitely *should not* invoke Undefined Behavior.
+这些就是全部了, 把这些操作归为 Unsafe 的原因是, 滥用这些会导致可怕的未定义的行为. 触发为定义的行为就相当于给予了编译器全权的权力在你程序里做一些武断且不好的事情. 你应该 *完全避免* 触发任何为定义的行为.
 
-Unlike C, Undefined Behavior is pretty limited in scope in Rust. All the core
-language cares about is preventing the following things:
+不像 C, Rust 中的为定义的行为是限定在一定范围内的. 所有核心语法都会刻意的去预防如下这些事情：
 
-* Dereferencing null, dangling, or unaligned pointers
-* Reading [uninitialized memory][]
-* Breaking the [pointer aliasing rules][]
-* Producing invalid primitive values:
-    * dangling/null references
-    * null `fn` pointers
-    * a `bool` that isn't 0 or 1
-    * an undefined `enum` discriminant
-    * a `char` outside the ranges [0x0, 0xD7FF] and [0xE000, 0x10FFFF]
-    * A non-utf8 `str`
-* Unwinding into another language
-* Causing a [data race][race]
+* 解引用 null、悬空或未对齐的指针
+* 读取[未初始化的内存][uninitialized memory]
+* 打破[指针别名规则][pointer aliasing rules]
+* 生成无效的原始值：
+    * 悬空/null 引用
+    * 空 `fn` 函数指针
+    * 非 0 或 1 的布尔值
+    * 未定义的 `enum` 判别式
+    * [0x0, 0xD7FF] 和 [0xE000, 0x10FFFF] 范围外的 `char` 值
+    * 非 utf-8 的 `str`
+* 展开到另一种语言
+* 引起[数据争用][race]
 
-That's it. That's all the causes of Undefined Behavior baked into Rust. Of
-course, unsafe functions and traits are free to declare arbitrary other
-constraints that a program must maintain to avoid Undefined Behavior. For
-instance, the allocator APIs declare that deallocating unallocated memory is
-Undefined Behavior.
+就这些而已, 这就是Rust中未定义行为的所有原因. 当然, unsafe 函数和 trait 可以自由随意的去声明一些其他约束, 用来约束程序程序坚持去避免未定义的行为. 举个例子, 内存分配器的 API 声明取消分配那些没分配过的内存, 就是未定义的行为.
 
-However, violations of these constraints generally will just transitively lead to one of
-the above problems. Some additional constraints may also derive from compiler
-intrinsics that make special assumptions about how code can be optimized. For instance,
-Vec and Box make use of intrinsics that require their pointers to be non-null at all times.
+但是, 违反这些约束通常只会导致上述问题的其中一个. 一些额外的约束也可以源自编译器内部, 并可以对如何优化代码做出特殊的假设. 举个例子, Vec 和 Box 使用编译器内部预置的函数, 要求它们的指针始终为非 null.
 
 Rust is otherwise quite permissive with respect to other dubious operations.
 Rust considers it "safe" to:
 
-* Deadlock
-* Have a [race condition][race]
-* Leak memory
-* Fail to call destructors
-* Overflow integers
-* Abort the program
-* Delete the production database
+对另一些可以的操作, Rust 也可以相当宽容. Rust 认为以下都是"安全"的:
 
-However any program that actually manages to do such a thing is *probably*
-incorrect. Rust provides lots of tools to make these things rare, but
-these problems are considered impractical to categorically prevent.
+* 死锁
+* 有[竞争条件][race]
+* 内存泄漏
+* 调用析构函数失败
+* 整型溢出
+* 中止程序
+* 删除生产环境数据库
+
+However any program that actually manages to do such a thing is *probably* incorrect.
+Rust provides lots of tools to make these things rare, but these problems are considered impractical to categorically prevent.
+
+但是, 真这么做了可能就不太好了, 尤其最后一条. Rust 提供了很多工具去阻止或减少这些事情的发生. 但是如果要完全避免这些问题是不切实际的.
+
 
 [pointer aliasing rules]: references.html
 [uninitialized memory]: uninitialized.html
