@@ -20,7 +20,7 @@
 - [actix](https://github.com/actix/actix) : Actor framework for Rust
 - [actix-net](https://github.com/actix/actix-net) : 可组合网络服务的框架
 - [actix-web](https://github.com/actix/actix-web) : Actix web is a rust web framework.
-- [actix-http](https://github.com/fafhrd91/actix-http) actix http library
+- [actix-http](https://github.com/actix/actix-http) actix http library
 - [actix-redis](https://github.com/actix/actix-redis) ： Redis actor and middleware for Actix
 - [actix-protobuf](https://github.com/actix/actix-protobuf) : Protobuf integration for actix web
 - [actix-remote](https://github.com/actix/actix-remote) : Distributed actors for actix framework.
@@ -29,8 +29,11 @@
 
 **社区库 :**
 
-- [rust-amqp](https://github.com/fafhrd91/rust-amqp) - AMQP 1.0 Protocol implementation in Rust
-- [rust-amqp-transport](https://github.com/fafhrd91/rust-amqp-transport) - AMQP 1.0 Transport
+- [actix-redis-cluster](https://github.com/Idein/actix-redis-cluster) - actix-redis-cluster
+- [actix-mq-network](https://github.com/irony-rust/actix-mq-network) - Message queue distributed network based on Actix
+- [actix-rate-limit](https://github.com/Idein/actix-rate-limit) - actix-rate-limit
+- [amqp-transport](https://github.com/fafhrd91/amqp-transport) - AMQP 1.0 Transport
+- [amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
 - [actix-nats](https://github.com/YellowInnovation/actix-nats) : Actix的NATS Message Broker(异步消息队列客户端)
 - [actix-lua](https://github.com/poga/actix-lua) : Actix的安全Lua脚本环境
 - [torchbear](https://github.com/foundpatterns/torchbear) : Rust中的应用程序框架，具有Lua脚本环境
@@ -40,6 +43,7 @@
 - [hearth](https://github.com/aheart/hearth) ： 通过SSH进行Linux资源监控
 - [actix-telegram](https://github.com/jeizsm/actix-telegram) : telegram bot library on actix
 - [actix-web-jaeger](https://github.com/OutThereLabs/actix-web-jaeger)
+- [actix-diesel](https://github.com/mehcode/actix-diesel) - Integrate Diesel into Actix (and Actix Web) cleanly and efficiently.
 
 
 **社区项目 :**
