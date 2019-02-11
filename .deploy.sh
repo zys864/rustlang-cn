@@ -1,15 +1,8 @@
-#!/usr/bin/env sh
+#!/bin/bash -eu
 
-# 确保脚本抛出遇到的错误
-set -e
+echo "Documentation uploading."
 
-# 生成静态文件
-npm run build
+cp CNAME docs/.vuepress/dist
+/tmp/ghp-import/ghp_import.py -n -p -f -m "Update documentation." -b master -r https://$rustlangcn@github.com/rustlang-cn/rustlang-cn.github.io.git docs/.vuepress/dist
 
-
-if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "master" ]]; then
-  cp CNAME docs/.vuepress/dist
-  git clone https://github.com/davisp/ghp-import.git &&
-  ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -b master -r https://"$rustlangcn"@github.com/rustlang-cn/rustlang-cn.github.io.git docs/.vuepress/dist &&
-  echo "Uploaded documentation"
-fi
+echo "Documentation uploaded."

@@ -2,19 +2,19 @@ language: node_js
 node_js: stable
 
 git:
-   depth: 9999999
-   
-matrix:
-  include:
-    - env:
-      - TASK=build
-      script: 
-        - npm install
-        
+  depth: false
+
+install:
+  - npm install
+  - git clone https://github.com/davisp/ghp-import.git /tmp/ghp-import
+
+script:
+  - npm run build
+
 deploy:
   provider: script
-  script: bash .deploy.sh
+  script: ./.deploy.sh
   skip_cleanup: true
   on:
     branch: master
-    condition: $TRAVIS_PULL_REQUEST = "false" && $TASK = "build"
+    condition: $TRAVIS_PULL_REQUEST = "false"
