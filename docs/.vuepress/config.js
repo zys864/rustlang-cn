@@ -88,13 +88,7 @@ module.exports = {
           { text: '网络', items: [ 
             { text: 'Awesome', link: '/resourse/awesome/' },
             { text: 'Crates', link: '/resourse/crates/' },
-            { text: '资源', link: '/resourse/resourse/' },
-            { text: '专栏', items: [ 
-              { text: '知乎', link: 'https://zhuanlan.zhihu.com/rustlang-cn' },
-              { text: '思否', link: 'https://segmentfault.com/blog/rust-lang' },
-              { text: '简书', link: 'https://www.jianshu.com/c/2efae7198ea3' },
-              { text: '微博', link: 'https://weibo.com/kriry' }      
-            ] }
+            { text: '资源', link: '/resourse/resourse/' }
           ] },
           { text: '论坛', link: 'http://47.104.146.58' }
           
