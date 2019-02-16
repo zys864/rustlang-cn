@@ -31,7 +31,7 @@ module.exports = {
     themeConfig: {
         repo: 'rustlang-cn/rustlang-cn',
         docsDir: 'docs',
-        // logo: '/imgs/rust.png',
+        logo: '/imgs/rust.png',
         displayAllHeaders: true,
         editLinks: true,
         editLinkText: '在 GitHub 上编辑此页',
