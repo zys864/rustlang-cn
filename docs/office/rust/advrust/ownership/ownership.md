@@ -2,22 +2,11 @@
 
 > 原文跟踪[ownership.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/ownership.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Ownership is the breakout feature of Rust. It allows Rust to be completely
-memory-safe and efficient, while avoiding garbage collection. Before getting
-into the ownership system in detail, we will consider the motivation of this
-design.
+所有权是Rust的突破性特征。 它允许Rust完全内存安全且高效，同时避免垃圾回收。 在详细介绍所有权制度之前，我们将考虑这种设计的动机。
 
-We will assume that you accept that garbage collection (GC) is not always an
-optimal solution, and that it is desirable to manually manage memory in some
-contexts. If you do not accept this, might I interest you in a different
-language?
+我们假设您接受垃圾收集（GC）并不总是最佳解决方案，并且希望在某些上下文中手动管理内存。 如果你不接受这个，你可能会对另一种语言对感兴趣？
 
-Regardless of your feelings on GC, it is pretty clearly a *massive* boon to
-making code safe. You never have to worry about things going away *too soon*
-(although whether you still wanted to be pointing at that thing is a different
-issue...). This is a pervasive problem that C and C++ programs need to deal
-with. Consider this simple mistake that all of us who have used a non-GC'd
-language have made at one point:
+无论您对GC的感受如何，显然对于使代码安全无疑是一个巨大的好处。 你永远不必担心过早的事情会消失（尽管你是否仍然想要指出那件事是另一个问题......）。 这是C和C ++程序需要处理的普遍问题。 考虑一下这个简单的错误，即我们所有使用非GC语言的人都曾在某个方面做过：
 
 ```rust
 fn as_str(data: &u32) -> &str {
@@ -32,21 +21,11 @@ fn as_str(data: &u32) -> &str {
 }
 ```
 
-This is exactly what Rust's ownership system was built to solve.
-Rust knows the scope in which the `&s` lives, and as such can prevent it from
-escaping. However this is a simple case that even a C compiler could plausibly
-catch. Things get more complicated as code gets bigger and pointers get fed through
-various functions. Eventually, a C compiler will fall down and won't be able to
-perform sufficient escape analysis to prove your code unsound. It will consequently
-be forced to accept your program on the assumption that it is correct.
+这正是Rust的所有权系统要解决的问题。 Rust知道`＆s`的生存范围，因此可以防止它逃逸。 然而，这是一个简单的案例，即使是C编译器也可以合理地捕获。 随着代码变得越来越大，指针通过各种函数被提供，事情变得越来越复杂。 最终，C编译器将崩溃，并且无法执行足够的转义分析来证明您的代码不健全。 因此，在假设它是正确的情况下，它将被迫接受您的程序。
 
-This will never happen to Rust. It's up to the programmer to prove to the
-compiler that everything is sound.
+这将永远不会发生在Rust。 程序员可以向编译器证明一切都是正确的。
 
-Of course, Rust's story around ownership is much more complicated than just
-verifying that references don't escape the scope of their referent. That's
-because ensuring pointers are always valid is much more complicated than this.
-For instance in this code,
+当然，Rust关于所有权的故事要比仅仅验证引用不会超出其引用范围复杂。 那是因为确保指针始终有效要比这复杂得多。 例如，在此代码中，
 
 ```rust
 let mut data = vec![1, 2, 3];
@@ -61,7 +40,4 @@ data.push(4);
 println!("{}", x);
 ```
 
-naive scope analysis would be insufficient to prevent this bug, because `data`
-does in fact live as long as we needed. However it was *changed* while we had
-a reference into it. This is why Rust requires any references to freeze the
-referent and its owners.
+天真的范围分析不足以防止这个错误，因为数据确实存在，只要我们需要。 然而，当我们引用它时它被改变了。 这就是Rust要求任何引用来冻结引用对象及其所有者的原因。
