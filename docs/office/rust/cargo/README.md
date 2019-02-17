@@ -3,31 +3,27 @@
 ### 注意：本书的翻译和校对尚未全部完成,欢迎参与！
 
 > **本书同步于官方 [The Cargo Book](https://doc.rust-lang.org/cargo/guide/index.html) 仓库[地址](https://github.com/rust-lang/cargo/tree/master/src/doc/src)!**
-> 原文跟踪[README.md](https://github.com/rust-lang/cargo/blob/master/src/doc/src/index.md) &emsp; Commit: 4a8bd29f98f89b57183c790d98148586e1c13d98
+> 源[README.md](https://github.com/rust-lang/cargo/blob/master/src/doc/src/index.md) &emsp; Commit: 4a8bd29f98f89b57183c790d98148586e1c13d98
 
 ![Cargo Logo](./images/Cargo-Logo-Small.png)
 
-Cargo is the [Rust] *package manager*. Cargo downloads your Rust package’s
-dependencies, compiles your packages, makes distributable packages, and uploads them to
-[crates.io], the Rust community’s *package registry*. You can contribute
-to this book on [GitHub].
+Cargo是[Rust]包管理器。 Cargo下载Rust包的依赖项，编译包，生成可分发的包，并将它们上传到Rust社区的包注册中心[crates.io]。 您可以在[GitHub]上为本书做出贡献。
 
-## Sections
+## 章节
 
-**[Getting Started](getting-started/getting-started.html)**
+**[入门](getting-started/getting-started.html)**
 
-To get started with Cargo, install Cargo (and Rust) and set up your first crate.
+要开始使用Cargo，请安装Cargo（和Rust）来设置您的第一个箱子。
 
-**[Cargo Guide](guide/guide.html)**
+**[货物指南](guide/guide.html)**
 
-The guide will give you all you need to know about how to use Cargo to develop
-Rust packages.
+该指南将为您提供有关如何使用Cargo开发Rust包的所有信息。
 
-**[Cargo Reference](reference/reference.html)**
+**[货物参考](reference/reference.html)**
 
-The reference covers the details of various areas of Cargo.
+该参考文献涵盖了货物各个领域的细节。
 
-**[Frequently Asked Questions](faq.html)**
+**[常见的问题](faq.html)**
 
 [rust]: https://www.rust-lang.org/
 [crates.io]: https://crates.io/
