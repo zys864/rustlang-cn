@@ -2,17 +2,9 @@
 
 > 原文跟踪[conversions.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/conversions.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-At the end of the day, everything is just a pile of bits somewhere, and type
-systems are just there to help us use those bits right. There are two common
-problems with typing bits: needing to reinterpret those exact bits as a
-different type, and needing to change the bits to have equivalent meaning for
-a different type. Because Rust encourages encoding important properties in the
-type system, these problems are incredibly pervasive. As such, Rust
-consequently gives you several ways to solve them.
+在一天结束时，一切都只是一堆`bits`，类型系统只是帮助我们正确使用这些`bits`。类型`bits`有两个常见问题：需要将这些确切的`bits`重新解释为不同的类型，并且需要将`bits`更改为具有等效含义的不同类型。因为Rust鼓励在类型系统中编码重要属性，所以这些问题非常普遍。因此，Rust因此为您提供了几种解决方法。
 
-First we'll look at the ways that Safe Rust gives you to reinterpret values.
-The most trivial way to do this is to just destructure a value into its
-constituent parts and then build a new type out of them. e.g.
+首先，我们将介绍`Safe Rust`为您重新解释值的方法。实现这一目标的最简单方法是将一个值构造成其组成部分，然后从中构建一个新类型。例如
 
 ```rust
 struct Foo {
@@ -31,6 +23,5 @@ fn reinterpret(foo: Foo) -> Bar {
 }
 ```
 
-But this is, at best, annoying. For common conversions, Rust provides
-more ergonomic alternatives.
+但这令人讨厌。对于常见的转换，Rust提供了更符合人体工程学的替代品。
 
