@@ -1,4 +1,5 @@
 # Rust高级编程
+
 #### 高级和不安全的Rust编程的黑暗艺术
 
 ### 注意：本书的翻译和校对尚未全部完成。
@@ -6,7 +7,6 @@
 > **本书同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！**
 
 > 原文跟踪[README.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &emsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
-
 
 > 不是我所期望的程序，只有一种黑暗和不可言喻的孤独; 我终于看到了一个以前从未有人敢说过的可怕的真相 - 这个无法泄露的秘密。
 
