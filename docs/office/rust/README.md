@@ -30,7 +30,7 @@
 
 ## Server
 
-
+- [Futures](https://github.com/rust-lang-nursery/futures-rs)
 
 ## CLI
 
@@ -39,8 +39,10 @@
 ## WASM
 
 - [The Rust WebAssembly Book](https://rustwasm.github.io/book/)
+- [wasm-bindgen](https://rustwasm.github.io/wasm-bindgen/)
 
 ## IOT
 
 - [The Rust Embedded Book](https://rust-embedded.github.io/book/)
 - [The Discovery Book](https://rust-embedded.github.io/discovery/) - [中文版《Discovery》](https://rustlang-cn.org/office/iot/discovery/)
+- [The Embedonomicon Book](https://docs.rust-embedded.org/embedonomicon/)

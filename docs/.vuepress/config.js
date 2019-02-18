@@ -4,8 +4,6 @@ let { asyncrust } = require ('./category/asyncrust.js')
 let { reference } = require ('./category/reference.js')
 let { cargo } = require ('./category/cargo.js')
 let { tokio } = require ('./category/tokio.js')
-let { actix } = require ('./category/actix.js')
-let { actixnet } = require ('./category/actixnet.js')
 let { actixweb } = require ('./category/actixweb.js')
 let { diesel } = require ('./category/diesel.js')
 let { riker } = require ('./category/riker.js')
@@ -54,31 +52,14 @@ module.exports = {
                   { text: 'Cargo教程', link: '/office/rust/cargo/' }
                 ]
               },
-              { text: 'Server', items: [ 
-                  { text: 'Futures', link: '/office/server/futures/' }
-                ] 
-              },
-              { text: 'CLI', items: [ 
-                  { text: 'Book', link: '/office/cli/book/' }
-                ] 
-              },
-              { text: 'Wasm', items: [ 
-                  { text: 'Book', link: '/office/wasm/book/' },
-                  { text: 'Wasm-bindgen', link: '/office/wasm/wasm-bindgen/' }
-                ] 
-              },
               { text: 'IOT', items: [ 
-                  { text: 'Book', link: '/office/iot/book/' },
-                  { text: 'Discovery', link: '/office/iot/discovery/' },
-                  { text: 'Embedonomicon', link: '/office/iot/embedonomicon/' }
+                  { text: 'Discovery', link: '/office/iot/discovery/' }
                 ] 
               }
             ]
           },
           { text: '生态', items: [ 
             { text: 'Rust生态库-中文版', link: '/crates/' },
-            { text: 'Actix', link: '/crates/actix/' },
-            { text: 'Actix-net', link: '/crates/actix-net/' },
             { text: 'Actix-web', link: '/crates/actix-web/' },
             { text: 'Diesel', link: '/crates/diesel/' },
             { text: 'Riker', link: '/crates/riker/' },
@@ -101,8 +82,6 @@ module.exports = {
           '/office/rust/cargo/': cargo('Cargo'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
-          '/crates/actix/': actix('Actix'),
-          '/crates/actix-net/': actixnet('Actix-net'),
           '/crates/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),

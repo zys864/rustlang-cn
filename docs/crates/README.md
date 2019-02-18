@@ -1,10 +1,8 @@
 # Rust生态库-中文版
 
-> **欢迎参与翻译以下Rust生态库官方书籍，贡献Rust中文内容网络！**
+> **欢迎参与翻译以下Rust生态库官方书籍！以下分类均按字母排序**
 
 ## Server-Net
-
-> 分类均按字母排序
 
 - [Actix](https://github.com/actix) - [中文文档](https://rustlang-cn.org/crates/actix/)
 - [Actix-net](https://github.com/actix/actix-net) - [中文文档](https://rustlang-cn.org/crates/actix-net/)
