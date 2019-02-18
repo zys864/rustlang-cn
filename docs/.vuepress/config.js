@@ -48,7 +48,7 @@ module.exports = {
                   { text: 'Rust编程语言', link: '/office/rust/book/' },
                   { text: 'Rust高级编程', link: '/office/rust/advrust/' },
                   { text: 'Rust异步编程', link: '/office/rust/async-rust/' },
-                  { text: 'Rust参考规范', link: '/office/rust/reference/' },
+                  { text: 'Rust语言规范', link: '/office/rust/reference/' },
                   { text: 'Cargo教程', link: '/office/rust/cargo/' }
                 ]
               },
