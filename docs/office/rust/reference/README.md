@@ -1,6 +1,6 @@
 # Rust语言规范
 
-> **本书同步于官方 [The Rust Reference]([https://doc.rust-lang.org/nomicon/](https://doc.rust-lang.org/reference/index.html)) 仓库[地址]([https://github.com/rust-lang-nursery/nomicon](https://github.com/rust-lang-nursery/reference/)),欢迎参与！**
+> **本书同步于官方 [The Rust Reference](https://doc.rust-lang.org/reference/index.html) 仓库[地址](https://github.com/rust-lang-nursery/reference/),欢迎参与！**
 
 > 源 [introduction](https://github.com/rust-lang-nursery/reference/blob/master/src/introduction.md) &nbsp; Commit: a2405b970b7c8222a483b82213adcb17d646c75d
 
