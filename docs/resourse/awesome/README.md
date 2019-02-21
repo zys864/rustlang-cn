@@ -4,6 +4,8 @@
 
 ## Awesome-Rust内容目录
 
+> [Rustlang-cn资源仓库](https://github.com/rustlang-cn/resourses)
+
 - [Rust](#rust)
   - [Table of contents](#table-of-contents)
   - [Applications](#applications)
