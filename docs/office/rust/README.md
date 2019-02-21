@@ -30,7 +30,7 @@
 
 ## Server
 
-- [Futures](https://github.com/rust-lang-nursery/futures-rs)
+- [Futures](https://rust-lang-nursery.github.io/futures-api-docs/0.3.0-alpha.13/futures/)
 
 ## CLI
 
