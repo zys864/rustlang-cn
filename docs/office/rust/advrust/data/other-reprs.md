@@ -1,4 +1,4 @@
-# Alternative representations
+# 替代数据布局
 
 > 源-[other-reprs](https://github.com/rust-lang-nursery/nomicon/blob/master/src/other-reprs.md) &nbsp; Commit: 7f019ec5c87da39fe0b9b5149e413d914528e945
 
