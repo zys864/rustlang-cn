@@ -1,5 +1,7 @@
 # Rust资源
 
+> [Rustlang-cn资源仓库](https://github.com/rustlang-cn/resourses)
+
 ## Rust语言书
 
 * [Rust程序设计语言-第二版](https://kaisery.github.io/trpl-zh-cn/foreword.html)
