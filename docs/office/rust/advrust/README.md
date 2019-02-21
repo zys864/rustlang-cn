@@ -4,17 +4,16 @@
 
 ### 注意：本书的翻译和校对尚未全部完成。
 
-> **本书同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！**
+> **同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！**
+> 源-[README](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &nbsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
 
-> 原文跟踪[README.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &emsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975
-
-> 不是我所期望的程序，只有一种黑暗和不可言喻的孤独; 我终于看到了一个以前从未有人敢说过的可怕的真相 - 这个无法泄露的秘密。
+> 我一直期待的程序代码并未出现，取而代之的竟是这令人战栗的黑暗与不可名状的孤独。我看见了！那个让所有人都噤声不语的恐怖事实，那个不可言说的秘密中的秘密——这个精心构建的Rust语言，其实并不像它最初看起来那般坚固不朽。事实上，它竟然是非安全的，它的身躯散发着古怪的气味，滋生着诡异的寄生生物。而我，对这一切束手无策，因为它们都是在编译期发生的。
 
 本书深入介绍了编写`Unsafe Rust`程序时需要了解的所有细节。
 
 > **本书的知识是“按原样”提供的，不提供任何形式的明示或暗示的保证，包括但不限于释放让你的心灵在不可思议的无限宇宙破碎飘零的不可名状的恐惧。**
 
-如果你希望有一个漫长而愉快的 Rust 生涯，你现在就应该离开，并忘记你曾经见过这本书。没有必要。但是，如果您打算编写不安全的代码——或者只是想深入研究这个语言——本书包含许多有用的信息。
+如果你仍然期待着拥有一个长期且快乐的Rust编程生涯，那么现在就转身离开，彻底忘掉你曾经见到过这本书——你并不会感到生活有什么缺憾。但是，如果你计划编写非安全代码——或者仅仅是想探究一下这门语言的内在秘密——本书将给你许多有用的信息.
 
 与[*Rust编程语言*](https://rustlang-cn.org/office/rust/book/)一书不同，我们将假设你事先具有足够的知识。特别地，您应该熟悉系统编程和基本的 Rust 知识。如果您不能适应这些主题，则应考虑首先阅读*Rust编程语言*一书。但我们不会假设您已经阅读过*Rust编程语言*；如果你愿意，你可以直接阅读本书，我们会在适当的情况下偶尔回顾一下基础知识。 但注意我们不会从头开始解释一切。
 

@@ -1,35 +1,20 @@
 # Alternative representations
 
-> 原文跟踪[other-reprs.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/other-reprs.md) &emsp; Commit: 7f019ec5c87da39fe0b9b5149e413d914528e945
+> 源-[other-reprs](https://github.com/rust-lang-nursery/nomicon/blob/master/src/other-reprs.md) &nbsp; Commit: 7f019ec5c87da39fe0b9b5149e413d914528e945
 
-Rust allows you to specify alternative data layout strategies from the default.
-There's also the [reference].
+Rust允许您从默认中指定替代数据布局策略。 这里有[reference].
 
 ## repr(C)
 
-This is the most important `repr`. It has fairly simple intent: do what C does.
-The order, size, and alignment of fields is exactly what you would expect from C
-or C++. Any type you expect to pass through an FFI boundary should have
-`repr(C)`, as C is the lingua-franca of the programming world. This is also
-necessary to soundly do more elaborate tricks with data layout such as
-reinterpreting values as a different type.
+这是最重要的一种`repr`。它的目的很简单，就是和C保持一致。数据的顺序、大小、对齐方式都和你在C或C++中见到的一摸一样。所有你需要通过FFI交互的类型都应该有`repr(C)`，因为C是程序设计领域的世界语。而且如果我们要在数据布局方面玩一些花活的话，比如把数据重新解析成另一种类型，`repr(C)`也是很有必要的。
 
-We strongly recommend using [rust-bindgen][] and/or [cbdingen][] to manage your FFI
-boundaries for you. The Rust team works closely with those projects to ensure
-that they work robustly and are compatible with current and future guarantees
-about type layouts and reprs.
+我们强烈建议您使用[rust-bindgen]和/或[cbdingen]来管理您的FFI边界。 Rust团队与这些项目密切合作，以确保它们运行稳健，并与当前和未来有关类型布局和`reprs`保证兼容。
 
-The interaction of `repr(C)` with Rust's more exotic data layout features must be
-kept in mind. Due to its dual purpose as "for FFI" and "for layout control",
-`repr(C)` can be applied to types that will be nonsensical or problematic if
-passed through the FFI boundary.
+必须牢记`repr（C）`与Rust更具特殊的数据布局特性的相互作用。 由于其"用于FFI"和"用于布局控制"的双重目的，`repr（C）`可以应用于通过FFI边界时无意义或有问题的类型。
 
-* ZSTs are still zero-sized, even though this is not a standard behavior in
-C, and is explicitly contrary to the behavior of an empty type in C++, which
-says they should still consume a byte of space.
+* ZST的大小是0，尽管这在C语言中不是标准行为，而且它也与C++中的空类型有着明显的不同，C++的空类型还是要占用一个字节的空间的。
 
-* DST pointers (wide pointers) and tuples are not a concept
-  in C, and as such are never FFI-safe.
+* DST的指针（胖指针），元组都是C中没有的，因此也不是FFI安全的。
 
 * Enums with fields also aren't a concept in C or C++, but a valid bridging
   of the types [is defined][really-tagged].
@@ -56,9 +41,7 @@ construct an instance of an enum that does not match one of its
 variants. (This allows exhaustive matches to continue to be written and
 compiled as normal.)
 
-
-
-# repr(transparent)
+## repr(transparent)
 
 This can only be used on structs with a single non-zero-sized field (there may
 be additional zero-sized fields). The effect is that the layout and ABI of the
@@ -74,59 +57,31 @@ Foo(f32)` to always have the same ABI as `f32`.
 
 More details are in the [RFC][rfc-transparent].
 
+## repr(u*), repr(i*)
 
+These specify the size to make a fieldless enum. If the discriminant overflows the integer it has to fit in, it will produce a compile-time error. You can manually ask Rust to allow this by setting the overflowing element to explicitly be 0. However Rust will not allow you to create an enum where two variants have the same discriminant.
 
-# repr(u*), repr(i*)
+"fieldless enum" 的意思是枚举的每一个变量里都不关联数据。不指定repr(u*)或repr(i*)的无成员枚举依然是一个Rust的合法原生类型，它们都没有固定的ABI表示方法。给它们指定`repr`使其有了固定的类型大小，方便在ABI中使用。
 
-These specify the size to make a fieldless enum. If the discriminant overflows
-the integer it has to fit in, it will produce a compile-time error. You can
-manually ask Rust to allow this by setting the overflowing element to explicitly
-be 0. However Rust will not allow you to create an enum where two variants have
-the same discriminant.
+如果枚举有字段，则效果类似于`repr（C）`，因为有一个定义的类型布局。 这使得它可以将枚举传递给C代码，或直接访问类型的原始表示操纵它的标签和字段。 有关详细信息，请参阅RFC [really-tagged]。
 
-The term "fieldless enum" only means that the enum doesn't have data in any
-of its variants. A fieldless enum without a `repr(u*)` or `repr(C)` is
-still a Rust native type, and does not have a stable ABI representation.
-Adding a `repr` causes it to be treated exactly like the specified
-integer size for ABI purposes.
+为枚举显式指定`repr`将抑制空指针优化。
 
-If the enum has fields, the effect is similar to the effect of `repr(C)`
-in that there is a defined layout of the type. This makes it possible to
-pass the enum to C code, or access the type's raw representation and directly
-manipulate its tag and fields. See [the RFC][really-tagged] for details.
+这些`repr`对于结构体无效。
 
-Adding an explicit `repr` to an enum suppresses the null-pointer
-optimization.
+## repr(packed)
 
-These reprs have no effect on a struct.
+`repr(packed)`强制Rust不填充空数据，只将类型与一个字节对齐。 这可能会改善内存占用，但可能会产生其他负面影响。
 
+特别是，大多数架构都强烈推荐将数据对齐。 这意味着加载未对齐的数据会很低效（x86)，甚至是错误的(一些ARM芯片)。 对于直接加载或存储打包字段的简单情况，编译器可能能够通过移位和掩码来解决对齐问题。 但是，如果您对打包字段进行引用，则编译器不太可能生成代码以避免未对齐的加载。
 
+**[从Rust 2018开始，这仍然会导致未定义的行为][ub loads]**
 
+`repr(packed)` 不能轻易使用。 除非您有极端要求，否则不应使用此选项。
 
-# repr(packed)
+这个repr是`repr（C）`和`repr（rust）`的修改。
 
-`repr(packed)` forces Rust to strip any padding, and only align the type to a
-byte. This may improve the memory footprint, but will likely have other negative
-side-effects.
-
-In particular, most architectures *strongly* prefer values to be aligned. This
-may mean the unaligned loads are penalized (x86), or even fault (some ARM
-chips). For simple cases like directly loading or storing a packed field, the
-compiler might be able to paper over alignment issues with shifts and masks.
-However if you take a reference to a packed field, it's unlikely that the
-compiler will be able to emit code to avoid an unaligned load.
-
-**[As of Rust 2018, this still can cause undefined behavior.][ub loads]**
-
-`repr(packed)` is not to be used lightly. Unless you have extreme requirements,
-this should not be used.
-
-This repr is a modifier on `repr(C)` and `repr(rust)`.
-
-
-
-
-# repr(align(n))
+## repr(align(n))
 
 `repr(align(n))` (where `n` is a power of two) forces the type to have an
 alignment of *at least* n.
@@ -137,10 +92,6 @@ kinds of concurrent code).
 
 This is a modifier on `repr(C)` and `repr(rust)`. It is incompatible with
 `repr(packed)`.
-
-
-
-
 
 [reference]: https://github.com/rust-rfcs/unsafe-code-guidelines/tree/master/reference/src/representation
 [drop flags]: drop-flags.html

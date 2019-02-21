@@ -1,4 +1,4 @@
-# Safe 和 Unsafe 如何相互作用
+# Safe 和 Unsafe 如何交互
 
 > 原文跟踪[safe-unsafe-meaning.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/safe-unsafe-meaning.md) &emsp; Commit: b6e3cbf5b0f12df1d5e30198ef7cfc17d9c70b6e
 

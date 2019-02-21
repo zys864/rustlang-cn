@@ -1,14 +1,12 @@
 # 遇见Safe与Unsafe 
 
-> 原文跟踪[meet-safe-and-unsafe.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/meet-safe-and-unsafe.md) &emsp; Commit: a08085479b674bcac6e41bdc00dbee798ea9854e
+> 源-[meet-safe-and-unsafe](https://github.com/rust-lang-nursery/nomicon/blob/master/src/meet-safe-and-unsafe.md) &nbsp; Commit: a08085479b674bcac6e41bdc00dbee798ea9854e
 
-![safe and unsafe](../img/safeandunsafe.svg)
-
-不必担心底层实现细节是一件很棒的事。谁会关心空元组占用多少空间呢？可惜有时这很重要，我们需要担心它。性能是开发人员开始关注实现细节的最常见原因，但更重要的是，当与其他语言交互，或直接涉及硬件、操作系统时，这些细节可能关系到程序的正确性。
+不必担心底层实现细节是一件很棒的事。谁会关心空元组占用多少空间呢？可惜有时这很重要，我们需要关注它。性能是开发人员开始关注实现细节的最常见原因，但更重要的是，当与其他语言交互，或直接涉及硬件、操作系统时，这些细节可能关系到程序的正确性。
 
 在一个安全的编程语言中，当实现细节开始变得重要时，程序员通常有三个选择：
 
-- 调整代码以鼓励编译器或运行时执行优化
+- 调整代码以让编译器或运行时执行优化
 - 采用不地道或更加繁琐的设计来实现所需的实现
 - 用一种可以控制这些细节的语言重写实现
 
