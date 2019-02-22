@@ -1,21 +1,15 @@
-# Drop Check
+# Drop检查
 
-> 原文跟踪[dropck.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/dropck.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
+> 源：[dropck.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/dropck.md) &nbsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
-We have seen how lifetimes provide us some fairly simple rules for ensuring
-that we never read dangling references. However up to this point we have only ever
-interacted with the *outlives* relationship in an inclusive manner. That is,
-when we talked about `'a: 'b`, it was ok for `'a` to live *exactly* as long as
-`'b`. At first glance, this seems to be a meaningless distinction. Nothing ever
-gets dropped at the same time as another, right? This is why we used the
-following desugaring of `let` statements:
+我们已经知道生命周期给我们提供了一些很简单的规则，以保证我们永远不会读取悬垂引用。但是，到目前为止我们提到生命周期的长短时，指的都是非严格的关系。也就是说，当我们写`'a: 'b`的时候，`'a`其实也可以和`'b`一样长。乍一看，这一点没什么意义。本来也不会有两个东西被同时销毁的，不是吗？我们去掉下面的`let`表达式的语法糖看看：
 
-```rust
+``` Rust
 let x;
 let y;
 ```
 
-```rust
+``` Rust
 {
     let x;
     {
@@ -24,30 +18,19 @@ let y;
 }
 ```
 
-Each creates its own scope, clearly establishing that one drops before the
-other. However, what if we do the following?
+每一个都创建了自己的作用域，可以很清楚地看出来一个在另一个之前被销毁。但是，如果是下面这样的呢？
 
-```rust
+``` Rust
 let (x, y) = (vec![], vec![]);
 ```
 
-Does either value strictly outlive the other? The answer is in fact *no*,
-neither value strictly outlives the other. Of course, one of x or y will be
-dropped before the other, but the actual order is not specified. Tuples aren't
-special in this regard; composite structures just don't guarantee their
-destruction order as of Rust 1.0.
+有哪一个比另一个存活更长吗？答案是，没有，没有哪个严格地比另一个长。当然，x和y中肯定有一个比另一个先销毁，但是销毁的顺序是不确定的。并非只有元组是这样，复合结构体从Rust 1.0开始就不会保证它们的销毁顺序。
 
-We *could* specify this for the fields of built-in composites like tuples and
-structs. However, what about something like Vec? Vec has to manually drop its
-elements via pure-library code. In general, anything that implements Drop has
-a chance to fiddle with its innards during its final death knell. Therefore
-the compiler can't sufficiently reason about the actual destruction order
-of the contents of any type that implements Drop.
+我们已经清楚了元组和结构体这种内置复合类型的行为了。那么Vec这样的类型又是什么样的呢？Vec必须通过标准库代码手动销毁它的元素。通常来说，所有实现了Drop的类型在临死前都有一次回光返照的机会。所以，对于实现了Drop的类型，编译器没有充分的理由判断它们的内容的实际销毁顺序。
 
-So why do we care? We care because if the type system isn't careful, it could
-accidentally make dangling pointers. Consider the following simple program:
+可是我们为什么要关心这个？因为如果系统不够小心，就可能搞出来悬垂指针。考虑下面这个简单的程序：
 
-```rust
+``` Rust
 struct Inspector<'a>(&'a u8);
 
 fn main() {
@@ -57,18 +40,16 @@ fn main() {
 }
 ```
 
-This program is totally sound and compiles today. The fact that `days` does
-not *strictly* outlive `inspector` doesn't matter. As long as the `inspector`
-is alive, so is days.
+这段程序是正确且可以正常编译的。`days`并不严格地比`inspector`存活得更长，但这没什么关系。只要`inspector`还存活着，`days`就一定也活着。
 
-However if we add a destructor, the program will no longer compile!
+可如果我们添加一个析构函数，程序就不能编译了！
 
-```rust
+``` Rust
 struct Inspector<'a>(&'a u8);
 
 impl<'a> Drop for Inspector<'a> {
     fn drop(&mut self) {
-        println!("I was only {} days from retirement!", self.0);
+        println!("再过{}天我就退休了！", self.0);
     }
 }
 
@@ -76,17 +57,17 @@ fn main() {
     let (inspector, days);
     days = Box::new(1);
     inspector = Inspector(&days);
-    // Let's say `days` happens to get dropped first.
-    // Then when Inspector is dropped, it will try to read free'd memory!
+    // 如果days碰巧先被销毁了
+    // 那么当销毁Inspector的时候，它会读取被释放的内存
 }
 ```
 
-```text
+```
 error[E0597]: `days` does not live long enough
   --> src/main.rs:12:28
    |
 12 |     inspector = Inspector(&days);
-   |                            ^^^^ borrowed value does not live long enough
+   |                             ^^^^ borrowed value does not live long enough
 ...
 15 | }
    | - `days` dropped here while still borrowed
@@ -96,34 +77,19 @@ error[E0597]: `days` does not live long enough
 error: aborting due to previous error
 ```
 
-Implementing `Drop` lets the `Inspector` execute some arbitrary code during its
-death. This means it can potentially observe that types that are supposed to
-live as long as it does actually were destroyed first.
+实现`Drop`使得`Inspector`可以在销毁前执行任意的代码。一些通常认为和它生命周期一样长的类型可能实际上比它先销毁，而这会有潜在的问题。
 
-Interestingly, only generic types need to worry about this. If they aren't
-generic, then the only lifetimes they can harbor are `'static`, which will truly
-live *forever*. This is why this problem is referred to as *sound generic drop*.
-Sound generic drop is enforced by the *drop checker*. As of this writing, some
-of the finer details of how the drop checker validates types is totally up in
-the air. However The Big Rule is the subtlety that we have focused on this whole
-section:
+有意思的是，只有泛型需要考虑这个问题。如果不是泛型的话，那么唯一可用的生命周期就是`'static`，而它确确实实会永远存在。这也就是这一问题被称之为“安全泛型销毁”的原因。安全泛型销毁是通过drop检查器执行的。我们还未涉及到drop检查器判断类型是否可用的细节，但其实我们之前已经讨论了这个问题的最主要规则：
 
-**For a generic type to soundly implement drop, its generics arguments must
-strictly outlive it.**
+**一个安全地实现Drop的类型，它的泛型参数生命周期必须严格地长于它本身**
 
-Obeying this rule is (usually) necessary to satisfy the borrow
-checker; obeying it is sufficient but not necessary to be
-sound. That is, if your type obeys this rule then it's definitely
-sound to drop.
+遵守这一规则（大部分情况下）是满足借用检查器要求的必要条件，同时是满足安全要求的充分非必要条件。也就是说，如果类型遵守上述规则，它就一定可以安全地drop。
 
-The reason that it is not always necessary to satisfy the above rule
-is that some Drop implementations will not access borrowed data even
-though their type gives them the capability for such access.
+之所以并不总是满足借用检查器要求的必要条件，是因为有时类型借用了数据但是在Drop的实现里没有访问这些数据。
 
-For example, this variant of the above `Inspector` example will never
-access borrowed data:
+例如，上面的`Inspector`的这一变体就不会访问借用的数据：
 
-```rust
+``` Rust
 struct Inspector<'a>(&'a u8, &'static str);
 
 impl<'a> Drop for Inspector<'a> {
@@ -134,17 +100,16 @@ impl<'a> Drop for Inspector<'a> {
 
 fn main() {
     let (inspector, days);
-    days = Box::new(1);
-    inspector = Inspector(&days, "gadget");
-    // Let's say `days` happens to get dropped first.
-    // Even when Inspector is dropped, its destructor will not access the
-    // borrowed `days`.
+    days = Box::nex(1);
+    inspector = Inspector(&days, "gadget);
+    // 假设days碰巧先被销毁。
+    // 可当Inspector被销毁时，它的析构函数也不会访问借用的days。
 }
 ```
 
-Likewise, this variant will also never access borrowed data:
+同样，这个变体也不会访问借用的数据：
 
-```rust
+``` Rust
 use std::fmt;
 
 struct Inspector<T: fmt::Display>(T, &'static str);
@@ -159,46 +124,30 @@ fn main() {
     let (inspector, days): (Inspector<&u8>, Box<u8>);
     days = Box::new(1);
     inspector = Inspector(&days, "gadget");
-    // Let's say `days` happens to get dropped first.
-    // Even when Inspector is dropped, its destructor will not access the
-    // borrowed `days`.
+    // 假设days碰巧先被销毁。
+    // 可当Inspector被销毁时，它的析构函数也不会访问借用的days。
 }
 ```
 
-However, *both* of the above variants are rejected by the borrow
-checker during the analysis of `fn main`, saying that `days` does not
-live long enough.
+但是，借用检查器在分析`main`函数的时候会拒绝上面两段代码，并指出`days`存活得不够长。
 
-The reason is that the borrow checking analysis of `main` does not
-know about the internals of each `Inspector`'s `Drop` implementation.  As
-far as the borrow checker knows while it is analyzing `main`, the body
-of an inspector's destructor might access that borrowed data.
+这是因为，当借用检查分析`main`函数的时候，它并不知道每个`Inspector`的`Drop`实现的内部细节。它只知道inspector的析构函数有访问借用数据的可能。
 
-Therefore, the drop checker forces all borrowed data in a value to
-strictly outlive that value.
+因此，drop检查器强制要求一个值借用的所有数据的生命周期必须严格长于值本身。
 
-## An Escape Hatch
+## 留一个后门
 
-The precise rules that govern drop checking may be less restrictive in
-the future.
+上面的类型检查的规则在未来有可能会松动。
 
-The current analysis is deliberately conservative and trivial; it forces all
-borrowed data in a value to outlive that value, which is certainly sound.
+当前的分析方法是很保守甚至苛刻的，它强制要求一个值借用的数据必须比值本身长寿，以保证绝对的安全。
 
-Future versions of the language may make the analysis more precise, to
-reduce the number of cases where sound code is rejected as unsafe.
-This would help address cases such as the two `Inspector`s above that
-know not to inspect during destruction.
+未来的版本中，分析过程会更加精细，以减少安全的代码被拒绝的情况。比如上面的两个`Inspector`，它们知道在销毁过程中不应该被检查。
 
-In the meantime, there is an unstable attribute that one can use to
-assert (unsafely) that a generic type's destructor is *guaranteed* to
-not access any expired data, even if its type gives it the capability
-to do so.
+同时，有一个还未稳定的属性可以用来（非安全地）声明类型的析构函数保证不会访问过期的数据，即使类型的签名显示有这种可能存在。
 
-That attribute is called `may_dangle` and was introduced in [RFC 1327][rfc1327].
-To deploy it on the `Inspector` example from above, we would write:
+这个属性是`my_dangle`，在[RFC 1327](https://github.com/rust-lang/rfcs/blob/master/text/1327-dropck-param-eyepatch.md)中被引入。我们可以这样将其放在上面的`Inspector`例子里：
 
-```rust
+``` Rust
 struct Inspector<'a>(&'a u8, &'static str);
 
 unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
@@ -208,17 +157,11 @@ unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
 }
 ```
 
-Use of this attribute requires the `Drop` impl to be marked `unsafe` because the
-compiler is not checking the implicit assertion that no potentially expired data
-(e.g. `self.0` above) is accessed.
+使用这个属性要求`Drop`的实现被标为`unsafe`，因为编译器将不会检查有没有过期的数据（比如`self.0`）被访问。
 
-The attribute can be applied to any number of lifetime and type parameters. In
-the following example, we assert that we access no data behind a reference of
-lifetime `'b` and that the only uses of `T` will be moves or drops, but omit
-the attribute from `'a` and `U`, because we do access data with that lifetime
-and that type:
+这个属性可以赋给任意数量的生命周期和类型参数。下面这个例子里，我们声明我们不会访问有生命周期`'b`的引用背后的数据，而类型`T`也只会被用来转移或销毁。但是我们没有为`'a`和`U`添加属性，因为我们确实会用到这个生命周期和类型：
 
-```rust
+``` Rust
 use std::fmt::Display;
 
 struct Inspector<'a, 'b, T, U: Display>(&'a u8, &'b u8, T, U);
@@ -230,62 +173,48 @@ unsafe impl<'a, #[may_dangle] 'b, #[may_dangle] T, U: Display> Drop for Inspecto
 }
 ```
 
-It is sometimes obvious that no such access can occur, like the case above.
-However, when dealing with a generic type parameter, such access can
-occur indirectly. Examples of such indirect access are
+上面的例子中，哪些数据不会被用到是一目了然的。但是，有时候这些泛型参数会被间接地访问。间接访问的形式包括：
 
- * invoking a callback
- * via a trait method call
+- 使用回调函数
+- 通过调用trait方法
 
-(Future changes to the language, such as impl specialization, may add
-other avenues for such indirect access.)
+（在日后的版本里可能增加其他间接访问的途径。）
 
-Here is an example of invoking a callback:
+以下是使用回调的例子：
 
-```rust
+``` Rust
 struct Inspector<T>(T, &'static str, Box<for <'r> fn(&'r T) -> String>);
 
 impl<T> Drop for Inspector<T> {
     fn drop(&mut self) {
-        // The `self.2` call could access a borrow e.g. if `T` is `&'a _`.
+        // 如果T的类型是&'a _，self.2的调用可能访问借用的数据
         println!("Inspector({}, {}) unwittingly inspects expired data.",
                  (self.2)(&self.0), self.1);
     }
 }
 ```
 
-Here is an example of a trait method call:
+这是trait方法调用的例子：
 
-```rust
+``` Rust
 use std::fmt;
 
 struct Inspector<T: fmt::Display>(T, &'static str);
 
 impl<T: fmt::Display> Drop for Inspector<T> {
-    fn drop(&mut self) {
-        // There is a hidden call to `<T as Display>::fmt` below, which
-        // could access a borrow e.g. if `T` is `&'a _`
+    fn drop(&mut drop) {
+        // 下面有一个对<T as Display>::fmt的隐藏调用，
+        // 当T的类型是&'a _时，可能访问借用数据
         println!("Inspector({}, {}) unwittingly inspects expired data.",
                  self.0, self.1);
     }
 }
 ```
 
-And of course, all of these accesses could be further hidden within
-some other method invoked by the destructor, rather than being written
-directly within it.
+当然，这些访问可以进一步地被隐藏在其他的析构函数调用的方法里，而不仅是直接写在函数中。
 
-In all of the above cases where the `&'a u8` is accessed in the
-destructor, adding the `#[may_dangle]`
-attribute makes the type vulnerable to misuse that the borrower
-checker will not catch, inviting havoc. It is better to avoid adding
-the attribute.
+上面的几个例子里，`&'a u8`都在析构函数里被访问了。如果给它添加`#[may_dangle]`属性，这些类型很可能会产生借用检查器无法捕捉的错误，引发不可预料的灾难。所以最好能避免使用这个属性。
 
-## Is that all about drop checker
+## drop检查的故事讲完了吗？
 
-It turns out that when writing unsafe code, we generally don't need to
-worry at all about doing the right thing for the drop checker. However there
-is one special case that you need to worry about, which we will look at in
-the next section.
-
-[rfc1327]: https://github.com/rust-lang/rfcs/blob/master/text/1327-dropck-param-eyepatch.md
+我们发现，在写非安全代码时，其实并不用关心是否满足drop检查器的要求。不过有一个特殊的场景是例外的，我们将在下一章讲到它。
