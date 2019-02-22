@@ -1,6 +1,6 @@
-# Implementing Vec
+# 实现Vec
 
-> 源-[vec.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源：[vec.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
 我们要把所有的内容汇总起来，从头开始写一个std::Vec。因为所有编写非安全代码的工具都是不稳定的，这个项目只保证短期有效（从Rust 1.9.0开始）。除了分配器API，我们要用到的大部分不稳定代码都尽量保证和最新的形式一致。
 
