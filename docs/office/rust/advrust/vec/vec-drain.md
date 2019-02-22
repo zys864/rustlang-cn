@@ -1,18 +1,15 @@
 # Drain
 
-> 原文跟踪[vec-drain.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-drain.md) &emsp; Commit: e45316fbe872ed879c0d0be4cd90492b6c3afa2d
+> 源-[vec-drain.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-drain.md) &nbsp; Commit: e45316fbe872ed879c0d0be4cd90492b6c3afa2d
 
-Let's move on to Drain. Drain is largely the same as IntoIter, except that
-instead of consuming the Vec, it borrows the Vec and leaves its allocation
-untouched. For now we'll only implement the "basic" full-range version.
+我们接着看看Drain。Drain和IntoIter基本相同，只不过它并不获取Vec的值，而是借用Vec并且不改变它的分配空间。现在我们只是先最“基本”的全范围(full-range)的版本。
 
-```rust,ignore
+``` Rust
 use std::marker::PhantomData;
 
 struct Drain<'a, T: 'a> {
-    // Need to bound the lifetime here, so we do it with `&'a mut Vec<T>`
-    // because that's semantically what we contain. We're "just" calling
-    // `pop()` and `remove(0)`.
+    // 这里需要限制生命周期。我们使用&'a mut Vec<T>，因为这就是语义上我们包含的东西。
+    // 我们只调用pop()和remove(0)
     vec: PhantomData<&'a mut Vec<T>>,
     start: *const T,
     end: *const T,
@@ -25,27 +22,22 @@ impl<'a, T> Iterator for Drain<'a, T> {
             None
 ```
 
--- wait, this is seeming familiar. Let's do some more compression. Both
-IntoIter and Drain have the exact same structure, let's just factor it out.
+——等一下，这个看着有点眼熟。我们需要做进一步的压缩。IntoIter和Drain有着完全一样的结构，我们把它提取出来。
 
-```rust
+``` Rust
 struct RawValIter<T> {
     start: *const T,
     end: *const T,
 }
 
 impl<T> RawValIter<T> {
-    // unsafe to construct because it has no associated lifetimes.
-    // This is necessary to store a RawValIter in the same struct as
-    // its actual allocation. OK since it's a private implementation
-    // detail.
+    // 构建它是非安全的，因为它没有关联的生命周期。
     unsafe fn new(slice: &[T]) -> Self {
         RawValIter {
             start: slice.as_ptr(),
             end: if slice.len() == 0 {
-                // if `len = 0`, then this is not actually allocated memory.
-                // Need to avoid offsetting because that will give wrong
-                // information to LLVM via GEP.
+                // 如果len == 0，说明没有真的分配内存。这时需要避免offset，
+                // 因为那会给LLVM的GEP提供错误的信息
                 slice.as_ptr()
             } else {
                 slice.as_ptr().offset(slice.len() as isize)
@@ -54,14 +46,14 @@ impl<T> RawValIter<T> {
     }
 }
 
-// Iterator and DoubleEndedIterator impls identical to IntoIter.
+// Iterator和DoubleEndedIterator的实现与IntoIter完全一样。
 ```
 
-And IntoIter becomes the following:
+IntoIter变成了这样：
 
-```rust,ignore
+``` Rust
 pub struct IntoIter<T> {
-    _buf: RawVec<T>, // we don't actually care about this. Just need it to live.
+    _buf: RawVec<T>, // 我们并不关心这个，只是需要它们保持分配空间不被销毁
     iter: RawValIter<T>,
 }
 
@@ -98,14 +90,11 @@ impl<T> Vec<T> {
 }
 ```
 
-Note that I've left a few quirks in this design to make upgrading Drain to work
-with arbitrary subranges a bit easier. In particular we *could* have RawValIter
-drain itself on drop, but that won't work right for a more complex Drain.
-We also take a slice to simplify Drain initialization.
+注意，我在设计中留下了一些小后门，以便更简单地将Drain升级为可访问任意子范围的版本。特别是，我们可以在drop中让RawValIter遍历它自己。但是这种设计不适用于更复杂的Drain。我们还使用一个slice简化Drain的初始化。
 
-Alright, now Drain is really easy:
+好了，现在Drain变得很简单：
 
-```rust,ignore
+``` Rust
 use std::marker::PhantomData;
 
 pub struct Drain<'a, T: 'a> {
@@ -134,9 +123,8 @@ impl<T> Vec<T> {
         unsafe {
             let iter = RawValIter::new(&self);
 
-            // this is a mem::forget safety thing. If Drain is forgotten, we just
-            // leak the whole Vec's contents. Also we need to do this *eventually*
-            // anyway, so why not do it now?
+            // 这一步是为了mem::forget的安全。如果Drain被forget，我们会泄露整个Vec的内容
+            // 同时，既然我们无论如何都会做这一步，为什么不现在做呢？
             self.len = 0;
 
             Drain {
@@ -148,7 +136,4 @@ impl<T> Vec<T> {
 }
 ```
 
-For more details on the `mem::forget` problem, see the
-[section on leaks][leaks].
-
-[leaks]: leaking.html
+关于更多的`mem::forget`的问题，请见[关于泄露的章节](https://rustlang-cn.org/office/rust/advrust/obrm/leaking.html)。
