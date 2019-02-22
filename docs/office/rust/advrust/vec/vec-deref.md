@@ -1,19 +1,12 @@
 # Deref
 
-> 原文跟踪[vec-deref.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-deref.md) &emsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
+> 源-[vec-deref.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-deref.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
 
-Alright! We've got a decent minimal stack implemented. We can push, we can
-pop, and we can clean up after ourselves. However there's a whole mess of
-functionality we'd reasonably want. In particular, we have a proper array, but
-none of the slice functionality. That's actually pretty easy to solve: we can
-implement `Deref<Target=[T]>`. This will magically make our Vec coerce to, and
-behave like, a slice in all sorts of conditions.
+不错！我们实现了一个成熟的小的栈。我们可以push、可以pop、也可以自动清理。但是还是有一堆的功能是我们需要的。特别是，我们已经有了一个很好的数组，但是还没有slice相关的功能。这非常容易解决：我们可以实现`Deref<Target=[T]>`。这样我们的Vec就神奇地变成了slice。
 
-All we need is `slice::from_raw_parts`. It will correctly handle empty slices
-for us. Later once we set up zero-sized type support it will also Just Work
-for those too.
+我们只需要使用`slice::from_raw_parts`。它能够为我们正确处理空slice。等到后面我们完成了零尺寸类型的支持，它们依然可以完美配合。
 
-```rust,ignore
+``` Rust
 use std::ops::Deref;
 
 impl<T> Deref for Vec<T> {
@@ -26,9 +19,9 @@ impl<T> Deref for Vec<T> {
 }
 ```
 
-And let's do DerefMut too:
+我们把DefMut也实现了吧：
 
-```rust,ignore
+``` Rust
 use std::ops::DerefMut;
 
 impl<T> DerefMut for Vec<T> {
@@ -40,5 +33,4 @@ impl<T> DerefMut for Vec<T> {
 }
 ```
 
-Now we have `len`, `first`, `last`, indexing, slicing, sorting, `iter`,
-`iter_mut`, and all other sorts of bells and whistles provided by slice. Sweet!
+现在我们有了`len`、`first`、`last`、索引、分片、排序、`iter`、`iter_mut`，以及其他所有的slice提供的功能。完美！
