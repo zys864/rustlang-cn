@@ -1,6 +1,6 @@
-# Allocating Memory
+# 分配内存
 
-> 源-[vec-alloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-alloc.md) &nbsp; Commit: 23e4f0817113450fea5439b1e4c7f69ac7445fe8
+> 源：[vec-alloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-alloc.md) &nbsp; Commit: 23e4f0817113450fea5439b1e4c7f69ac7445fe8
 
 使用Unique给Vec（以及所有的标准库集合）造成了一个问题：空的Vec不会分配内存。如果既不能分配内存，又不能给`ptr`传递一个空指针，那我们在`Vec::new`中能做什么呢？好吧，我们就胡乱往Vec里塞点东西。
 
