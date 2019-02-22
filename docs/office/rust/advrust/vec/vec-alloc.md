@@ -1,62 +1,37 @@
 # Allocating Memory
 
-> 原文跟踪[vec-alloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-alloc.md) &emsp; Commit: 23e4f0817113450fea5439b1e4c7f69ac7445fe8
+> 源-[vec-alloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-alloc.md) &nbsp; Commit: 23e4f0817113450fea5439b1e4c7f69ac7445fe8
 
-Using Unique throws a wrench in an important feature of Vec (and indeed all of
-the std collections): an empty Vec doesn't actually allocate at all. So if we
-can't allocate, but also can't put a null pointer in `ptr`, what do we do in
-`Vec::new`? Well, we just put some other garbage in there!
+使用Unique给Vec（以及所有的标准库集合）造成了一个问题：空的Vec不会分配内存。如果既不能分配内存，又不能给`ptr`传递一个空指针，那我们在`Vec::new`中能做什么呢？好吧，我们就胡乱往Vec里塞点东西。
 
-This is perfectly fine because we already have `cap == 0` as our sentinel for no
-allocation. We don't even need to handle it specially in almost any code because
-we usually need to check if `cap > len` or `len > 0` anyway. The recommended
-Rust value to put here is `mem::align_of::<T>()`. Unique provides a convenience
-for this: `Unique::empty()`. There are quite a few places where we'll
-want to use `empty` because there's no real allocation to talk about but
-`null` would make the compiler do bad things.
+这么做没什么问题，因为我们用`cap == 0`来表示没有分配空间。我们也不用做什么特殊的处理，因为我们通常都会去检查`cap > len`或者`len > 0`。Rust推荐的放进去的值是`mem::align_of::<T>()`。Unique则提供了一个更方便的方式`Unique::empty()`。我们会在很多的地方用到`empty`，因为有时候我们没有实际分配的内存，而`null`会降低编译器的效率。
 
-So:
+所以：
 
-```rust,ignore
+``` Rust
 #![feature(alloc, heap_api)]
 
 use std::mem;
 
 impl<T> Vec<T> {
-    fn new() -> Self {
-        assert!(mem::size_of::<T>() != 0, "We're not ready to handle ZSTs");
+    fn new -> Self {
+        assert!(mem::size_of::<T>() != 0, "还没准备好处理零尺寸类型");
         Vec { ptr: Unique::empty(), len: 0, cap: 0 }
     }
 }
 ```
 
-I slipped in that assert there because zero-sized types will require some
-special handling throughout our code, and I want to defer the issue for now.
-Without this assert, some of our early drafts will do some Very Bad Things.
+我们插入了一个assert语句，因为零尺寸类型需要做很多特殊的处理，我们希望以后再讨论这个问题。如果没有assert的话，我们之前的代码会出现很多严重的问题。
 
-Next we need to figure out what to actually do when we *do* want space. For
-that, we'll need to use the rest of the heap APIs. These basically allow us to
-talk directly to Rust's allocator (jemalloc by default).
+接下来我们要讨论在需要内存空间的时候，我们要做些什么。这里我们需要使用其他的heap API。这些API允许我们直接和Rust的分配器（默认是jemalloc）打交道。
 
-We'll also need a way to handle out-of-memory (OOM) conditions. The standard
-library calls `std::alloc::oom()`, which in turn calls the the `oom` langitem.
-By default this just aborts the program by executing an illegal cpu instruction.
-The reason we abort and don't panic is because unwinding can cause allocations
-to happen, and that seems like a bad thing to do when your allocator just came
-back with "hey I don't have any more memory".
+我们还需要能够处理内存不足（OOM）的方法。标准库会调用`std::alloc::oom()`，而这个函数会调用`oom`langitem。默认情况下，它就是执行一个非法的CPU指令来中止程序。之所以要终止程序而不是panic，是因为栈展开的过程也可能需要分配内存，而你的分配器早就告诉过你“嘿，我这没有更多的内存了”。
 
-Of course, this is a bit silly since most platforms don't actually run out of
-memory in a conventional way. Your operating system will probably kill the
-application by another means if you legitimately start using up all the memory.
-The most likely way we'll trigger OOM is by just asking for ludicrous quantities
-of memory at once (e.g. half the theoretical address space). As such it's
-*probably* fine to panic and nothing bad will happen. Still, we're trying to be
-like the standard library as much as possible, so we'll just kill the whole
-program.
+当然，这么做显得有一点傻乎乎，因为大多数平台正常情况下都不会真的没有内存。如果你的程序正常地耗尽了内存，操作系统可能会用其他的方式kill掉它。真的遇到OOM，最有可能的原因是我们一次性的请求严重过量的内存（比如，理论地址空间的一半）。这种情况下其实可以panic而不用担心有什么问题。不过，我们希望尽量模仿标准库的行为，所以我们还是中止整个程序。
 
-Okay, now we can write growing. Roughly, we want to have this logic:
+好了，现在我们可以编写扩容的代码了。简单粗暴一点，我们需要这样的逻辑：
 
-```text
+``` Rust
 if cap == 0:
     allocate()
     cap = 1
@@ -65,106 +40,48 @@ else:
     cap *= 2
 ```
 
-But Rust's only supported allocator API is so low level that we'll need to do a
-fair bit of extra work. We also need to guard against some special
-conditions that can occur with really large allocations or empty allocations.
+但是Rust支持的分配器API过于底层了，我们不得不做一些其他的工作。我们还需要应对过大的或者空的内存分配等特殊的场景。
 
-In particular, `ptr::offset` will cause us a lot of trouble, because it has
-the semantics of LLVM's GEP inbounds instruction. If you're fortunate enough to
-not have dealt with this instruction, here's the basic story with GEP: alias
-analysis, alias analysis, alias analysis. It's super important to an optimizing
-compiler to be able to reason about data dependencies and aliasing.
+特别是`ptr::offset`会给我们造成很多麻烦。因为它的语义是LLVM的GEP inbounds指令。如果你很幸运，以前没有处理过这个语义，这里就简单介绍一下GEP的作用：别名分析，别名分析，别名分析。推导数据依赖和别名对于一个成熟的编译器来说至关重要。
 
-As a simple example, consider the following fragment of code:
+一个简单的例子，看一下下面这段代码：
 
-```rust
-# let x = &mut 0;
-# let y = &mut 0;
+``` Rust
 *x *= 7;
 *y *= 3;
 ```
 
-If the compiler can prove that `x` and `y` point to different locations in
-memory, the two operations can in theory be executed in parallel (by e.g.
-loading them into different registers and working on them independently).
-However the compiler can't do this in general because if x and y point to
-the same location in memory, the operations need to be done to the same value,
-and they can't just be merged afterwards.
+如果编译器可以证明`x`和`y`指向内存的不同区域，那么这两个操作理论上可以并行执行(比如，把它们加载到不同的寄存器并各自独立地处理)。但一般编译器不能这么做，因为如果x和y指向相同的区域，两个操作是在同一个值上做的，最后的结果不能合并到一起。
 
-When you use GEP inbounds, you are specifically telling LLVM that the offsets
-you're about to do are within the bounds of a single "allocated" entity. The
-ultimate payoff being that LLVM can assume that if two pointers are known to
-point to two disjoint objects, all the offsets of those pointers are *also*
-known to not alias (because you won't just end up in some random place in
-memory). LLVM is heavily optimized to work with GEP offsets, and inbounds
-offsets are the best of all, so it's important that we use them as much as
-possible.
+如果你使用了GEP inbounds，你其实是在告诉LLVM你的offset操作是在一个分配实体里面做的。LLVM可以认为，当已知两个指针指向不同的对象时，他们所有的offset也都不是重名的（因为它们只能指向某个确定范围内的位置）。LLVM针对GEP offset做了很多的优化，而inbounds offset是效果最好的，所以我们也要尽可能地利用它。
 
-So that's what GEP's about, how can it cause us trouble?
+这就是GEP做的事情，那么它怎么会给我们制造麻烦呢？
 
-The first problem is that we index into arrays with unsigned integers, but
-GEP (and as a consequence `ptr::offset`) takes a signed integer. This means
-that half of the seemingly valid indices into an array will overflow GEP and
-actually go in the wrong direction! As such we must limit all allocations to
-`isize::MAX` elements. This actually means we only need to worry about
-byte-sized objects, because e.g. `> isize::MAX` `u16`s will truly exhaust all of
-the system's memory. However in order to avoid subtle corner cases where someone
-reinterprets some array of `< isize::MAX` objects as bytes, std limits all
-allocations to `isize::MAX` bytes.
+第一个问题，我们索引数组时使用的是无符号整数，但GEP（其实也就是`ptr::offset`）接受的是有符号整数。这表明有一半合法的索引值是超出了GEP的范围的，会指向错误的方向。所以我们必须限制所有的分配空间最多有`isize::Max`个元素。这实际意味着我们只需要关心一个字节大小的对象，因为数量`> isize::MAX`个`u16`会耗尽系统的内存。不过，为了避免一些奇怪的边界场景，比如有人将少于`isize::MAX`个对象的数组重解析为字节数组，标准库还限制了分配空间最大为`isize::MAX`个字节。
 
-On all 64-bit targets that Rust currently supports we're artificially limited
-to significantly less than all 64 bits of the address space (modern x64
-platforms only expose 48-bit addressing), so we can rely on just running out of
-memory first. However on 32-bit targets, particularly those with extensions to
-use more of the address space (PAE x86 or x32), it's theoretically possible to
-successfully allocate more than `isize::MAX` bytes of memory.
+Rust目前支持的各种64位目标平台，都被人为限制了内存地址空间明显小于64位（现代x86平台只暴露了48位的寻址空间），所以我们可以依赖于OOM实现上面的要求。但是对于32位目标平台，特别是那些借助扩展可以使用多于寻址空间的内存的平台（PAE x86或x32），理论上可能成功分配到多于`isize::MAX`字节的内存。
 
-However since this is a tutorial, we're not going to be particularly optimal
-here, and just unconditionally check, rather than use clever platform-specific
-`cfg`s.
+不过因为本书只是一个教程，我们也不必做得绝对完美。这里就使用无条件检查，而不用更智能的平台相关的`cfg`。
 
-The other corner-case we need to worry about is empty allocations. There will
-be two kinds of empty allocations we need to worry about: `cap = 0` for all T,
-and `cap > 0` for zero-sized types.
+另一个需要关注的边界场景是空分配。而空分配又分为两种：`cap = 0`，以及`cap > 0`但是类型大小为0。
 
-These cases are tricky because they come
-down to what LLVM means by "allocated". LLVM's notion of an
-allocation is significantly more abstract than how we usually use it. Because
-LLVM needs to work with different languages' semantics and custom allocators,
-it can't really intimately understand allocation. Instead, the main idea behind
-allocation is "doesn't overlap with other stuff". That is, heap allocations,
-stack allocations, and globals don't randomly overlap. Yep, it's about alias
-analysis. As such, Rust can technically play a bit fast and loose with the notion of
-an allocation as long as it's *consistent*.
+这些场景的特殊性在于，它们都做了特殊的处理以适配LLVM的“已分配”的概念。LLVM的分配的概念比我们通常的理解要更加抽象。因为LLVM要适配多种语言的语义以及分配器，它其实并不知道什么叫做分配。它所谓的分配的实际含义是“不要和其他的东西重叠”。也就是说，堆分配、栈分配已经全局变量都不能有重合的区域。是的，这就是别名分析。如果Rust和这一概念保持一致的话，理论上可以做到更快更灵活。
 
-Getting back to the empty allocation case, there are a couple of places where
-we want to offset by 0 as a consequence of generic code. The question is then:
-is it consistent to do so? For zero-sized types, we have concluded that it is
-indeed consistent to do a GEP inbounds offset by an arbitrary number of
-elements. This is a runtime no-op because every element takes up no space,
-and it's fine to pretend that there's infinite zero-sized types allocated
-at `0x01`. No allocator will ever allocate that address, because they won't
-allocate `0x00` and they generally allocate to some minimal alignment higher
-than a byte. Also generally the whole first page of memory is
-protected from being allocated anyway (a whole 4k, on many platforms).
+回到空分配的场景，代码中许多的地方都可能需要offset 0。现在的问题是：这么做会导致冲突吗？对于零尺寸类型，我们知道它可以做到任意数量的GEP inbounds offset而不会引起任何问题。这实际上是一个运行期的no-op，因为所有的元素都不占用空间，可以假设有无数个零尺寸类型位于`0x01`。当然，没有哪个分配器真的会分配那个地址，因为它们不会分配`0x00`，而最小的对齐(alignment)通常要大于一个字节。同时，内存的第一页通常处于受保护状态，不会在上面分配空间（对于大多数平台，一页是4k的空间）。
 
-However what about for positive-sized types? That one's a bit trickier. In
-principle, you can argue that offsetting by 0 gives LLVM no information: either
-there's an element before the address or after it, but it can't know which.
-However we've chosen to conservatively assume that it may do bad things. As
-such we will guard against this case explicitly.
+如果是尺寸大于0的类型呢？这种情况就更复杂一些。原则上，你可以认为offset 0不会给LLVM提供任何的信息：地址的前面或后面可能存在一些元素，可不需要知道它们确切是什么。但是，我们还是谨慎一些，假设这么做有可能导致不好的情况。所以我们会显式地避免这种场景。
 
-*Phew*
+终于要结束了。
 
-Ok with all the nonsense out of the way, let's actually allocate some memory:
+不要再说这些废话了，我们实际写一段内存分配的代码：
 
-```rust,ignore
+``` Rust
 use std::alloc::oom;
 
 fn grow(&mut self) {
-    // this is all pretty delicate, so let's say it's all unsafe
+    // 整段代码都很脆弱，所以我们把它整体设为unsafe
     unsafe {
-        // current API requires us to specify size and alignment manually.
+        // 现在的API允许我们手工指定对齐和尺寸
         let align = mem::align_of::<T>();
         let elem_size = mem::size_of::<T>();
 
@@ -172,18 +89,16 @@ fn grow(&mut self) {
             let ptr = heap::allocate(elem_size, align);
             (1, ptr)
         } else {
-            // as an invariant, we can assume that `self.cap < isize::MAX`,
-            // so this doesn't need to be checked.
+            // 简单起见，我们假设self.cap < isize::MAX，所以这里不需要做检查
             let new_cap = self.cap * 2;
-            // Similarly this can't overflow due to previously allocating this
+            // 因为之前已经成功分配过了，所以这块不会溢出
             let old_num_bytes = self.cap * elem_size;
 
-            // check that the new allocation doesn't exceed `isize::MAX` at all
-            // regardless of the actual size of the capacity. This combines the
-            // `new_cap <= isize::MAX` and `new_num_bytes <= usize::MAX` checks
-            // we need to make. We lose the ability to allocate e.g. 2/3rds of
-            // the address space with a single Vec of i16's on 32-bit though.
-            // Alas, poor Yorick -- I knew him, Horatio.
+            // 检查新分配的空间不超过isize::MAX，而不管实际的系统容量大小。
+            // 这里包含了对new_vap<=isize::MAX和new_num_bytes<=usize::MAX的检查
+            // 我们不能充分利用所有的地址空间。比如，一个i16的Vec在32位平台上，
+            // 有2/3的地址空间分配不到。这些空间永远地离开了我们。
+            // Alas, poor Yorick -- I knew him, Horatio.（译注：《哈姆雷特》中悼念逝去生命的经典台词）
             assert!(old_num_bytes <= (::std::isize::MAX as usize) / 2,
                     "capacity overflow");
 
@@ -195,7 +110,7 @@ fn grow(&mut self) {
             (new_cap, ptr)
         };
 
-        // If allocate or reallocate fail, we'll get `null` back
+        // 如果分配或者再分配失败，我们会得到null
         if ptr.is_null() { oom(); }
 
         self.ptr = Unique::new(ptr as *mut _);
@@ -204,6 +119,5 @@ fn grow(&mut self) {
 }
 ```
 
-Nothing particularly tricky here. Just computing sizes and alignments and doing
-some careful multiplication checks.
+没有什么特别奇怪的操作。只是计算类型大小和对其，然后小心地做一些乘法检查。
 
