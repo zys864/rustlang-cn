@@ -1,87 +1,50 @@
-# Unchecked Uninitialized Memory
+# 未经检查的未初始化内存
 
-> 原文跟踪[unchecked-uninit.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/unchecked-uninit.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源：[unchecked-uninit.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/unchecked-uninit.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-One interesting exception to this rule is working with arrays. Safe Rust doesn't
-permit you to partially initialize an array. When you initialize an array, you
-can either set every value to the same thing with `let x = [val; N]`, or you can
-specify each member individually with `let x = [val1, val2, val3]`.
-Unfortunately this is pretty rigid, especially if you need to initialize your
-array in a more incremental or dynamic way.
+一个特殊情况是数组。安全Rust不允许部分地初始化数组。初始化一个数组时，你可以通过`let x = [val; N]`为每一个位置赋予相同的值，或者是单独指定每一个成员的值`let x = [val1, val2, val3]`。不幸的是，这个要求太苛刻了。很多时候我们需要用增量或者动态的方式初始化数组。
 
-Unsafe Rust gives us a powerful tool to handle this problem:
-`mem::uninitialized`. This function pretends to return a value when really
-it does nothing at all. Using it, we can convince Rust that we have initialized
-a variable, allowing us to do trickier things with conditional and incremental
-initialization.
+非安全Rust给我们提供了一个很有力的工具以处理这一问题：`mem::uninitialized`。这个函数假装返回一个值，但其实它什么也没有做。我们用它来欺骗Rust我们已经初始化了一个变量了，从而可以做一些很神奇的事情，比如有条件还有增量地初始化。
 
-Unfortunately, this opens us up to all kinds of problems. Assignment has a
-different meaning to Rust based on whether it believes that a variable is
-initialized or not. If it's believed uninitialized, then Rust will semantically
-just memcopy the bits over the uninitialized ones, and do nothing else. However
-if Rust believes a value to be initialized, it will try to `Drop` the old value!
-Since we've tricked Rust into believing that the value is initialized, we can no
-longer safely use normal assignment.
+不过，它也给我们打开了各种问题的大门。在Rust中，对于已初始化和未初始化的变量赋值，是有不同的含义的。如果Rust认为变量未初始化，它会将字节拷贝到未初始化的内存区域，别的就什么都不做了。可如果Rust判断变量已初始化，它会销毁原有的值！因为我们欺骗Rust值已经初始化，我们再也不能安全地赋值了。
 
-This is also a problem if you're working with a raw system allocator, which
-returns a pointer to uninitialized memory.
+系统分配器返回一个指向未初始化内存的指针，与它配合时同样会造成问题。
 
-To handle this, we must use the `ptr` module. In particular, it provides
-three functions that allow us to assign bytes to a location in memory without
-dropping the old value: `write`, `copy`, and `copy_nonoverlapping`.
+接下来，我们还必须使用`ptr`模块。特别是它提供的三个函数，允许我们将字节码写入一块内存而不会销毁原有的变量。这些函数为：`write`，`copy`和`copy_nonoverlapping`。
 
-* `ptr::write(ptr, val)` takes a `val` and moves it into the address pointed
-  to by `ptr`.
-* `ptr::copy(src, dest, count)` copies the bits that `count` T's would occupy
-  from src to dest. (this is equivalent to memmove -- note that the argument
-  order is reversed!)
-* `ptr::copy_nonoverlapping(src, dest, count)` does what `copy` does, but a
-  little faster on the assumption that the two ranges of memory don't overlap.
-  (this is equivalent to memcpy -- note that the argument order is reversed!)
+- `ptr::write(ptr, val)`函数接受`val`然后将它的值移入`ptr`指向的地址
+- `ptr::copy(src, dest, count)`函数从`src`处将`count`个T占用的字节拷贝到`dest`。（这个函数和`memmove`相同，不过要注意参数顺序是反的！）
+- `ptr::copy_nonoverlapping(src, dest, count)`和`copy`的功能是一样的，不过它假设两段内存不会有重合部分，因此速度会略快一点。（这个函数和`memcpy`相同，不过要注意参数顺序是反的！）
 
-It should go without saying that these functions, if misused, will cause serious
-havoc or just straight up Undefined Behavior. The only things that these
-functions *themselves* require is that the locations you want to read and write
-are allocated. However the ways writing arbitrary bits to arbitrary
-locations of memory can break things are basically uncountable!
+很显然，如果这些函数被滥用的话，很可能导致错误或者未定义行为。它们唯一的要求就是被读写的位置必须已经分配了内存。但是，向任意位置写入任意字节很可能造成不可预测的错误。
 
-Putting this all together, we get the following:
+下面的代码集中展示了它们的用法：
 
-```rust
+``` Rust
 use std::mem;
 use std::ptr;
 
-// size of the array is hard-coded but easy to change. This means we can't
-// use [a, b, c] syntax to initialize the array, though!
+// 数组的大小是硬编码的但是可以很方便地修改
+// 不过这表示我们不能用[a, b, c]这种方式初始化数组
 const SIZE: usize = 10;
 
 let mut x: [Box<u32>; SIZE];
 
 unsafe {
-	// convince Rust that x is Totally Initialized
-	x = mem::uninitialized();
-	for i in 0..SIZE {
-		// very carefully overwrite each index without reading it
-		// NOTE: exception safety is not a concern; Box can't panic
-		ptr::write(&mut x[i], Box::new(i as u32));
-	}
+    // 欺骗Rust说x已经被初始化
+    x = mem::uninitialized();
+    for i in 0..SIZE {
+        // 十分小心地覆盖每一个索引值而不读取它
+        // 注意：异常安全性不需要考虑；Box不会panic
+        ptr::write(&mut x[i], Box::new(i as u32));
+    }
 }
 
 println!("{:?}", x);
 ```
 
-It's worth noting that you don't need to worry about `ptr::write`-style
-shenanigans with types which don't implement `Drop` or contain `Drop` types,
-because Rust knows not to try to drop them. Similarly you should be able to
-assign to fields of partially initialized structs directly if those fields don't
-contain any `Drop` types.
+需要注意，你不用担心`ptr::write`和实现了`Drop`的或者包含`Drop`子类型的类型之间无法和谐共处，因为Rust知道这时不会调用`drop`。类似的，你可以给一个只有局部初始化的结构体的成员赋值，只要那个成员不包含`Drop`子类型。
 
-However when working with uninitialized memory you need to be ever-vigilant for
-Rust trying to drop values you make like this before they're fully initialized.
-Every control path through that variable's scope must initialize the value
-before it ends, if it has a destructor.
-*[This includes code panicking](unwinding.html)*.
+但是，在使用未初始化内存的时候你需要时刻小心，Rust可能会在值未完全初始化的时候就尝试销毁它们。如果一个变量有析构函数，那么变量作用域的每一个代码分支都应该在结束之前完成变量的初始化。否则[会导致崩溃](https://doc.rust-lang.org/nomicon/unwinding.html)。
 
-And that's about it for working with uninitialized memory! Basically nothing
-anywhere expects to be handed uninitialized memory, so if you're going to pass
-it around at all, be sure to be *really* careful.
+这就是未初始化内存的全部内容！其他地方基本上不会再涉及到未初始化内存了，所以如果你想跳过本章，请千万小心。
