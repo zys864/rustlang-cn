@@ -1,6 +1,6 @@
 # 处理零尺寸类型
 
-> 源 [vec-zsts.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-zsts.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
+> 源:[vec-zsts.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-zsts.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
 
 是时候和零尺寸类型开战了。安全Rust并不需要关心这个，但是Vec大量的依赖裸指针和内存分配，这些都需要零尺寸类型。我们要小心两件事情：
 
