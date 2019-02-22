@@ -2,7 +2,7 @@
 
 > 源：[README](https://github.com/rust-lang-nursery/nomicon/blob/master/src/README.md) &nbsp; Commit: 885c5bc5e721a9a9e9f94ed2101ad3d5e4424975 
 
-**同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！** 本书部分内容基于[rustonomicon_zh-CN](https://github.com/tjxing/rustonomicon_zh-CN),感谢作者.以后将与Rust官方文档同步更新.
+**同步于官方 [The Rustonomicon](https://doc.rust-lang.org/nomicon/) 仓库[地址](https://github.com/rust-lang-nursery/nomicon)！** 本书部分内容基于[rustonomicon_zh-CN](https://github.com/tjxing/rustonomicon_zh-CN),感谢作者.现将与Rust官方文档同步更新.
 
 > 我一直期待的程序代码并未出现，取而代之的竟是这令人战栗的黑暗与不可名状的孤独。我看见了！那个让所有人都噤声不语的恐怖事实，那个不可言说的秘密中的秘密——这个精心构建的Rust语言，其实并不像它最初看起来那般坚固不朽。事实上，它竟然是非安全的，它的身躯散发着古怪的气味，滋生着诡异的寄生生物。而我，对这一切束手无策，因为它们都是在编译期发生的。
 
