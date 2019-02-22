@@ -1,22 +1,11 @@
 # Implementing Vec
 
-> 原文跟踪[vec.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源-[vec.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-To bring everything together, we're going to write `std::Vec` from scratch.
-Because all the best tools for writing unsafe code are unstable, this
-project will only work on nightly (as of Rust 1.9.0). With the exception of the
-allocator API, much of the unstable code we'll use is expected to be stabilized
-in a similar form as it is today.
+我们要把所有的内容汇总起来，从头开始写一个std::Vec。因为所有编写非安全代码的工具都是不稳定的，这个项目只保证短期有效（从Rust 1.9.0开始）。除了分配器API，我们要用到的大部分不稳定代码都尽量保证和最新的形式一致。
 
-However we will generally try to avoid unstable code where possible. In
-particular we won't use any intrinsics that could make a code a little
-bit nicer or efficient because intrinsics are permanently unstable. Although
-many intrinsics *do* become stabilized elsewhere (`std::ptr` and `str::mem`
-consist of many intrinsics).
+不过，如果可能的话，我们会尽量避免使用不稳定代码。特别是，我们不会使用内在函数(intrinsics)，虽然它可以使代码更好更高效，但它是永久不稳定的功能。尽管许多的内在函数已经在一些地方稳固使用了（std::ptr和str::mem使用了很多内在函数）。
 
-Ultimately this means our implementation may not take advantage of all
-possible optimizations, though it will be by no means *naive*. We will
-definitely get into the weeds over nitty-gritty details, even
-when the problem doesn't *really* merit it.
+也就是说我们的实现不会借助所有可能的优化手段，即使部分手段其实已经比较成熟了。我们还会深入探究种种内在的细节，哪怕实际问题并不需要这样做。
 
-You wanted advanced. We're gonna go advanced.
+你想要高级的，我们就给你高级的。
