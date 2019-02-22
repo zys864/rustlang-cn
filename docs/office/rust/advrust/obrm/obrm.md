@@ -1,6 +1,6 @@
-# 基于所有权的资源管理(OBRM)
+# 基于所有权的资源管理
 
-> 原文跟踪[obrm.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/obrm.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源：[obrm.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/obrm.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
 OBRM（AKA RAII：资源获取即初始化）是您在Rust中通常与之交互的东西。 特别是如果您使用标准库。
 
