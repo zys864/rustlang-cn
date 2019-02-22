@@ -1,37 +1,21 @@
-# Transmutes
+# 变形(Transmutes)
 
-> 原文跟踪[transmutes.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/transmutes.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源：[transmutes.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/transmutes.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Get out of our way type system! We're going to reinterpret these bits or die
-trying! Even though this book is all about doing things that are unsafe, I
-really can't emphasize that you should deeply think about finding Another Way
-than the operations covered in this section. This is really, truly, the most
-horribly unsafe thing you can do in Rust. The railguards here are dental floss.
+类型系统你给我滚开！我要自己解析这些字节，不成功便成仁！虽然本书都是关于非安全的内容，我还是希望你能仔细考虑避免使用本章讲到的内容。这是你在Rust中所能做到的真真正正、彻彻底底、最最可怕的非安全行为。所有的保护机制都形同虚设。
 
-`mem::transmute<T, U>` takes a value of type `T` and reinterprets it to have
-type `U`. The only restriction is that the `T` and `U` are verified to have the
-same size. The ways to cause Undefined Behavior with this are mind boggling.
+`mem::transmute<T, U>`接受一个`T`类型的值，然后将它重新解析为类型`U`。唯一的限制是`T`和`U`必须有同样的大小。可能产生未定义行为的情况让人看着头疼。
 
-* First and foremost, creating an instance of *any* type with an invalid state
-  is going to cause arbitrary chaos that can't really be predicted.
-* Transmute has an overloaded return type. If you do not specify the return type
-  it may produce a surprising type to satisfy inference.
-* Making a primitive with an invalid value is UB
-* Transmuting between non-repr(C) types is UB
-* Transmuting an & to &mut is UB
-    * Transmuting an & to &mut is *always* UB
-    * No you can't do it
-    * No you're not special
-* Transmuting to a reference without an explicitly provided lifetime
-  produces an [unbounded lifetime]
+- 最重要的，创建任一类型的处于不合法状态的示例，都将产生不可预知的混乱
+- transmute有一个重载的返回类型。如果没有明确指定返回类型，它会返回一个满足类型推断的奇怪类型
+- 使用不合法的值构建基本类型是未定义行为
+- 非repr(C)的类型之间相互变形是未定义行为
+- `&`变形为`&mut`是未定义行为
+  * `&`变形为`&mut`**永远**都是未定义行为
+  * 不要多想，你绝对不能这么做
+  * 不要多想，你没有什么特殊的
+- 变形为一个未指定生命周期的引用会产生[无界生命周期](https://doc.rust-lang.org/nomicon/unbounded-lifetimes.html)
 
-`mem::transmute_copy<T, U>` somehow manages to be *even more* wildly unsafe than
-this. It copies `size_of<U>` bytes out of an `&T` and interprets them as a `U`.
-The size check that `mem::transmute` has is gone (as it may be valid to copy
-out a prefix), though it is Undefined Behavior for `U` to be larger than `T`.
+`mem::transmute_copy<T, U>`很神奇地比这更加不安全。它从`&T`拷贝`size_of<U>`个字节并将它们解析为`U`。`mem::transmute`仅有的类型大小的检查都不见了（因为拷贝类型前缀有可能是合法的），只不过`U`的尺寸比`T`大会被视为一个未定义行为。
 
-Also of course you can get most of the functionality of these functions using
-pointer casts.
-
-
-[unbounded lifetime]: unbounded-lifetimes.html
+当然，本章大部分的功能都可以通过指针的显式转换实现。
