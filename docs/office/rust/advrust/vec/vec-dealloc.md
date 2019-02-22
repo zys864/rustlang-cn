@@ -1,19 +1,12 @@
-# Deallocating
+# 重新分配
 
-> 原文跟踪[vec-dealloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-dealloc.md) &emsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
+> 源-[vec-dealloc.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-dealloc.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
 
-Next we should implement Drop so that we don't massively leak tons of resources.
-The easiest way is to just call `pop` until it yields None, and then deallocate
-our buffer. Note that calling `pop` is unneeded if `T: !Drop`. In theory we can
-ask Rust if `T` `needs_drop` and omit the calls to `pop`. However in practice
-LLVM is *really* good at removing simple side-effect free code like this, so I
-wouldn't bother unless you notice it's not being stripped (in this case it is).
+接下来我们应该实现Drop，否则就要造成大量的资源泄露了。最简单的方法是循环调用`pop`直到产生None为止，然后再回收我们的缓存。注意，当`T: !Drop`的时候，调用`pop`不是必须的。理论上我们可以问一问Rust`T`是不是`need_drop`然后再省略一些`pop`调用。可实际上LLVM很擅长移除像这样的无副作用的代码，所以我们不需要再做多余的事，除非你发现LLVM不能成功移除（在这里它能）。
 
-We must not call `heap::deallocate` when `self.cap == 0`, as in this case we
-haven't actually allocated any memory.
+在`self.cap == 0`的时候，我们一定不要调用`heap::deallocate`，因为这时我们还没有实际分配过任何内存。
 
-
-```rust,ignore
+``` Rust
 impl<T> Drop for Vec<T> {
     fn drop(&mut self) {
         if self.cap != 0 {
