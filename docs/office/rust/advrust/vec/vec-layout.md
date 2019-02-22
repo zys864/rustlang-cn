@@ -14,7 +14,7 @@ pub struct Vec<T> {
 }
 ```
 
-这段代码可以通过编译。可不幸的是，它是不正确的。首先，编译器产生的变性过于严格。所以`&Vev<&'static str>`不能当做`&Vev<&'a str>`使用。更主要的是，它会给drop检查器传递错误的所有权信息,因为编译器会保守地假设我们不拥有任何的值。关于变性和drop检查的细节，请见[所有权和生命周期](https://doc.rust-lang.org/nomicon/ownership.html)。
+这段代码可以通过编译。可不幸的是，它是不正确的。首先，编译器产生的变性过于严格。所以`&Vev<&'static str>`不能当做`&Vev<&'a str>`使用。更主要的是，它会给drop检查器传递错误的所有权信息,因为编译器会保守地假设我们不拥有任何的值。关于变性和drop检查的细节，请见[所有权和生命周期](https://rustlang-cn.org/office/rust/advrust/ownership/ownership.html)。
 
 .
 正如我们在所有权一章见到的，当裸指针指向一块我们拥有所有权的位置，我们应该使用`Unique<T>`代替`*mut T`。尽管Unique是不稳定的，我们尽可能不去使用它。
@@ -70,4 +70,3 @@ pub struct Vec<T> {
 
 如果你不太在意空指针优化，那么你可以使用稳定代码。但是我们之后的代码会依赖于这个优化去设计。还要注意，调用`Unique::new`是非安全的，因为给它传递null属于未定义行为。我们的稳定Unique就不需要让`new`是非安全的，因为它没有对于它的内容做其他的保证。
 
-[所有权和生命周期]: https://rustlang-cn.org/office/rust/advrust/ownership/ownership.html
