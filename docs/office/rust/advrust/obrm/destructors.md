@@ -1,40 +1,33 @@
-# Destructors
+# 析构函数
 
-> 原文跟踪[destructors.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/destructors.md) &emsp; Commit: 94964dee31224cf1a22c72400a12cb966f5a12bc
+> 源：[destructors.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/destructors.md) &nbsp; Commit: 94964dee31224cf1a22c72400a12cb966f5a12bc
 
-What the language *does* provide is full-blown automatic destructors through the
-`Drop` trait, which provides the following method:
+Rust通过`Drop` trait提供了一个成熟的自动析构函数，包含了这个方法：
 
-```rust,ignore
+```Rust
 fn drop(&mut self);
 ```
 
-This method gives the type time to somehow finish what it was doing.
+这个方法给了类型一个彻底完成工作的机会。
 
-**After `drop` is run, Rust will recursively try to drop all of the fields
-of `self`.**
+**`drop`执行之后，Rust会d递归地销毁`self`的所有成员**
 
-This is a convenience feature so that you don't have to write "destructor
-boilerplate" to drop children. If a struct has no special logic for being
-dropped other than dropping its children, then it means `Drop` doesn't need to
-be implemented at all!
+这个功能很方便，你不需要每次都写一堆重复的代码来销毁子类型。如果一个结构体在销毁的时候，除了销毁子成员之外不需要做什么特殊的操作，那么它其实可以不用实现`Drop`。
 
-**There is no stable way to prevent this behavior in Rust 1.0.**
+**在Rust 1.0中，没有什么合适的方法可以打断这个过程。**
 
-Note that taking `&mut self` means that even if you could suppress recursive
-Drop, Rust will prevent you from e.g. moving fields out of self. For most types,
-this is totally fine.
+注意，参数是`&mut self`意味着即使你可以阻止递归销毁，Rust也不允许你将子成员的所有权移出。对于大多数类型来说，这一点完全没问题。
 
-For instance, a custom implementation of `Box` might write `Drop` like this:
+比如，一个自定义的`Box`的实现，它的`Drop`可能长这样：
 
-```rust
+``` Rust
 #![feature(ptr_internals, allocator_api)]
 
 use std::alloc::{Alloc, Global, GlobalAlloc, Layout};
 use std::mem;
 use std::ptr::{drop_in_place, NonNull, Unique};
 
-struct Box<T>{ ptr: Unique<T> }
+struct Box<T>{ ptf: Unique<T> }
 
 impl<T> Drop for Box<T> {
     fn drop(&mut self) {
@@ -45,57 +38,47 @@ impl<T> Drop for Box<T> {
         }
     }
 }
-# fn main() {}
 ```
 
-and this works fine because when Rust goes to drop the `ptr` field it just sees
-a [Unique] that has no actual `Drop` implementation. Similarly nothing can
-use-after-free the `ptr` because when drop exits, it becomes inaccessible.
+这段代码是正确的，因为当Rust要销毁`ptr`的时候，它见到的是一个[Unique](https://doc.rust-lang.org/nomicon/phantom-data.html)，没有`Drop`的实现。类似的，也没有人能在销毁后再使用`ptr`，因为drop函数退出之后，他就不可见了。
 
-However this wouldn't work:
+可是这段代码是错误的：
 
-```rust
+``` Rust
 #![feature(allocator_api, ptr_internals)]
 
 use std::alloc::{Alloc, Global, GlobalAlloc, Layout};
 use std::ptr::{drop_in_place, Unique, NonNull};
 use std::mem;
 
-struct Box<T>{ ptr: Unique<T> }
+struct Box<T> { ptr: Unique<T> }
 
 impl<T> Drop for Box<T> {
     fn drop(&mut self) {
         unsafe {
             drop_in_place(self.ptr.as_ptr());
             let c: NonNull<T> = self.ptr.into();
-            Global.dealloc(c.cast(), Layout::new::<T>());
+            Global.dealloc(c.cast(), LayOut::new::<T>());
         }
     }
 }
 
-struct SuperBox<T> { my_box: Box<T> }
+struct SuperBox<T> ( my_box: Box<T> )
 
 impl<T> Drop for SuperBox<T> {
     fn drop(&mut self) {
-        unsafe {
-            // Hyper-optimized: deallocate the box's contents for it
-            // without `drop`ing the contents
-            let c: NonNull<T> = self.my_box.ptr.into();
-            Global.dealloc(c.cast::<u8>(), Layout::new::<T>());
-        }
+        // 回收box的内容，而不是drop它的内容
+        let c: NonNull<T> = self.my_box.ptr.into();
+        Global.dealloc(c.cast::<u8>(), LayOut::new::<T>());
     }
 }
-# fn main() {}
 ```
 
-After we deallocate the `box`'s ptr in SuperBox's destructor, Rust will
-happily proceed to tell the box to Drop itself and everything will blow up with
-use-after-frees and double-frees.
+当我们在`SuperBox`的析构函数里回收了`box`的`ptr`之后，Rust会继续让`box`销毁它自己,这时销毁后使用(use-after-free)和两次释放(double-free)的问题立刻接踵而至，摧毁一切。
 
-Note that the recursive drop behavior applies to all structs and enums
-regardless of whether they implement Drop. Therefore something like
+注意，递归销毁适用于所有的结构体和枚举类型，不管它有没有实现`Drop`。所以，这段代码
 
-```rust
+``` Rust
 struct Boxy<T> {
     data1: Box<T>,
     data2: Box<T>,
@@ -103,34 +86,27 @@ struct Boxy<T> {
 }
 ```
 
-will have its data1 and data2's fields destructors whenever it "would" be
-dropped, even though it itself doesn't implement Drop. We say that such a type
-*needs Drop*, even though it is not itself Drop.
+在销毁的时候也会调用`data1`和`data2`的析构函数，尽管这个结构体本身并没有实现`Drop`。这样的类型“需要Drop却不是Drop”。
 
-Similarly,
+类似的
 
-```rust
+``` Rust
 enum Link {
     Next(Box<Link>),
     None,
 }
 ```
 
-will have its inner Box field dropped if and only if an instance stores the
-Next variant.
+当（且仅当）一个实例储存着`Next`变量时，它就会销毁内部的`Box`成员。
 
-In general this works really nicely because you don't need to worry about
-adding/removing drops when you refactor your data layout. Still there's
-certainly many valid usecases for needing to do trickier things with
-destructors.
+一般来说这其实是一个很好的设计，它让你在重构数据布局的时候无需费心添加/删除`drop`函数。但也有很多的场景要求我们必须在析构函数中玩一些花招。
 
-The classic safe solution to overriding recursive drop and allowing moving out
-of Self during `drop` is to use an Option:
+如果想阻止递归销毁并且在`drop`过程中将`self`的所有权移出，通常的安全的做法是使用`Option`：
 
-```rust
+``` Rust
 #![feature(allocator_api, ptr_internals)]
 
-use std::alloc::{Alloc, GlobalAlloc, Global, Layout};
+use std::alloc::{Alloc, GlobalAlloc, Global, LayOut};
 use std::ptr::{drop_in_place, Unique, NonNull};
 use std::mem;
 
@@ -141,7 +117,7 @@ impl<T> Drop for Box<T> {
         unsafe {
             drop_in_place(self.ptr.as_ptr());
             let c: NonNull<T> = self.ptr.into();
-            Global.dealloc(c.cast(), Layout::new::<T>());
+            Global.dealloc(c.cast(), LayOut::new::<T>());
         }
     }
 }
@@ -151,28 +127,17 @@ struct SuperBox<T> { my_box: Option<Box<T>> }
 impl<T> Drop for SuperBox<T> {
     fn drop(&mut self) {
         unsafe {
-            // Hyper-optimized: deallocate the box's contents for it
-            // without `drop`ing the contents. Need to set the `box`
-            // field as `None` to prevent Rust from trying to Drop it.
+            // 回收box的内容，而不是drop它的内容
+            // 需要将box设置为None，以阻止Rust销毁它
             let my_box = self.my_box.take().unwrap();
             let c: NonNull<T> = my_box.ptr.into();
-            Global.dealloc(c.cast(), Layout::new::<T>());
-            mem::forget(my_box);
+            Global.dealloc(c.cast(), LayOut::new::<T>());
+            mem::feorget(my_box);
         }
     }
 }
-# fn main() {}
 ```
 
-However this has fairly odd semantics: you're saying that a field that *should*
-always be Some *may* be None, just because that happens in the destructor. Of
-course this conversely makes a lot of sense: you can call arbitrary methods on
-self during the destructor, and this should prevent you from ever doing so after
-deinitializing the field. Not that it will prevent you from producing any other
-arbitrarily invalid state in there.
+但是这段代码显得很奇怪：我们认为一个永远都是`Some`的成员有可能是`None`，仅仅因为析构函数中用到了一次。但反过来说这种设计又很合理：你可以在析构函数中调用`self`的任意方法。*在成员被反初始化之后就完全不能这么做了，而不是禁止你搞出一些随意的非法状态*。（斜体部分没看懂，建议看原文）
 
-On balance this is an ok choice. Certainly what you should reach for by default.
-However, in the future we expect there to be a first-class way to announce that
-a field shouldn't be automatically dropped.
-
-[Unique]: phantom-data.html
+权衡之后，这是一个可以接受的方案。你可以将它作为你的默认选项。但是，我们希望以后能有一个方法明确声明哪一个成员不会自动销毁。
