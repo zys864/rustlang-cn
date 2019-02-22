@@ -1,46 +1,29 @@
-# Handling Zero-Sized Types
+# 处理零尺寸类型
 
-> 原文跟踪[vec-zsts.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-zsts.md) &emsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
+> 源-[vec-zsts.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-zsts.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
 
-It's time. We're going to fight the specter that is zero-sized types. Safe Rust
-*never* needs to care about this, but Vec is very intensive on raw pointers and
-raw allocations, which are exactly the two things that care about
-zero-sized types. We need to be careful of two things:
+是时候和零尺寸类型开战了。安全Rust并不需要关心这个，但是Vec大量的依赖裸指针和内存分配，这些都需要零尺寸类型。我们要小心两件事情：
 
-* The raw allocator API has undefined behavior if you pass in 0 for an
-  allocation size.
-* raw pointer offsets are no-ops for zero-sized types, which will break our
-  C-style pointer iterator.
+- 当给分配器API传递分配尺寸为0时，会导致未定义行为
+- 对零尺寸类型的裸指针做offset是一个no-op，这会破坏我们的C-style指针迭代器。
 
-Thankfully we abstracted out pointer-iterators and allocating handling into
-RawValIter and RawVec respectively. How mysteriously convenient.
+幸好我们把指针迭代器和内存分配逻辑抽象出来放在RawValIter和RawVec中了。真是太方便了。
 
+## 为零尺寸类型分配空间
 
+如果分配器API不支持分配大小为0的空间，那么我们究竟储存了些什么呢？当然是`Unique::empty()`了！基本上所有关于ZST的操作都是no-op，因为ZST只有一个值，不需要储存或加载任何的状态。这也同样适用于`ptr::read`和`ptr::write`：它们根本不会看那个指针一眼。所以我们并不需要修改指针。
 
+注意，我们之前的分配代码依赖于OOM会先于数值溢出出现的假设，对于零尺寸类型不再有效了。我们必须显式地保证cap的值在ZST的情况下不会溢出。
 
-## Allocating Zero-Sized Types
+基于现在的架构，我们需要写3处保护代码，RawVec的三个方法每个都有一处。
 
-So if the allocator API doesn't support zero-sized allocations, what on earth
-do we store as our allocation? `Unique::empty()` of course! Almost every operation
-with a ZST is a no-op since ZSTs have exactly one value, and therefore no state needs
-to be considered to store or load them. This actually extends to `ptr::read` and
-`ptr::write`: they won't actually look at the pointer at all. As such we never need
-to change the pointer.
-
-Note however that our previous reliance on running out of memory before overflow is
-no longer valid with zero-sized types. We must explicitly guard against capacity
-overflow for zero-sized types.
-
-Due to our current architecture, all this means is writing 3 guards, one in each
-method of RawVec.
-
-```rust,ignore
+``` Rust
 impl<T> RawVec<T> {
     fn new() -> Self {
-        // !0 is usize::MAX. This branch should be stripped at compile time.
+        // !0就是usize::MAX。这段分支代码在编译期就可以计算出结果。
         let cap = if mem::size_of::<T>() == 0 { !0 } else { 0 };
 
-        // Unique::empty() doubles as "unallocated" and "zero-sized allocation"
+        // Unique::empty()有着“未分配”和“零尺寸分配”的双重含义
         RawVec { ptr: Unique::empty(), cap: cap }
     }
 
@@ -48,8 +31,8 @@ impl<T> RawVec<T> {
         unsafe {
             let elem_size = mem::size_of::<T>();
 
-            // since we set the capacity to usize::MAX when elem_size is
-            // 0, getting to here necessarily means the Vec is overfull.
+            // 因为当elem_size为0时我们设置了cap为usize::MAX，
+            // 这一步成立意味着Vec的容量溢出了
             assert!(elem_size != 0, "capacity overflow");
 
             let align = mem::align_of::<T>();
@@ -66,7 +49,7 @@ impl<T> RawVec<T> {
                 (new_cap, ptr)
             };
 
-            // If allocate or reallocate fail, we'll get `null` back
+            // 如果分配或再分配失败，我们会得到null
             if ptr.is_null() { oom() }
 
             self.ptr = Unique::new(ptr as *mut _);
@@ -79,7 +62,7 @@ impl<T> Drop for RawVec<T> {
     fn drop(&mut self) {
         let elem_size = mem::size_of::<T>();
 
-        // don't free zero-sized allocations, as they were never allocated.
+        // 不要释放零尺寸空间，因为它根本就没有分配过
         if self.cap != 0 && elem_size != 0 {
             let align = mem::align_of::<T>();
 
@@ -92,20 +75,13 @@ impl<T> Drop for RawVec<T> {
 }
 ```
 
-That's it. We support pushing and popping zero-sized types now. Our iterators
-(that aren't provided by slice Deref) are still busted, though.
+就是这样。我们现在已经支持push和pop零尺寸类型了。但是迭代器（slice未提供的）还不能工作。
 
+## 迭代零尺寸类型
 
+offset 0是一个no-op。这意味着我们的`start`和`end`总是会被初始化为相同的值，我们的迭代器也无法产生任何的东西。当前的解决方案是把指针转换为整数，增加他们的值，然后再转换回来：
 
-
-## Iterating Zero-Sized Types
-
-Zero-sized offsets are no-ops. This means that our current design will always
-initialize `start` and `end` as the same value, and our iterators will yield
-nothing. The current solution to this is to cast the pointers to integers,
-increment, and then cast them back:
-
-```rust,ignore
+``` Rust
 impl<T> RawValIter<T> {
     unsafe fn new(slice: &[T]) -> Self {
         RawValIter {
@@ -122,13 +98,9 @@ impl<T> RawValIter<T> {
 }
 ```
 
-Now we have a different bug. Instead of our iterators not running at all, our
-iterators now run *forever*. We need to do the same trick in our iterator impls.
-Also, our size_hint computation code will divide by 0 for ZSTs. Since we'll
-basically be treating the two pointers as if they point to bytes, we'll just
-map size 0 to divide by 1.
+现在我们有了一个新的bug。我们成功地让迭代器从完全不运行，变成了永远不停地运行。我们需要在迭代器的实现中玩同样的把戏。同时，`size_hint`在ZST的情况下会出现除数为0的问题。因为我们假设这两个指针都指向某个字节，我们在除数为0的情况下直接将除数变为1。
 
-```rust,ignore
+``` Rust
 impl<T> Iterator for RawValIter<T> {
     type Item = T;
     fn next(&mut self) -> Option<T> {
@@ -173,4 +145,4 @@ impl<T> DoubleEndedIterator for RawValIter<T> {
 }
 ```
 
-And that's it. Iteration works!
+很好，迭代器也可以工作了。
