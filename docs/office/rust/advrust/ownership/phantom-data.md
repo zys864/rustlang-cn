@@ -1,35 +1,23 @@
 # PhantomData
 
-> 原文跟踪[phantom-data.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/phantom-data.md) &emsp; Commit: a73391dd35c32061bec678257d4c3ddac268c51b
+> 源：[phantom-data.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/phantom-data.md) &nbsp; Commit: a73391dd35c32061bec678257d4c3ddac268c51b
 
-When working with unsafe code, we can often end up in a situation where
-types or lifetimes are logically associated with a struct, but not actually
-part of a field. This most commonly occurs with lifetimes. For instance, the
-`Iter` for `&'a [T]` is (approximately) defined as follows:
+在编写非安全代码时，我们常常遇见这种情况：类型或生命周期逻辑上与一个结构体关联起来了，但是却不属于结构体的任何一个成员。这种情况对于生命周期尤为常见。比如，`&'a [T]`的`Iter`大概是这么定义的：
 
-```rust
+``` Rust
 struct Iter<'a, T: 'a> {
     ptr: *const T,
     end: *const T,
 }
 ```
 
-However because `'a` is unused within the struct's body, it's *unbounded*.
-Because of the troubles this has historically caused, unbounded lifetimes and
-types are *forbidden* in struct definitions. Therefore we must somehow refer
-to these types in the body. Correctly doing this is necessary to have
-correct variance and drop checking.
+但是，因为`'a`没有在结构体内被使用，它是无界的。由于一些历史原因，无界生命周期和类型禁止出现在结构体定义中。所以我们必须想办法在结构体内用到这些类型，这也是正确的变性检查和drop检查的必要条件。
 
-We do this using `PhantomData`, which is a special marker type. `PhantomData`
-consumes no space, but simulates a field of the given type for the purpose of
-static analysis. This was deemed to be less error-prone than explicitly telling
-the type-system the kind of variance that you want, while also providing other
-useful such as the information needed by drop check.
+我们使用一个特殊的标志类型`PhantomData`做到这一点。`PhantomData`不消耗存储空间，它只是模拟了某种类型的数据，以方便静态分析。这么做比显式地告诉类型系统你需要的变性更不容易出错，而且还能提供drop检查需要的信息。
 
-Iter logically contains a bunch of `&'a T`s, so this is exactly what we tell
-the PhantomData to simulate:
+`Iter`逻辑上包含一系列`&'a T`，所以我们用`PhantomData`这样去模拟它：
 
-```rust
+``` Rust
 use std::marker;
 
 struct Iter<'a, T: 'a> {
@@ -39,68 +27,58 @@ struct Iter<'a, T: 'a> {
 }
 ```
 
-and that's it. The lifetime will be bounded, and your iterator will be variant
-over `'a` and `T`. Everything Just Works.
+就是这样，生命周期变得有界了，你的迭代器对于`'a`和`T`也可变了。一切尽如人意。
 
-Another important example is Vec, which is (approximately) defined as follows:
+另一个重要的例子是`Vec`，它差不多是这么定义的：
 
-```rust
+``` Rust
 struct Vec<T> {
-    data: *const T, // *const for variance!
+    data: *const T, // *const是可变的！
     len: usize,
     cap: usize,
 }
 ```
 
-Unlike the previous example, it *appears* that everything is exactly as we
-want. Every generic argument to Vec shows up in at least one field.
-Good to go!
+和之前的例子不同，这个定义已经满足我们的各种要求了。`Vec`的每一个泛型参数都被至少一个成员使用过了。非常完美！
 
-Nope.
+你高兴的太早了。
 
-The drop checker will generously determine that `Vec<T>` does not own any values
-of type T. This will in turn make it conclude that it doesn't need to worry
-about Vec dropping any T's in its destructor for determining drop check
-soundness. This will in turn allow people to create unsoundness using
-Vec's destructor.
+Drop检查器会判断`Vec<T>`并不拥有T类型的值，然后它认为无需担心Vec在析构函数里能不能安全地销毁T，再然后它会允许人们创建不安全的Vec析构函数。
 
-In order to tell dropck that we *do* own values of type T, and therefore may
-drop some T's when *we* drop, we must add an extra PhantomData saying exactly
-that:
+为了让drop检查器知道我们确实拥有T类型的值，也就是需要在销毁Vec的时候同时销毁T，我们需要添加一个额外的PhantomData：
 
-```rust
-use std::marker;
+``` Rust
+use std::marker:
 
 struct Vec<T> {
-    data: *const T, // *const for variance!
+    data: *const T, // *const是可变的！
     len: usize,
     cap: usize,
     _marker: marker::PhantomData<T>,
 }
 ```
 
-Raw pointers that own an allocation is such a pervasive pattern that the
-standard library made a utility for itself called `Unique<T>` which:
+让裸指针拥有数据是一个很普遍的设计，以至于标准库为它自己创造了一个叫`Unique<T>`的组件，它可以：
 
-* wraps a `*const T` for variance
-* includes a `PhantomData<T>`
-* auto-derives `Send`/`Sync` as if T was contained
-* marks the pointer as `NonZero` for the null-pointer optimization
+- 封装一个`*const T`处理变性
+- 包含一个PhantomData<T>
+- 自动实现`Send`/`Sync`，模拟和包含T时一样的行为
+- 将指针标记为`NonZero`以便空指针优化
 
-## Table of `PhantomData` patterns
+## `PhantomData`模式表
 
-Here’s a table of all the wonderful ways `PhantomData` could be used:
+下表展示了各种牛X闪闪的`PhantomData`用法：
 
-| Phantom type                | `'a`      | `T`                       |
-|-----------------------------|-----------|---------------------------|
-| `PhantomData<T>`            | -         | variant (with drop check) |
-| `PhantomData<&'a T>`        | variant   | variant                   |
-| `PhantomData<&'a mut T>`    | variant   | invariant                 |
-| `PhantomData<*const T>`     | -         | variant                   |
-| `PhantomData<*mut T>`       | -         | invariant                 |
-| `PhantomData<fn(T)>`        | -         | contravariant (*)         |
-| `PhantomData<fn() -> T>`    | -         | variant                   |
-| `PhantomData<fn(T) -> T>`   | -         | invariant                 |
-| `PhantomData<Cell<&'a ()>>` | invariant | -                         |
+| Phantom 类型 | `'a` | `'T` |
+|----|----|----|
+|`PhantomData<T>`|-|协变（可触发drop检查）|
+|`PhantomData<&'a T>`|协变|协变|
+|`PhantomData<&'a mut T>`|协变|不变|
+|`PhantomData<*const T>`|-|协变|
+|`PhantomData<*mut T>`|-|不变|
+|`PhantomData<fn(T)>`|-|逆变(*)|
+|`PhantomData<fn() -> T`|-|协变|
+|`PhantomData<fn(T) -> T>`|-|不变|
+|`PhantomData<Cell<&'a ()>>`|不变|-|
 
-(*) If contravariance gets scrapped, this would be invariant.
+(*)如果发生变性的冲突，这个是不变的
