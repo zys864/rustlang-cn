@@ -1,23 +1,21 @@
 # 别名
 
-> 原文跟踪[aliasing.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/aliasing.md) &emsp; Commit: 9e1c1703ec8947fe4bc327242d62731257eb3fd4
+> 源：[aliasing.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/aliasing.md) &nbsp; Commit: 9e1c1703ec8947fe4bc327242d62731257eb3fd4
 
-First off, let's get some important caveats out of the way:
+首先，有几点重要声明：
 
-* We will be using the broadest possible definition of aliasing for the sake of discussion. Rust's definition will probably be more restricted to factor in mutations and liveness.
+- 以下的讨论将采用最广泛意义上的别名的定义。而Rust的定义可能会更加严格,需要考虑到可变性和生命周期。
+- 我们假设程序都是单线程且不会中断的，同时也不会去考虑存储器映射之类的问题。除非特别指定，否则Rust默认这些事情不存在。更多的细节请见[并发章节](https://doc.rust-lang.org/nomicon/concurrency.html)。
 
-* We will be assuming a single-threaded, interrupt-free, execution. We will also be ignoring things like memory-mapped hardware. Rust assumes these things don't happen unless you tell it otherwise. For more details, see the [Concurrency Chapter](concurrency.html).
+基于这些，我们给出定义：当变量和指针表示的内存区域有重叠时，它们互为对方的别名。
 
-With that said, here's our working definition: variables and pointers *alias*
-if they refer to overlapping regions of memory.
+## 为什么别名很重要
 
-## Why Aliasing Matters
+为什么我们要关注别名？
 
-So why should we care about aliasing?
+看下面这个简单的函数。
 
-Consider this simple function:
-
-```rust
+``` Rust
 fn compute(input: &u32, output: &mut u32) {
     if *input > 10 {
         *output = 1;
@@ -28,76 +26,57 @@ fn compute(input: &u32, output: &mut u32) {
 }
 ```
 
-We would *like* to be able to optimize it to the following function:
+我们可能会这样优化它：
 
-```rust
+``` Rust
 fn compute(input: &u32, output: &mut u32) {
-    let cached_input = *input; // keep *input in a register
+    let cached_input = *input; // 将*input放入缓存
     if cached_input > 10 {
-        *output = 2;  // x > 10 implies x > 5, so double and exit immediately
+        *output = 2; // x > 5 则必然 x > 5，所以直接加倍并立即退出
     } else if cached_input > 5 {
         *output *= 2;
     }
 }
 ```
 
-In Rust, this optimization should be sound. For almost any other language, it
-wouldn't be (barring global analysis). This is because the optimization relies
-on knowing that aliasing doesn't occur, which most languages are fairly liberal
-with. Specifically, we need to worry about function arguments that make `input`
-and `output` overlap, such as `compute(&x, &mut x)`.
+在Rust中，这种优化是正确的。但对于其他几乎所有的语言，都是有错误的（除非编译器进行全局分析）。这是因为优化方案成立的前提是不存在别名，而绝大多数语言并不会限制这一点。例子中我们需要特别担心的是传递给`input`和`output`的参数可能会重合，比如`comput(&x, &mut x)`。
 
-With that input, we could get this execution:
+对于上面的参数，程序流程会是这样：
 
-```rust
-                    //  input ==  output == 0xabad1dea
-                    // *input == *output == 20
-if *input > 10 {    // true  (*input == 20)
-    *output = 1;    // also overwrites *input, because they are the same
-}
-if *input > 5 {     // false (*input == 1)
+``` Rust
+                  //  input ==  output == 0xabad1dea
+                  // *input == *output == 20
+if *input > 10 {  // true (*input == 20)
+    *output = 1;  // 同时覆盖了 *input，以为他们是一样的
+} 
+*input > 5 {      // false (*input == 1)
     *output *= 2;
 }
-                    // *input == *output == 1
+                  // *input == *output == 1
 ```
 
-Our optimized function would produce `*output == 2` for this input, so the
-correctness of our optimization relies on this input being impossible.
+我们优化过的函数的结果是`*output == 2`，所以对于这样的输入参数，优化函数是不正确的。
 
-In Rust we know this input should be impossible because `&mut` isn't allowed to be
-aliased. So we can safely reject its possibility and perform this optimization.
-In most other languages, this input would be entirely possible, and must be considered.
+在Rust中我们知道不会出现上面那样的输入参数，因为`&mut`不允许存在别名。所以我们可以安全的忽略这种可能性而使用优化方案。对于大多数其他语言，这种输入的可能性是存在的，必须特别的考虑到。
 
-This is why alias analysis is important: it lets the compiler perform useful
-optimizations! Some examples:
+这就是别名分析的重要性：它允许编译器做出一些有用的优化。举几个例子：
 
-* keeping values in registers by proving no pointers access the value's memory
-* eliminating reads by proving some memory hasn't been written to since last we read it
-* eliminating writes by proving some memory is never read before the next write to it
-* moving or reordering reads and writes by proving they don't depend on each other
+- 将值放入缓存变量中，因为可以确定没有指针可以访问变量的内存。
+- 省略一些读操作，因为可以确定在上一次读内存之后，内存没有发生变化
+- 省略一些写操作，因为可以确定下一次写内存之前，内存不会被读取
+- 移动或重排读写操作的顺序，因为可以确定它们并不互相依赖
 
-These optimizations also tend to prove the soundness of bigger optimizations
-such as loop vectorization, constant propagation, and dead code elimination.
+这些优化也可以进一步证明更大程度的优化的可行性，比如循环向量化、常量替换和不可达代码消除等。
 
-In the previous example, we used the fact that `&mut u32` can't be aliased to prove
-that writes to `*output` can't possibly affect `*input`. This let us cache `*input`
-in a register, eliminating a read.
+在前面的例子中，我们根据`&mut u32`不存在别名的原则证明了`*output`不可能影响`*input`。这使得我们缓存了`*input`，并且省略了一次读操作。
 
-By caching this read, we knew that the the write in the `> 10` branch couldn't
-affect whether we take the `> 5` branch, allowing us to also eliminate a
-read-modify-write (doubling `*output`) when `*input > 10`.
+通过缓存读操作的结果，我们知道在`>10`的分支中的写操作不会影响执行`>5`分支的判断条件，这样我们在`*input > 10`的情况下省略了一次读-改-写操作(`*output`加倍)。
 
-The key thing to remember about alias analysis is that writes are the primary
-hazard for optimizations. That is, the only thing that prevents us
-from moving a read to any other part of the program is the possibility of us
-re-ordering it with a write to the same location.
+关于别名分析需要记住的一个关键点是，写操作是优化的主要障碍。我们不能随意移动读操作的唯一原因，就是可能存在向相同位置写数据的操作，这种移动会破坏他们之间的顺序关系。
 
-For instance, we have no concern for aliasing in the following modified version
-of our function, because we've moved the only write to `*output` to the very
-end of our function. This allows us to freely reorder the reads of `*input` that
-occur before it:
+比如，下面这个版本的函数中，我们不需要担心别名问题，因为我们把唯一的一次写`*output`的操作放到了函数的最后。这让我们可以随意地改变之前的读`*input`操作的顺序：
 
-```rust
+``` Rust
 fn compute(input: &u32, output: &mut u32) {
     let mut temp = *output;
     if *input > 10 {
@@ -110,17 +89,8 @@ fn compute(input: &u32, output: &mut u32) {
 }
 ```
 
-We're still relying on alias analysis to assume that `temp` doesn't alias
-`input`, but the proof is much simpler: the value of a local variable can't be
-aliased by things that existed before it was declared. This is an assumption
-every language freely makes, and so this version of the function could be
-optimized the way we want in any language.
+我们仍然需要别名分析来证明`temp`不是`input`的别名，但是这时的证明过程要简单得多：一个本地别量不可能是在它的声明之前就存在的变量的别名。这是所有编程语言共有的一个前提，所以这一版本的函数可以按照与其他语言相同的方式去优化它。
 
-This is why the definition of "alias" that Rust will use likely involves some
-notion of liveness and mutation: we don't actually care if aliasing occurs if
-there aren't any actual writes to memory happening.
+这也就是Rust可能采用的“别名”定义与生命周期和可变性有关的原因：在没有写内存操作存在的情况下，我们实际上不需要关注是否存在别名。
 
-Of course, a full aliasing model for Rust must also take into consideration things like
-function calls (which may mutate things we don't see), raw pointers (which have
-no aliasing requirements on their own), and UnsafeCell (which lets the referent
-of an `&` be mutated).
+当然，一个完整的别名模型也要考虑到诸如函数调用（可能改变我们不可见的内容）、裸指针（不存在限制别名的需求），以及UnsafeCell（允许被`&`引用的内容可变）。
