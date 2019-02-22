@@ -1,42 +1,32 @@
-# Foreign Function Interface
+# 外部函数接口
 
-> 原文跟踪[ffi.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/ffi.md) &emsp; Commit: b3d532f55bea88bf34aae8d3b6af4c5d1ceaf31e
+> 源：[ffi.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/ffi.md) &nbsp; Commit: b3d532f55bea88bf34aae8d3b6af4c5d1ceaf31e
 
-## Introduction
+## 介绍
 
-This guide will use the [snappy](https://github.com/google/snappy)
-compression/decompression library as an introduction to writing bindings for
-foreign code. Rust is currently unable to call directly into a C++ library, but
-snappy includes a C interface (documented in
-[`snappy-c.h`](https://github.com/google/snappy/blob/master/snappy-c.h)).
+这个教程会使用[snappy](https://github.com/google/snappy)压缩/解压缩库来介绍外部代码绑定的编写方法。Rust目前还不能直接调用C++的库，但是snappy有C的接口（文档在`snappy-c.h`中）。
 
-## A note about libc
+### 关于libc的说明
 
-Many of these examples use [the `libc` crate][libc], which provides various
-type definitions for C types, among other things. If you’re trying these
-examples yourself, you’ll need to add `libc` to your `Cargo.toml`:
+接下来很多的例子会使用[`libc` crate](https://crates.io/crates/libc)，它为我们提供了很多C类型的定义。如果你要亲自尝试一下这些例子的话，你需要把`libc`添加到你的`Cargo.toml`:
 
-```toml
+``` Toml
 [dependencies]
 libc = "0.2.0"
 ```
+然后在你的crate的根文件插入一句`extern crate libc;`
 
-[libc]: https://crates.io/crates/libc
+### 调用外部函数
 
-and add `extern crate libc;` to your crate root.
+下面是一个调用外部函数的小例子，安装了snappy才能编译成功。
 
-## Calling foreign functions
-
-The following is a minimal example of calling a foreign function which will
-compile if snappy is installed:
-
-```rust
+``` Rust
 extern crate libc;
 use libc::size_t;
 
 #[link(name = "snappy")]
 extern {
-    fn snappy_max_compressed_length(source_length: size_t) -> size_t;
+    fn snappy_mx_compressed_length(source_length: size_t) -> size_t;
 }
 
 fn main() {
@@ -45,25 +35,15 @@ fn main() {
 }
 ```
 
-The `extern` block is a list of function signatures in a foreign library, in
-this case with the platform's C ABI. The `#[link(...)]` attribute is used to
-instruct the linker to link against the snappy library so the symbols are
-resolved.
+`extern`代码块中是外部库的函数签名的列表，这个例子中使用的是平台相关的C的ABI。`#[link(...)]`属性用来构建一个链接snappy库的链接器，以便解析库中的符号(symbol)。
 
-Foreign functions are assumed to be unsafe so calls to them need to be wrapped
-with `unsafe {}` as a promise to the compiler that everything contained within
-truly is safe. C libraries often expose interfaces that aren't thread-safe, and
-almost any function that takes a pointer argument isn't valid for all possible
-inputs since the pointer could be dangling, and raw pointers fall outside of
-Rust's safe memory model.
+外部函数都被认为是不安全的，所以对它们的调用必须包装在`unsafe {}`中，也就是向编译器承诺块中的代码都是安全的。C的库经常暴露非线程安全的接口，而且几乎所有的接受指针参数的函数都是不合法的，因为指针可能是悬垂指针，而裸指针不符合Rust的内存安全模型。
 
-When declaring the argument types to a foreign function, the Rust compiler
-cannot check if the declaration is correct, so specifying it correctly is part
-of keeping the binding correct at runtime.
+在声明外部函数的参数类型时，Rust编译器不能检查声明的正确性，所以我们需要自己保证它是正确的，这也是运行期正确绑定的条件之一。
 
-The `extern` block can be extended to cover the entire snappy API:
+`extern`块还可以继续扩展，包含所有的snappy API：
 
-```rust
+``` Rust
 extern crate libc;
 use libc::{c_int, size_t};
 
@@ -84,24 +64,15 @@ extern {
     fn snappy_validate_compressed_buffer(compressed: *const u8,
                                          compressed_length: size_t) -> c_int;
 }
-fn main() {}
 ```
 
-## Creating a safe interface
+## 创建安全接口
 
-The raw C API needs to be wrapped to provide memory safety and make use of higher-level concepts
-like vectors. A library can choose to expose only the safe, high-level interface and hide the unsafe
-internal details.
+原生的C API进行封装，以保证内存安全，还有使用vector等高级概念。库可以选择只暴露安全的、高级的接口，并隐藏非安全的内部细节。
 
-Wrapping the functions which expect buffers involves using the `slice::raw` module to manipulate Rust
-vectors as pointers to memory. Rust's vectors are guaranteed to be a contiguous block of memory. The
-length is the number of elements currently contained, and the capacity is the total size in elements of
-the allocated memory. The length is less than or equal to the capacity.
+我们使用`slice::raw`模块封装接受内存块的函数，这个模块会把Rust的vector转换为内存的指针。Rust的vector是一块连续的内存。它的长度是当前包含的元素的数量，容量是分配内存可存储的元素的总数。长度是小于等于容量的。
 
-```rust
-use libc::{c_int, size_t};
-unsafe fn snappy_validate_compressed_buffer(_: *const u8, _: size_t) -> c_int { 0 }
-fn main() {}
+``` Rust
 pub fn validate_compressed_buffer(src: &[u8]) -> bool {
     unsafe {
         snappy_validate_compressed_buffer(src.as_ptr(), src.len() as size_t) == 0
@@ -109,24 +80,13 @@ pub fn validate_compressed_buffer(src: &[u8]) -> bool {
 }
 ```
 
-The `validate_compressed_buffer` wrapper above makes use of an `unsafe` block, but it makes the
-guarantee that calling it is safe for all inputs by leaving off `unsafe` from the function
-signature.
+上方的`validate_compressed_buffer`包装器用到了`unsafe`代码块，但是函数签名里没有`unsafe`关键字，这说明它保证函数调用对所有的输入都是安全的。
 
-The `snappy_compress` and `snappy_uncompress` functions are more complex, since a buffer has to be
-allocated to hold the output too.
+`snappy_compress`和`snappy_uncompress`函数更复杂一些，因为它们需要分配一块空间储存输出的结果。
 
-The `snappy_max_compressed_length` function can be used to allocate a vector with the maximum
-required capacity to hold the compressed output. The vector can then be passed to the
-`snappy_compress` function as an output parameter. An output parameter is also passed to retrieve
-the true length after compression for setting the length.
+`snappy_max_compressed_length`函数可以用来分配一段最大容积内的vector，以保存输出的结果。这个vector可以传递给`snappy_compress`函数作为输出参数。还会传递一个输出参数获取压缩后的真实长度，以便设置返回值的长度。
 
-```rust
-use libc::{size_t, c_int};
-unsafe fn snappy_compress(a: *const u8, b: size_t, c: *mut u8,
-                          d: *mut size_t) -> c_int { 0 }
-unsafe fn snappy_max_compressed_length(a: size_t) -> size_t { a }
-fn main() {}
+``` Rust
 pub fn compress(src: &[u8]) -> Vec<u8> {
     unsafe {
         let srclen = src.len() as size_t;
@@ -143,19 +103,9 @@ pub fn compress(src: &[u8]) -> Vec<u8> {
 }
 ```
 
-Decompression is similar, because snappy stores the uncompressed size as part of the compression
-format and `snappy_uncompressed_length` will retrieve the exact buffer size required.
+解压缩也是类似的，因为snappy的压缩格式中保存了未压缩时的大小，函数`snappy_uncompressed_length`可以获取需要的缓存区的尺寸。
 
-```rust
-use libc::{size_t, c_int};
-unsafe fn snappy_uncompress(compressed: *const u8,
-                            compressed_length: size_t,
-                            uncompressed: *mut u8,
-                            uncompressed_length: *mut size_t) -> c_int { 0 }
-unsafe fn snappy_uncompressed_length(compressed: *const u8,
-                                     compressed_length: size_t,
-                                     result: *mut size_t) -> c_int { 0 }
-fn main() {}
+``` Rust
 pub fn uncompress(src: &[u8]) -> Option<Vec<u8>> {
     unsafe {
         let srclen = src.len() as size_t;
@@ -177,30 +127,9 @@ pub fn uncompress(src: &[u8]) -> Option<Vec<u8>> {
 }
 ```
 
-Then, we can add some tests to show how to use them.
+接下来，我们添加一些测试用例来展示如何使用它们。
 
-```rust
-use libc::{c_int, size_t};
-unsafe fn snappy_compress(input: *const u8,
-                          input_length: size_t,
-                          compressed: *mut u8,
-                          compressed_length: *mut size_t)
-                          -> c_int { 0 }
-unsafe fn snappy_uncompress(compressed: *const u8,
-                            compressed_length: size_t,
-                            uncompressed: *mut u8,
-                            uncompressed_length: *mut size_t)
-                            -> c_int { 0 }
-unsafe fn snappy_max_compressed_length(source_length: size_t) -> size_t { 0 }
-unsafe fn snappy_uncompressed_length(compressed: *const u8,
-                                     compressed_length: size_t,
-                                     result: *mut size_t)
-                                     -> c_int { 0 }
-unsafe fn snappy_validate_compressed_buffer(compressed: *const u8,
-                                            compressed_length: size_t)
-                                            -> c_int { 0 }
-fn main() { }
-
+``` Rust
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -232,30 +161,23 @@ mod tests {
 }
 ```
 
-## Destructors
+## 析构函数
 
-Foreign libraries often hand off ownership of resources to the calling code.
-When this occurs, we must use Rust's destructors to provide safety and guarantee
-the release of these resources (especially in the case of panic).
+外部库经常把资源的所有权返还给调用代码。如果是这样，我们必须用Rust的析构函数保证所有的资源都被释放了（特别是在panic的情况下）。
 
-For more about destructors, see the [Drop trait](../std/ops/trait.Drop.html).
+更多关于析构函数的内容，请见[Drop trait](https://doc.rust-lang.org/std/ops/trait.Drop.html)。
 
-## Callbacks from C code to Rust functions
+## C代码到Rust函数的回调
 
-Some external libraries require the usage of callbacks to report back their
-current state or intermediate data to the caller.
-It is possible to pass functions defined in Rust to an external library.
-The requirement for this is that the callback function is marked as `extern`
-with the correct calling convention to make it callable from C code.
+一些外部库需要用到回调向调用者报告当前状态或者中间数据。我们是可以把Rust写的函数传递给外部库的。要求是回调函数必须标为`extern`并遵守正确的调用规范，以保证C代码可以调用它。
 
-The callback function can then be sent through a registration call
-to the C library and afterwards be invoked from there.
+然后回调函数会通过注册调用传递给C的库，并在外部库中被触发。
 
-A basic example is:
+下面是一个简单的例子。
 
-Rust code:
+Rust代码：
 
-```rust
+``` Rust
 extern fn callback(a: i32) {
     println!("I'm called from C with value {0}", a);
 }
@@ -269,14 +191,14 @@ extern {
 fn main() {
     unsafe {
         register_callback(callback);
-        trigger_callback(); // Triggers the callback.
+        trigger_callback(); // 触发回调
     }
 }
 ```
 
-C code:
+C代码：
 
-```c
+``` C
 typedef void (*rust_callback)(int32_t);
 rust_callback cb;
 
@@ -290,34 +212,25 @@ void trigger_callback() {
 }
 ```
 
-In this example Rust's `main()` will call `trigger_callback()` in C,
-which would, in turn, call back to `callback()` in Rust.
+这个例子中，Rust的`main()`要调用C的`trigger_callback()`，而这个函数会反过来调用Rust中的`callback()`。
 
-## Targeting callbacks to Rust objects
+### 将Rust对象作为回调
 
-The former example showed how a global function can be called from C code.
-However it is often desired that the callback is targeted to a special
-Rust object. This could be the object that represents the wrapper for the
-respective C object.
+之前的例子演示了C代码如何调用全局函数。但是很多情况下回调也可能是一个Rust对象，比如说封装了某个C的结构体的Rust对象。
 
-This can be achieved by passing a raw pointer to the object down to the
-C library. The C library can then include the pointer to the Rust object in
-the notification. This will allow the callback to unsafely access the
-referenced Rust object.
+要实现这一点，我们可以传递一个指向这个对象的裸指针给C的库。C的库接下来可以将指针转换为Rust的对象。这样回调函数就可以非安全地访问相应的Rust对象了。
 
-Rust code:
-
-```rust
+``` Rust
 #[repr(C)]
 struct RustObject {
     a: i32,
-    // Other members...
+    // 其他成员……
 }
 
 extern "C" fn callback(target: *mut RustObject, a: i32) {
     println!("I'm called from C with value {0}", a);
     unsafe {
-        // Update the value in RustObject with the value received from the callback:
+        // 用回调函数接收的值更新RustObject的值：
         (*target).a = a;
     }
 }
@@ -330,7 +243,7 @@ extern {
 }
 
 fn main() {
-    // Create the object that will be referenced in the callback:
+    // 创建回调用到的对象：
     let mut rust_object = Box::new(RustObject { a: 5 });
 
     unsafe {
@@ -340,9 +253,9 @@ fn main() {
 }
 ```
 
-C code:
+C代码：
 
-```c
+``` C
 typedef void (*rust_callback)(void*, int32_t);
 void* cb_target;
 rust_callback cb;
@@ -354,104 +267,61 @@ int32_t register_callback(void* callback_target, rust_callback callback) {
 }
 
 void trigger_callback() {
-  cb(cb_target, 7); // Will call callback(&rustObject, 7) in Rust.
+  cb(cb_target, 7); // 调用Rust的callback(&rustObject, 7)
 }
 ```
 
-## Asynchronous callbacks
+### 异步回调
 
-In the previously given examples the callbacks are invoked as a direct reaction
-to a function call to the external C library.
-The control over the current thread is switched from Rust to C to Rust for the
-execution of the callback, but in the end the callback is executed on the
-same thread that called the function which triggered the callback.
+上面给出的例子里，回调都是外部C库的直接的函数调用。当前线程的控制权从Rust转移到C再转移回Rust，不过最终回调都是在调用触发回调的函数的线程里执行的。
 
-Things get more complicated when the external library spawns its own threads
-and invokes callbacks from there.
-In these cases access to Rust data structures inside the callbacks is
-especially unsafe and proper synchronization mechanisms must be used.
-Besides classical synchronization mechanisms like mutexes, one possibility in
-Rust is to use channels (in `std::sync::mpsc`) to forward data from the C
-thread that invoked the callback into a Rust thread.
+如果外部库启动了自己的线程，并在那个线程里调用回调函数，情况就变得复杂了。这时再访问回调中的Rust数据结构是非常不安全的，必须使用正常地同步机制。除了Mutex等传统的同步机制，还有另一个选项就是使用channel（在`std::sync::mpsc`中）将数据从触发回调的C线程传送给一个Rust线程。
 
-If an asynchronous callback targets a special object in the Rust address space
-it is also absolutely necessary that no more callbacks are performed by the
-C library after the respective Rust object gets destroyed.
-This can be achieved by unregistering the callback in the object's
-destructor and designing the library in a way that guarantees that no
-callback will be performed after deregistration.
+如果一个异步回调使用了一个Rust地址空间里的对象，一定要注意，在这个对象销毁之后C的库不能再调用任何的回调。我们可以在对象的析构函数里注销回调，并且重新设计库确保毁掉注销后就不会被调用了。
 
-## Linking
+## 链接
 
-The `link` attribute on `extern` blocks provides the basic building block for
-instructing rustc how it will link to native libraries. There are two accepted
-forms of the link attribute today:
+`extern`代码块上的`link`属性用于指导rustc如何链接到一个本地的库。现在`link`属性有两种可用的形式：
 
-* `#[link(name = "foo")]`
-* `#[link(name = "foo", kind = "bar")]`
+- `#[link(name = "foo")]`
+- `#[link(name = "foo", kind = "bar")]`
 
-In both of these cases, `foo` is the name of the native library that we're
-linking to, and in the second case `bar` is the type of native library that the
-compiler is linking to. There are currently three known types of native
-libraries:
+两种形式中，`foo`都是我们要链接的本地库的名字。而第二种形式中的`bar`是要链接的本地库的类型。目前有三种已知的本地库类型：
 
-* Dynamic - `#[link(name = "readline")]`
-* Static - `#[link(name = "my_build_dependency", kind = "static")]`
-* Frameworks - `#[link(name = "CoreFoundation", kind = "framework")]`
+- 动态 - `#[link(name = "readline")]`
+- 静态 - `#[link(name = "my_build_dependency", kind = "static")]`
+- 框架 - `#[link(name = "CoreFundation", kind = "framework")]`
 
-Note that frameworks are only available on macOS targets.
+注意，框架只适用于MacOS平台。
 
-The different `kind` values are meant to differentiate how the native library
-participates in linkage. From a linkage perspective, the Rust compiler creates
-two flavors of artifacts: partial (rlib/staticlib) and final (dylib/binary).
-Native dynamic library and framework dependencies are propagated to the final
-artifact boundary, while static library dependencies are not propagated at
-all, because the static libraries are integrated directly into the subsequent
-artifact.
+不同的`kind`表明本地库以不同的方式参与链接。从链接器的角度看，Rust编译器产生两种输出结果：部分结果(rlib/staticlib)和最终结果(dylib/binary)。本地动态库和框架依赖可以被最终结果使用，而静态库则不会，因为静态库是直接集成在接下来的输出里的。
 
-A few examples of how this model can be used are:
+举几个这个模型用法的例子：
 
-* A native build dependency. Sometimes some C/C++ glue is needed when writing
-  some Rust code, but distribution of the C/C++ code in a library format is
-  a burden. In this case, the code will be archived into `libfoo.a` and then the
-  Rust crate would declare a dependency via `#[link(name = "foo", kind =
-  "static")]`.
+- 本地构建依赖。有时候编写Rust代码需要一些C/C++作为补充，但是把C/C++代码以一个库的形式发布却不容易。这种情况下，代码应该包装在`libfoo.a`中，然后Rust的crate会声明一个依赖`#[link(name = "foo", kind = "static")]`。
+不管crate最终以哪种形式输出，本地静态库都会被包含在输出中，这表明发布静态库并不必要。
 
-  Regardless of the flavor of output for the crate, the native static library
-  will be included in the output, meaning that distribution of the native static
-  library is not necessary.
+- 普通动态库。通用的系统库（比如`readline`）在许多系统中都支持，而我们经常遇到找不到库的本地备份的的情况。如果这样的依赖被包含在Rust的crate中，部分结果（比如rlib）不会链接到这个库中。但是如果rlib被最终结果包含了，本地库也会被链接。
 
-* A normal dynamic dependency. Common system libraries (like `readline`) are
-  available on a large number of systems, and often a static copy of these
-  libraries cannot be found. When this dependency is included in a Rust crate,
-  partial targets (like rlibs) will not link to the library, but when the rlib
-  is included in a final target (like a binary), the native library will be
-  linked in.
+在MacOS中，框架和动态库具有相同的语义。
 
-On macOS, frameworks behave with the same semantics as a dynamic library.
+## 非安全代码块
 
-## Unsafe blocks
+有一些操作，比如解引用裸指针、或者调用被标为unsafe的函数，它们只能存在于非安全代码块中。非安全代码块隔离了非安全性，并向编译器承诺非安全性不会影响到块以外的代码。
 
-Some operations, like dereferencing raw pointers or calling functions that have been marked
-unsafe are only allowed inside unsafe blocks. Unsafe blocks isolate unsafety and are a promise to
-the compiler that the unsafety does not leak out of the block.
+非安全函数则不同，它们声明非安全性一定会影响到函数之外。一个非安全函数写法如下：
 
-Unsafe functions, on the other hand, advertise it to the world. An unsafe function is written like
-this:
-
-```rust
+``` Rust
 unsafe fn kaboom(ptr: *const i32) -> i32 { *ptr }
 ```
 
-This function can only be called from an `unsafe` block or another `unsafe` function.
+这个函数只能在`unsafe`代码块或者另外一个`unsafe`函数里被调用。
 
-## Accessing foreign globals
+## 访问外部全局变量
 
-Foreign APIs often export a global variable which could do something like track
-global state. In order to access these variables, you declare them in `extern`
-blocks with the `static` keyword:
+外部API经常暴露一些全局变量，用于记录全局状态等。为了访问这些变量，你需要在`extern`块中用`static`关键字声明它们：
 
-```rust
+``` Rust
 extern crate libc;
 
 #[link(name = "readline")]
@@ -465,11 +335,9 @@ fn main() {
 }
 ```
 
-Alternatively, you may need to alter global state provided by a foreign
-interface. To do this, statics can be declared with `mut` so we can mutate
-them.
+有时也可能需要通过外部的接口修改全局状态。如果要这么做，静态变量还要添加`mut`，让我们可以修改它们。
 
-```rust
+``` Rust
 extern crate libc;
 
 use std::ffi::CString;
@@ -492,16 +360,13 @@ fn main() {
 }
 ```
 
-Note that all interaction with a `static mut` is unsafe, both reading and
-writing. Dealing with global mutable state requires a great deal of care.
+注意，所有和`static mut`的操作都是非安全的，不管是读还是写。处理全局可变状态的时候一定要格外的小心。
 
-## Foreign calling conventions
+## 外部调用规范
 
-Most foreign code exposes a C ABI, and Rust uses the platform's C calling convention by default when
-calling foreign functions. Some foreign functions, most notably the Windows API, use other calling
-conventions. Rust provides a way to tell the compiler which convention to use:
+大多数外部代码都暴露C的ABI，而Rust默认根据平台相关的C的调用规范调用外部函数。还有一些外部函数使用其他的规范，最典型的就是WindowsAPI。Rust也有方法告诉编译器使用哪种规范：
 
-```rust
+``` Rust
 extern crate libc;
 
 #[cfg(all(target_os = "win32", target_arch = "x86"))]
@@ -510,66 +375,39 @@ extern crate libc;
 extern "stdcall" {
     fn SetEnvironmentVariableA(n: *const u8, v: *const u8) -> libc::c_int;
 }
-# fn main() { }
 ```
 
-This applies to the entire `extern` block. The list of supported ABI constraints
-are:
+这段代码作用于整个`extern`代码块。支持的ABI包括：
 
-* `stdcall`
-* `aapcs`
-* `cdecl`
-* `fastcall`
-* `vectorcall`
+- `stdcall`
+- `appcs`
+- `cdecl`
+- `fastcall`
+- `vectorcall` 这个目前被`abi_vectorcall`隐藏着，不允许修改。
+- `Rust`
+- `rust-intrinsic`
+- `system`
+- `C`
+- `win64`
+- `sysv64`
 
-This is currently hidden behind the `abi_vectorcall` gate and is subject to change.
+列表中所有的abi都是自解释的，但是`system`可能会显得有些奇怪。它的意思是选择一个合适的与目标库通信的ABI。比如，在win32的x86架构上，它实际使用的是`stdcall`。而在x86_64上，Windows使用`C`调用规范，所以它实际使用的是`C`。这意味着在我们之前的例子中，我们可以使用`extern "system" { ... }`为所有的Windows系统定义块，而不仅仅是x86的平台。
 
-* `Rust`
-* `rust-intrinsic`
-* `system`
-* `C`
-* `win64`
-* `sysv64`
+## 与外部代码互用性
 
-Most of the abis in this list are self-explanatory, but the `system` abi may
-seem a little odd. This constraint selects whatever the appropriate ABI is for
-interoperating with the target's libraries. For example, on win32 with a x86
-architecture, this means that the abi used would be `stdcall`. On x86_64,
-however, windows uses the `C` calling convention, so `C` would be used. This
-means that in our previous example, we could have used `extern "system" { ... }`
-to define a block for all windows systems, not only x86 ones.
+只有给一个结构体指定了`#[repr(C)]`，Rust才保证结构体的布局与平台的C的表示方法相兼容。`#[repr(C, packed)]`可以让结构体成员之间无填充。`#[repr(C)]`也可以作用于枚举类型。
 
-## Interoperability with foreign code
+Rust的`Box<T>`用一个非空的指针指向它包含的对象。但是，这些指针不能手工创建，而是要由内部分配器去管理。引用可以安全地等同于非空指针。不过，违背借用检查和可变性规则就不能保证是安全的了，所以在需要使用指针的地方我们尽量使用裸指针，因为编译器不会对它做过多的限制。
 
-Rust guarantees that the layout of a `struct` is compatible with the platform's
-representation in C only if the `#[repr(C)]` attribute is applied to it.
-`#[repr(C, packed)]` can be used to lay out struct members without padding.
-`#[repr(C)]` can also be applied to an enum.
+Vector和String拥有相同的内存布局，而且`vec`和`str`模块里也有一些与C API相关的工具。但是，字符串不是以`\0`结尾的。如果你想要一个与C兼容的Null结尾的字符串，你应该使用`std::ffi`模块中的`CString`类型。
 
-Rust's owned boxes (`Box<T>`) use non-nullable pointers as handles which point
-to the contained object. However, they should not be manually created because
-they are managed by internal allocators. References can safely be assumed to be
-non-nullable pointers directly to the type.  However, breaking the borrow
-checking or mutability rules is not guaranteed to be safe, so prefer using raw
-pointers (`*`) if that's needed because the compiler can't make as many
-assumptions about them.
+[crate.io的`libc` crate]`(https://crates.io/crates/libc)在`libc`模块中包含了C标准库的类型别名和函数定义，而Rust默认链接`libc`和`libm`。
 
-Vectors and strings share the same basic memory layout, and utilities are
-available in the `vec` and `str` modules for working with C APIs. However,
-strings are not terminated with `\0`. If you need a NUL-terminated string for
-interoperability with C, you should use the `CString` type in the `std::ffi`
-module.
+## 可变函数
 
-The [`libc` crate on crates.io][libc] includes type aliases and function
-definitions for the C standard library in the `libc` module, and Rust links
-against `libc` and `libm` by default.
+在C中，函数可以是“可变的”，也就是说可以接收可变数量的参数。在Rust中可以在外部函数声明的参数类表中插入`...`实现这一点：
 
-## Variadic functions
-
-In C, functions can be 'variadic', meaning they accept a variable number of arguments. This can
-be achieved in Rust by specifying `...` within the argument list of a foreign function declaration:
-
-```rust
+``` Rust
 extern {
     fn foo(x: i32, ...);
 }
@@ -581,54 +419,35 @@ fn main() {
 }
 ```
 
-Normal Rust functions can *not* be variadic:
+普通的Rust函数不能是可变的：
 
-```rust
-// This will not compile
-
+``` Rust
+// 这段不能通过编译
 fn foo(x: i32, ...) { }
 ```
 
-## The "nullable pointer optimization"
+## 空指针优化
 
-Certain Rust types are defined to never be `null`. This includes references (`&T`,
-`&mut T`), boxes (`Box<T>`), and function pointers (`extern "abi" fn()`). When
-interfacing with C, pointers that might be `null` are often used, which would seem to
-require some messy `transmute`s and/or unsafe code to handle conversions to/from Rust types.
-However, the language provides a workaround.
+一些Rust类型被定义为永不为`null`，包括引用（`&T`、`&mut T`）、`Box<T>`、以及函数指针（`extern "abi" fn()`）。可是在使用C的接口时，指针是经常可能为`null`的。看起来似乎需要用到`transmute`或者非安全代码来处理各种混乱的类型转换。但是，Rust其实提供了另外的方法。
 
-As a special case, an `enum` is eligible for the "nullable pointer optimization" if it contains
-exactly two variants, one of which contains no data and the other contains a field of one of the
-non-nullable types listed above.  This means no extra space is required for a discriminant; rather,
-the empty variant is represented by putting a `null` value into the non-nullable field. This is
-called an "optimization", but unlike other optimizations it is guaranteed to apply to eligible
-types.
+一些特殊情况中，`enum`很适合做空指针优化，只要它包含两个变量，其中一个不包含数据，而另外一个包含一个非空类型的成员。这样就不需要额外的空间做判断了：给那个包含非空成员的变量传递一个`null`，用它来表示另外那个空的变量。这种行为虽然被叫做“优化”，但是和其他的优化不同，它只适用于合适的类型。
 
-The most common type that takes advantage of the nullable pointer optimization is `Option<T>`,
-where `None` corresponds to `null`. So `Option<extern "C" fn(c_int) -> c_int>` is a correct way
-to represent a nullable function pointer using the C ABI (corresponding to the C type
-`int (*)(int)`).
+最常见的受益于空指针优化的类型是`Option<T>`，其中`None`可以用`null`表示。所以`Option<extern "C" fn(c_int) - > c_int>`就很适合表示一个使用C ABI的可为空的函数指针（对应于C的`int (*)(int)`）。
 
-Here is a contrived example. Let's say some C library has a facility for registering a
-callback, which gets called in certain situations. The callback is passed a function pointer
-and an integer and it is supposed to run the function with the integer as a parameter. So
-we have function pointers flying across the FFI boundary in both directions.
+下面是一个刻意造出来的例子。假设一些C的库提供了注册回调的方法，然后在特定的条件下调用回调。回调接受一个函数指针和一个整数，然后用这个整数作为参数调用指针指向的函数。所以我们会向FFI边界的两侧都传递函数指针。
 
-```rust
+``` Rust
+extern crate libc;
 use libc::c_int;
 
-#[cfg(hidden)]
 extern "C" {
-    /// Registers the callback.
+    // 注册回调。
     fn register(cb: Option<extern "C" fn(Option<extern "C" fn(c_int) -> c_int>, c_int) -> c_int>);
 }
-unsafe fn register(_: Option<extern "C" fn(Option<extern "C" fn(c_int) -> c_int>,
-                                           c_int) -> c_int>)
-{}
 
-/// This fairly useless function receives a function pointer and an integer
-/// from C, and returns the result of calling the function with the integer.
-/// In case no function is provided, it squares the integer by default.
+// 这个函数其实没什么实际的用处。它从C代码接受一个函数指针和一个整数，
+// 用整数做参数调用指针指向的函数，并返回函数的返回值。
+// 如果没有指定函数，那默认就返回整数的平方。
 extern "C" fn apply(process: Option<extern "C" fn(c_int) -> c_int>, int: c_int) -> c_int {
     match process {
         Some(f) => f(int),
@@ -643,41 +462,34 @@ fn main() {
 }
 ```
 
-And the code on the C side looks like this:
+C的代码是像这样的：
 
-```c
+``` C
 void register(void (*f)(void (*)(int), int)) {
     ...
 }
 ```
 
-No `transmute` required!
+看，并不需要`transmute`！
 
-## Calling Rust code from C
+## C调用Rust
 
-You may wish to compile Rust code in a way so that it can be called from C. This is
-fairly easy, but requires a few things:
+你可能想要用某种方式编译Rust，让C可以直接调用它。这件事很简单，只需要做少数的处理：
 
-```rust
+``` Rust
 #[no_mangle]
 pub extern fn hello_rust() -> *const u8 {
     "Hello, world!\0".as_ptr()
 }
-fn main() {}
 ```
 
-The `extern` makes this function adhere to the C calling convention, as
-discussed above in "[Foreign Calling
-Conventions](ffi.html#foreign-calling-conventions)". The `no_mangle`
-attribute turns off Rust's name mangling, so that it is easier to link to.
+`extern`让它对应的函数符合C的调用规范，在上面的[外部调用规范](https://doc.rust-lang.org/nomicon/ffi.html#foreign-calling-conventions)一节有详细讨论。`no_mangle`属性关闭Rust的name mangling，让它更方便被链接。
 
-## FFI and panics
+## FFI和panic
 
-It’s important to be mindful of `panic!`s when working with FFI. A `panic!`
-across an FFI boundary is undefined behavior. If you’re writing code that may
-panic, you should run it in a closure with [`catch_unwind`]:
+使用FFI的时候要格外注意`panic!`。跨越FFI边界的`panic!`属于未定义行为。如果你写的代码可能会panic，你应该使用`catch_unwind`在一个闭包里执行它：
 
-```rust
+``` Rust
 use std::panic::catch_unwind;
 
 #[no_mangle]
@@ -694,50 +506,40 @@ pub extern fn oh_no() -> i32 {
 fn main() {}
 ```
 
-Please note that [`catch_unwind`] will only catch unwinding panics, not
-those who abort the process. See the documentation of [`catch_unwind`]
-for more information.
+请注意，`catch_unwind`只能捕获可展开的panic，不能捕获abort。更多的信息请参考`catch_unwind`的文档。
 
-[`catch_unwind`]: ../std/panic/fn.catch_unwind.html
+## 表示不透明结构体
 
-## Representing opaque structs
+有时候，C的库要提供一个指针指向某个东西，但又不想让你知道那个东西的内部细节。最简单的方式是使用`void *`：
 
-Sometimes, a C library wants to provide a pointer to something, but not let you
-know the internal details of the thing it wants. The simplest way is to use a
-`void *` argument:
-
-```c
+``` C
 void foo(void *arg);
 void bar(void *arg);
 ```
 
-We can represent this in Rust with the `c_void` type:
+在Rust中我们可以用`c_void`类型表示它：
 
-```rust
+``` Rust
 extern crate libc;
 
 extern "C" {
     pub fn foo(arg: *mut libc::c_void);
     pub fn bar(arg: *mut libc::c_void);
 }
-fn main() {}
 ```
 
-This is a perfectly valid way of handling the situation. However, we can do a bit
-better. To solve this, some C libraries will instead create a `struct`, where
-the details and memory layout of the struct are private. This gives some amount
-of type safety. These structures are called ‘opaque’. Here’s an example, in C:
+这是一个完全合法的方法。不过，我们其实还可以做得更好。要解决这个问题，一些C库可能会创建一个结构体，可结构体的细节和内存布局是私有的。这样提高了类型的安全性。这种结构体被称为”不透明“的。下面是一个C的例子：
 
-```c
-struct Foo; /* Foo is a structure, but its contents are not part of the public interface */
+``` C
+struct Foo; /* Foo是一个接口，但它的内容不属于公共接口 */
 struct Bar;
 void foo(struct Foo *arg);
 void bar(struct Bar *arg);
 ```
 
-To do this in Rust, let’s create our own opaque types:
+在Rust中，我们可以使用枚举来创建我们自己的不透明类型：
 
-```rust
+``` Rust
 #[repr(C)] pub struct Foo { _private: [u8; 0] }
 #[repr(C)] pub struct Bar { _private: [u8; 0] }
 
@@ -745,21 +547,11 @@ extern "C" {
     pub fn foo(arg: *mut Foo);
     pub fn bar(arg: *mut Bar);
 }
-fn main() {}
+# fn main() {}
 ```
 
-By including a private field and no constructor,
-we create an opaque type that we can't instantiate outside of this module.
-(A struct with no field could be instantiated by anyone.)
-We also want to use this type in FFI, so we have to add `#[repr(C)]`.
-And to avoid warning around using `()` in FFI, we instead use an empty array,
-which works just as well as an empty type but is FFI-compatible.
+给结构体一个私有成员而不给它构造函数，这样我们就创建了一个不透明的类型，而且我们不能在模块之外实例化它。（没有成员的结构体可以在任何地方实例化）因为我们希望在FFI中使用这个类型，我们必须加上`#[repr(C)]`。还为了避免在FFI中使用`()`的时候出现警告，我们用了一个空数组。空数组和空类型的行为一致，同时它还是FFI兼容的。
 
-But because our `Foo` and `Bar` types are
-different, we’ll get type safety between the two of them, so we cannot
-accidentally pass a pointer to `Foo` to `bar()`.
+但因为`Foo`和`Bar`是不同的类型，我们需要保证两者之间的类型安全性，所以我们不能把`Foo`的指针传递给`bar()`。
 
-Notice that it is a really bad idea to use an empty enum as FFI type.
-The compiler relies on empty enums being uninhabited, so handling values of type
-`&Empty` is a huge footgun and can lead to buggy program behavior (by triggering
-undefined behavior).
+注意，用空枚举作为FFI类型是一个很不好的设计。编译器将空枚举视为不可达的空类型，所以使用`&Empty`类型的值是很危险的，这可能导致很多程序中的问题（触发未定义行为）。
