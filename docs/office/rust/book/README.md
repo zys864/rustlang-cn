@@ -1,6 +1,6 @@
 # Rust编程语言
 
-> **本书同步于官方 [The Rust Programming Language](https://doc.rust-lang.org/book/) 仓库[地址](https://github.com/rust-lang/book)！** 本书初始基于[trpl-zh-cn](https://kaisery.github.io/trpl-zh-cn/foreword.html),感谢作者.以后将与Rust官方文档同步更新.
+> **本书同步于官方 [The Rust Programming Language](https://doc.rust-lang.org/book/) 仓库[地址](https://github.com/rust-lang/book)！** 本书初始基于[trpl-zh-cn](https://kaisery.github.io/trpl-zh-cn/foreword.html),感谢作者.现将与Rust官方文档同步更新.
 
 ## Why Rust
 
