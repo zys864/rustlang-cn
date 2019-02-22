@@ -1,52 +1,28 @@
-# Exception Safety
+# 异常安全性
 
-> 原文跟踪[exception-safety.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/exception-safety.md) &emsp; Commit: c4ef161ed0cf6438966d4a44ee53948b540789e8
+> 源：[exception-safety.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/exception-safety.md) &nbsp; Commit: c4ef161ed0cf6438966d4a44ee53948b540789e8
 
-Although programs should use unwinding sparingly, there's a lot of code that
-*can* panic. If you unwrap a None, index out of bounds, or divide by 0, your
-program will panic. On debug builds, every arithmetic operation can panic
-if it overflows. Unless you are very careful and tightly control what code runs,
-pretty much everything can unwind, and you need to be ready for it.
+虽然前面说过我们应该慎用展开，但是还是有许多的地方会Panic。如果你对`None`调用`unwrap`、使用超出范围的索引值、或者用0做除数，你的程序就要panic。在debug模式下，所有的计算操作在溢出的时候也都会panic。除非你十分小心并且严格控制着每一条代码的行为，否则所有的东西都有展开的可能，你需要时刻准备迎接它。
 
-Being ready for unwinding is often referred to as *exception safety*
-in the broader programming world. In Rust, there are two levels of exception
-safety that one may concern themselves with:
+在更广大的程序设计世界里，应对展开这件事通常被称之为“异常安全“。在Rust中，我们需要考虑两个层次的异常安全性：
 
-* In unsafe code, we *must* be exception safe to the point of not violating
-  memory safety. We'll call this *minimal* exception safety.
+- 在非安全代码中，异常安全的下限是要保证不能违背内存安全性。我们称之为最小异常安全性。
+- 在安全代码中，异常安全性要保证程序时刻在做正确的事情。我们称之为最大异常安全性。
 
-* In safe code, it is *good* to be exception safe to the point of your program
-  doing the right thing. We'll call this *maximal* exception safety.
+在许多情况下，非安全代码在处理展开的时候需要考虑到那些写得很糟糕的安全代码。一些只是暂时导致不稳定状态的程序需要小心，一旦触发了Panic会导致这种状态无法使用。这表示在不稳定状态依然存在的情况下，我们需要保证值运行不触发Panic的代码；或者在触发Panic的时候即使处理，清除这种状态。这也表明Panic看到的状态并不一定非得是连续的状态，我们只需要保证它是安全地状态就可以。
 
-As is the case in many places in Rust, Unsafe code must be ready to deal with
-bad Safe code when it comes to unwinding. Code that transiently creates
-unsound states must be careful that a panic does not cause that state to be
-used. Generally this means ensuring that only non-panicking code is run while
-these states exist, or making a guard that cleans up the state in the case of
-a panic. This does not necessarily mean that the state a panic witnesses is a
-fully coherent state. We need only guarantee that it's a *safe* state.
-
-Most Unsafe code is leaf-like, and therefore fairly easy to make exception-safe.
-It controls all the code that runs, and most of that code can't panic. However
-it is not uncommon for Unsafe code to work with arrays of temporarily
-uninitialized data while repeatedly invoking caller-provided code. Such code
-needs to be careful and consider exception safety.
-
-
-
-
+大多数非安全代码都比较容易实现异常安全。因为它控制着程序运行的每个细节，而且大部分代码不会Panic。但是非安全代码也经常要做诸如在未初始化数据的数组上反复运行外部代码这样的操作。这种代码就需要小心考虑异常安全性了。
 
 ## Vec::push_all
 
-`Vec::push_all` is a temporary hack to get extending a Vec by a slice reliably
-efficient without specialization. Here's a simple implementation:
+`Vec::push_all`使用一个`slice`扩充`Vec`，由于它没有具体化类型，所以能获得较高的效率。下面是一个简单的实现：
 
-```rust,ignore
+``` Rust
 impl<T: Clone> Vec<T> {
     fn push_all(&mut self, to_push: &[T]) {
         self.reserve(to_push.len());
         unsafe {
-            // can't overflow because we just reserved this
+            // 因为我们调用了reserve，所以不会出现溢出
             self.set_len(self.len() + to_push.len());
 
             for (i, x) in to_push.iter().enumerate() {
@@ -57,42 +33,26 @@ impl<T: Clone> Vec<T> {
 }
 ```
 
-We bypass `push` in order to avoid redundant capacity and `len` checks on the
-Vec that we definitely know has capacity. The logic is totally correct, except
-there's a subtle problem with our code: it's not exception-safe! `set_len`,
-`offset`, and `write` are all fine; `clone` is the panic bomb we over-looked.
+我们不去使用`push`，因为它会对Vec的容量和`len`做额外的检查，而有些情况下我们能够明确知道容量是充足的。这段代码的逻辑是完全正确的，但是却有一个问题：它不是异常安全的！`set_len`、`offset`和`write`都没问题，但是`clone`是一颗引发Panic的炸弹。
 
-Clone is completely out of our control, and is totally free to panic. If it
-does, our function will exit early with the length of the Vec set too large. If
-the Vec is looked at or dropped, uninitialized memory will be read!
+`Clone`的实现是我们无法控制的，它很可能会panic。如果它真的panic了，这个方法会提前退出，但我们之前给Vec设置的更大的长度会一致保持下去。当Vec被访问或者销毁的时候，它会读取未初始化内存！
 
-The fix in this case is fairly simple. If we want to guarantee that the values
-we *did* clone are dropped, we can set the `len` every loop iteration. If we
-just want to guarantee that uninitialized memory can't be observed, we can set
-the `len` after the loop.
-
-
-
-
+解决方法很简单。如果我们要保证我们clone的值都被销毁了，我们可以在每一次循环里设置`len`。如果我们只是想保证不会出现读取未初始化内存的情况，我们可以在循环之后设置`len`。
 
 ## BinaryHeap::sift_up
 
-Bubbling an element up a heap is a bit more complicated than extending a Vec.
-The pseudocode is as follows:
+对二叉堆做冒泡比扩充一个Vec要更复杂一点。伪代码是这样的：
 
-```text
+```
 bubble_up(heap, index):
     while index != 0 && heap[index] < heap[parent(index)]:
         heap.swap(index, parent(index))
         index = parent(index)
-
 ```
 
-A literal transcription of this code to Rust is totally fine, but has an annoying
-performance characteristic: the `self` element is swapped over and over again
-uselessly. We would rather have the following:
+将它翻译成Rust很容易，但是性能不会让人满意：`self`元素要一遍一遍做无意义的交换。我们更喜欢下面的版本：
 
-```text
+```
 bubble_up(heap, index):
     let elem = heap[index]
     while index != 0 && elem < heap[parent(index)]:
@@ -101,17 +61,11 @@ bubble_up(heap, index):
     heap[index] = elem
 ```
 
-This code ensures that each element is copied as little as possible (it is in
-fact necessary that elem be copied twice in general). However it now exposes
-some exception safety trouble! At all times, there exists two copies of one
-value. If we panic in this function something will be double-dropped.
-Unfortunately, we also don't have full control of the code: that comparison is
-user-defined!
+这段代码保证各个元素被尽量少的复制(通常每个元素需要被复制两次)。但是这样它会引发异常安全问题！任何时刻都存在着一个值的两份拷贝。如果这个方法中出现panic，有一些东西可能会被二次释放。不幸的是，我们同样不能完全掌控这段代码，因为比较操作是用户定义的。
 
-Unlike Vec, the fix isn't as easy here. One option is to break the user-defined
-code and the unsafe code into two separate phases:
+这个解决方案比Vec的要困难。一个选项是把用户定义代码和非安全代码拆分成两个阶段：
 
-```text
+```
 bubble_up(heap, index):
     let end_index = index;
     while end_index != 0 && heap[end_index] < heap[parent(end_index)]:
@@ -124,43 +78,31 @@ bubble_up(heap, index):
     heap[index] = elem
 ```
 
-If the user-defined code blows up, that's no problem anymore, because we haven't
-actually touched the state of the heap yet. Once we do start messing with the
-heap, we're working with only data and functions that we trust, so there's no
-concern of panics.
+如果用户定义的代码爆炸了，也不会伤及无辜，因为我们还没有实际改变堆的状态。等我们开始在堆上搞事情的时候，我们只会使用我们信任的数据和函数，不用担心panic。
 
-Perhaps you're not happy with this design. Surely it's cheating! And we have
-to do the complex heap traversal *twice*! Alright, let's bite the bullet. Let's
-intermix untrusted and unsafe code *for reals*.
+你可能对这个设计感到很不爽。这个属于作弊！而且我们必须对堆完整遍历两次！好吧，让我们直面困难，把不信任代码和不安全代码混合在一起。
 
-If Rust had `try` and `finally` like in Java, we could do the following:
+如果Rust像Java一样有`try`和`finally`，我们可以这么做：
 
-```text
+```
 bubble_up(heap, index):
     let elem = heap[index]
     try:
-        while index != 0 && elem < heap[parent(index)]:
+        while index != 0 && elem < heap[parent(index)]:
             heap[index] = heap[parent(index)]
             index = parent(index)
     finally:
         heap[index] = elem
 ```
 
-The basic idea is simple: if the comparison panics, we just toss the loose
-element in the logically uninitialized index and bail out. Anyone who observes
-the heap will see a potentially *inconsistent* heap, but at least it won't
-cause any double-drops! If the algorithm terminates normally, then this
-operation happens to coincide precisely with the how we finish up regardless.
+基本思想很简单：如果比较操作panic了，我们就把取出的元素塞回到逻辑上未初始化的位置然后退出。访问这个堆的人可能会发现堆的状态是不连续的，但是至少这个方案不会引发二次释放！如果算法正常结束的话，这个设计就和我们最开始不做任何处理的方案一模一样了。
 
-Sadly, Rust has no such construct, so we're going to need to roll our own! The
-way to do this is to store the algorithm's state in a separate struct with a
-destructor for the "finally" logic. Whether we panic or not, that destructor
-will run and clean up after us.
+可惜，Rust并没有这些东西，所以我们只能自己早轮子了！我们把算法的状态储存在一个独立的结构体中，结构体的析构函数起到了”finally“的功能。不管有没有panic，析构函数都会被调用并且清除我们留下状态。
 
-```rust,ignore
+``` Rust
 struct Hole<'a, T: 'a> {
     data: &'a mut [T],
-    /// `elt` is always `Some` from new until drop.
+    // elt从始至终都会是Some
     elt: Option<T>,
     pos: usize,
 }
@@ -193,7 +135,7 @@ impl<'a, T> Hole<'a, T> {
 
 impl<'a, T> Drop for Hole<'a, T> {
     fn drop(&mut self) {
-        // fill the hole again
+        // 再次填充hole
         unsafe {
             let pos = self.pos;
             ptr::write(&mut self.data[pos], self.elt.take().unwrap());
@@ -204,7 +146,7 @@ impl<'a, T> Drop for Hole<'a, T> {
 impl<T: Ord> BinaryHeap<T> {
     fn sift_up(&mut self, pos: usize) {
         unsafe {
-            // Take out the value at `pos` and create a hole.
+            // 取出pos处的值，然后创建一个hole
             let mut hole = Hole::new(&mut self.data, pos);
 
             while hole.pos() != 0 {
@@ -212,7 +154,7 @@ impl<T: Ord> BinaryHeap<T> {
                 if hole.removed() <= hole.get(parent) { break }
                 hole.move_to(parent);
             }
-            // Hole will be unconditionally filled here; panic or not!
+            // 无论有没有panic，hold在此处都会无条件地被填充
         }
     }
 }
