@@ -1,21 +1,14 @@
-# 子类型与转换
+# 子类型和变异
 
-> 原文跟踪[subtyping.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/subtyping.md) &emsp; Commit: a805a667ba8534b78b9587ba7644dac53ce0ab98
+> 源：[subtyping.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/subtyping.md) &nbsp; Commit: a805a667ba8534b78b9587ba7644dac53ce0ab98
 
-Subtyping is a relationship between types that allows statically typed
-languages to be a bit more flexible and permissive.
+子类型是类型之间的一种关系，可以让静态类型语言更加地灵活自由。
 
-Subtyping in Rust is a bit different from subtyping in other languages. This
-makes it harder to give simple examples, which is a problem since subtyping,
-and especially variance, are already hard to understand properly. As in,
-even compiler writers mess it up all the time.
+Rust中的子类型与其他语言的子类型略有不同。 这使得提供简单示例变得更加困难，这是一个问题，因为子类型，尤其是变异，已经很难正确理解。 甚至是编译器编写者也会搞乱。
 
-To keep things simple, this section will consider a small extension to the
-Rust language that adds a new and simpler subtyping relationship. After
-establishing concepts and issues under this simpler system,
-we will then relate it back to how subtyping actually occurs in Rust.
+为了简单起见，本节将考虑是对Rust语言的一个小扩展，它增加了一个新的更简单的子类型关系。 在这个更简单的系统下建立概念和问题之后，我们将把它与Rust中实际发生的子类型联系起来。
 
-So here's our simple extension, *Objective Rust*, featuring three new types:
+所以这是我们的简单扩展，Objective Rust，有三种新类型：
 
 ```rust
 trait Animal {
@@ -32,9 +25,9 @@ trait Dog: Animal {
 }
 ```
 
-But unlike normal traits, we can use them as concrete and sized types, just like structs.
+但与普通特征不同，我们可以将它们用作具体和大小的类型，就像结构体一样。
 
-Now, say we have a very simple function that takes an Animal, like this:
+现在，假设我们有一个非常简单的函数，它接受一个`Animal`，就像这样：
 
 ```rust
 fn love(pet: Animal) {
@@ -42,43 +35,28 @@ fn love(pet: Animal) {
 }
 ```
 
-By default, static types must match *exactly* for a program to compile. As such,
-this code won't compile:
+默认情况下，静态类型必须与要编译的程序完全匹配。 因此，此代码将无法编译：
 
 ```rust
 let mr_snuggles: Cat = ...;
 love(mr_snuggles);         // ERROR: expected Animal, found Cat
 ```
 
-Mr. Snuggles is a Cat, and Cats aren't *exactly* Animals, so we can't love him! 😿
+Snuggles先生是猫，猫不是动物，所以我们不能爱他！ 
 
-This is annoying because Cats *are* Animals. They support every operation
-an Animal supports, so intuitively `love` shouldn't care if we pass it a `Cat`.
-We should be able to just **forget** the non-animal parts of our `Cat`, as they
-aren't necessary to love it.
+这很烦人，因为猫是动物。它们支持动物支持的每一项操作，所以如果我们将它传递给`Cat`，直觉上爱情就不应该关心。我们应该能够忘记我们猫的非动物部分，因为它们没有必要去爱它。
 
-This is exactly the problem that *subtyping* is intended to fix. Because Cats are just
-Animals **and more**, we say Cat is a *subtype* of Animal (because Cats are a *subset*
-of all the Animals). Equivalently, we say that Animal is a *supertype* of Cat.
-With subtypes, we can tweak our overly strict static type system
-with a simple rule: anywhere a value of type `T` is expected, we will also
-accept values that are subtypes of `T`.
+这正是子类型要修复的问题。因为猫只是动物和更多，我们说猫是动物的亚型（因为猫是所有动物的子集）。同样，我们说动物是猫的超级类型。使用子类型，我们可以通过一个简单的规则调整我们过于严格的静态类型系统：在预期类型为T的值的任何地方，我们也将接受作为T的子类型的值。
 
-Or more concretely: anywhere an Animal is expected, a Cat or Dog will also work.
+或者更具体地说：在任何期望动物的地方，猫或狗也会起作用。
 
-As we will see throughout the rest of this section, subtyping is a lot more complicated
-and subtle than this, but this simple rule is a very good 99% intuition. And unless you
-write unsafe code, the compiler will automatically handle all the corner cases for you.
+正如我们将在本节的其余部分中看到的那样，子类型比这更复杂和微妙，但这个简单的规则是符合的99％直觉。除非您编写不安全的代码，编译器将自动为您处理所有角落情况。
 
-But this is the Rustonomicon. We're writing unsafe code, so we need to understand how
-this stuff really works, and how we can mess it up.
+但这是Rustonomicon。 我们正在编写不安全的代码，所以我们需要了解这些东西是如何工作的，以及我们为何搞砸它。
 
-The core problem is that this rule, naively applied, will lead to *meowing Dogs*. That is,
-we can convince someone that a Dog is actually a Cat. This completely destroys the fabric
-of our static type system, making it worse than useless (and leading to Undefined Behaviour).
+核心问题是这个规则会导致'喵喵叫'的狗。 也就是说，我们可以说服某人说狗实际上是猫。 这完全破坏了我们的静态类型系统的结构，使其比无用（并导致未定义的行为）更糟糕。
 
-Here's a simple example of this happening when we apply subtyping in a completely naive
-"find and replace" way.
+当我们以完全天真的"查找和替换"方式应用子类型时，这是一个简单的例子。
 
 ```rust
 fn evil_feeder(pet: &mut Animal) {
@@ -96,106 +74,67 @@ fn main() {
 }
 ```
 
-Clearly, we need a more robust system than "find and replace". That system is *variance*,
-which is a set of rules governing how subtyping should compose. Most importantly, variance
-defines situations where subtyping should be disabled.
+显然，我们需要一个比“查找和替换”更强大的系统。 该系统是变异，这是一组规则如何构成子类型的规则。 最重要的是，变异定义了应禁用子类型的情况。
 
-But before we get into variance, let's take a quick peek at where subtyping actually occurs in
-Rust: *lifetimes*!
+但在我们开始变异之前，让我们快速看看Rust中实际存在的子类型：生命周期！
 
-> NOTE: The typed-ness of lifetimes is a fairly arbitrary construct that some
-> disagree with. However it simplifies our analysis to treat lifetimes
-> and types uniformly.
+> 注意：生命周期的类型是一种相当随意的结构，有些人不同意。 然而，它简化了我们的分析，以统一处理生命周期和类型。
 
-Lifetimes are just regions of code, and regions can be partially ordered with the *contains*
-(outlives) relationship. Subtyping on lifetimes is in terms of that relationship:
-if `'big: 'small` ("big contains small" or "big outlives small"), then `'big` is a subtype
-of `'small`. This is a large source of confusion, because it seems backwards
-to many: the bigger region is a *subtype* of the smaller region. But it makes
-sense if you consider our Animal example: Cat is an Animal *and more*,
-just as `'big` is `'small` *and more*.
+生命周期只是代码区域，区域可以部分地与包含（outlives）关系一起排序。生命周期的子类型就是这种关系：如果`'big: 'small`（"big包含small"或"大比小存活的长"），那么`big`是`small`的子类型。这是一个很大的混乱来源，因为它看起来逆直觉很多：较大的区域是较小区域的子类型。但是，如果你考虑我们的动物例子，它是有道理的：猫是一个动物和更多，就像`big`是`small`和更多。
 
-Put another way, if someone wants a reference that lives for `'small`,
-usually what they actually mean is that they want a reference that lives
-for *at least* `'small`. They don't actually care if the lifetimes match
-exactly. So it should be ok for us to **forget** that something lives for
-`'big` and only remember that it lives for `'small`.
+换句话说，如果有人想要一个"small"的引用，那么他们实际上意味着他们想要的引用至少是"small"。他们实际上并不关心生命周期是否完全匹配。因此，我们应该忘记一些东西是`big`的生命周期而且只需记得`small`的生命周期。
 
-The meowing dog problem for lifetimes will result in us being able to
-store a short-lived reference in a place that expects a longer-lived one,
-creating a dangling reference and letting us use-after-free.
+`喵喵狗`问题的生命周期将导致我们能够将一个短命的参考存储在一个期望生命周期更长的地方，创造一个悬垂的引用并让我们在释放后使用。
 
-It will be useful to note that `'static`, the forever lifetime, is a subtype of
-every lifetime because by definition it outlives everything. We will be using
-this relationship in later examples to keep them as simple as possible.
+值得注意的是，`'static`，永恒的生命，是每个生命周期的子类型，因为根据定义，它比所有东西都要长。我们将在后面的示例中使用此关系，以使它们尽可能简单。
 
-With all that said, we still have no idea how to actually *use* subtyping of lifetimes,
-because nothing ever has type `'a`. Lifetimes only occur as part of some larger type
-like `&'a u32` or `IterMut<'a, u32>`. To apply lifetime subtyping, we need to know
-how to compose subtyping. Once again, we need *variance*.
+尽管如此，我们仍然不知道如何实际使用生命周期的子类型，因为没有谁有个类型`'a`。生命周期只发生在某些较大类型的一部分，如`'a u32`或`IterMut <'a，u32>`。要应用生命周期子类型，我们需要知道如何编写子类型。再一次，我们需要变异。
 
-## Variance
+## 变异
 
-Variance is where things get a bit complicated.
+变异是事情变得复杂的地方。
 
-Variance is a property that *type constructors* have with respect to their
-arguments. A type constructor in Rust is any generic type with unbound arguments.
-For instance `Vec` is a type constructor that takes a type `T` and returns
-`Vec<T>`. `&` and `&mut` are type constructors that take two inputs: a
-lifetime, and a type to point to.
+变异是类型构造函数关于其参数的属性。 Rust中的类型构造函数是具有无界参数的任何泛型类型。 例如，`Vec`是一个类型构造函数，它接受一个类型`T`并返回`Vec <T>`。 `＆`和`＆mut`是带有两个输入的类型构造函数：生命周期和指向的类型。
 
-> NOTE: For convenience we will often refer to `F<T>` as a type constructor just so
-> that we can easily talk about `T`. Hopefully this is clear in context.
+> 注意：为方便起见，我们经常将`F <T>`称为类型构造函数，以便我们可以轻松地讨论`T`.希望这在上下文中是明确的。
 
-A type constructor F's *variance* is how the subtyping of its inputs affects the
-subtyping of its outputs. There are three kinds of variance in Rust. Given two
-types `Sub` and `Super`, where `Sub` is a subtype of `Super`:
+类型构造函数`F`的变异是其输入的子类型如何影响其输出的子类型。 Rust中有三种变异。 给定`Sub`和`Super`两种类型，其中`Sub`是`Super`的子类型：
 
-* `F` is *covariant* if `F<Sub>` is a subtype of `F<Super>` (subtyping "passes through")
-* `F` is *contravariant* if `F<Super>` is a subtype of `F<Sub>` (subtyping is "inverted")
-* `F` is *invariant* otherwise (no subtyping relationship exists)
+- 如果当`F<Sub>`是`F<Super>`的子类型时，则`F`是*协变*的（子类型"正向"）
+- 如果当`F<Super>`是`F<Sub>`的子类型时，则`F`是*逆变*的 （子类型是"倒"）
+- 其他情况`F`是*不变*的（没有子类型关系存在）
 
-If `F` has multiple type parameters, we can talk about the individual variances
-by saying that, for example, `F<T, U>` is covariant over `T` and invariant over `U`.
+如果`F`有多个类型参数，我们可以通过讨论个体差异，例如，`F <T，U>`在`T上`是协变的而在`U`上是不变的，可以讨论各个变异。
 
-It is very useful to keep in mind that covariance is, in practical terms, "the"
-variance. Almost all consideration of variance is in terms of whether something
-should be covariant or invariant. Actually witnessing contravariance is quite difficult
-in Rust, though it does in fact exist.
+记住协变实际上是"变异"是非常有用的。 几乎所有对变异的考虑都取决于某些事物是否应该是协变的或不变的。 实际上，在Rust中遇见逆变是相当困难的，尽管它确实存在。
 
-Here is a table of important variances which the rest of this section will be devoted
-to trying to explain:
+以下是本节其余部分将用于解释变异的重要差异表：
 
-|   |                 |     'a    |         T         |     U     |
-|---|-----------------|:---------:|:-----------------:|:---------:|
-| * | `&'a T`        | covariant | covariant         |           |
-| * | `&'a mut T`     | covariant | invariant         |           |
-| * | `Box<T>`        |           | covariant         |           |
-|   | `Vec<T>`        |           | covariant         |           |
-| * | `UnsafeCell<T>` |           | invariant         |           |
-|   | `Cell<T>`       |           | invariant         |           |
-| * | `fn(T) -> U`    |           | **contra**variant | covariant |
-|   | `*const T`      |           | covariant         |           |
-|   | `*mut T`        |           | invariant         |           |
+|   |                 |     'a    |         T          |     U     |
+|---|-----------------|:---------:|:------------------:|:---------:|
+| * | `&'a T `        |    协变    |       协变         |           |
+| * | `&'a mut T`     |    协变    |       不变         |           |
+| * | `Box<T>`        |           |       协变         |           |
+|   | `Vec<T>`        |           |       协变         |           |
+| * | `UnsafeCell<T>` |           |       不变         |           |
+|   | `Cell<T>`       |           |       不变         |           |
+| * | `fn(T) -> U`    |           |     **逆变**       |    协变    |
+|   | `*const T`      |           |       协变         |           |
+|   | `*mut T`        |           |       不变         |           |
 
-The types with \*'s are the ones we will be focusing on, as they are in
-some sense "fundamental". All the others can be understood by analogy to the others:
+带`*`的类型是我们将关注的类型，因为它们在某种意义上是"基础"。 所有其他类型都可以通过类比来理解：
 
-* Vec and all other owning pointers and collections follow the same logic as Box
-* Cell and all other interior mutability types follow the same logic as UnsafeCell
-* `*const` follows the logic of `&T`
-* `*mut` follows the logic of `&mut T` (or `UnsafeCell<T>`)
 
-> NOTE: the *only* source of contravariance in the language is the arguments to
-> a function, which is why it really doesn't come up much in practice. Invoking
-> contravariance involves higher-order programming with function pointers that
-> take references with specific lifetimes (as opposed to the usual "any lifetime",
-> which gets into higher rank lifetimes, which work independently of subtyping).
+- `Vec`和所有其他的`拥有指针类型`和`集合`遵循与`Box`相同的逻辑
+- `Cell`和所有其他的`内部可变性类型`遵循与`UnsafeCell`相同的逻辑
+- `* const`遵循`＆T`的逻辑
+- `* mut`遵循`＆mut T`（或`UnsafeCell <T>`）的逻辑
 
-Ok, that's enough type theory! Let's try to apply the concept of variance to Rust
-and look at some examples.
+注意：语言中唯一的逆变来源是函数的参数，这就是为什么它在实践中确实没有出现的原因。 调用逆变包括使用函数指针进行高阶编程，这些函数指针采用具有特定生命周期的引用（与通常的“任何生命周期”相反，后者进入更高级别的生命周期，其独立于子类型工作）。
 
-First off, let's revisit the meowing dog example:
+这就是类型理论！ 让我们尝试将变异的概念应用于Rust并查看一些示例。
+
+首先，让我们再看看喵喵叫的狗的例子：
 
 ```rust
 fn evil_feeder(pet: &mut Animal) {
@@ -213,57 +152,27 @@ fn main() {
 }
 ```
 
-If we look at our table of variances, we see that `&mut T` is *invariant* over `T`.
-As it turns out, this completely fixes the issue! With invariance, the fact that
-Cat is a subtype of Animal doesn't matter; `&mut Cat` still won't be a subtype of
-`&mut Animal`. The static type checker will then correctly stop us from passing
-a Cat into `evil_feeder`.
+如果我们查看我们的差异表，我们会看到`＆mut T`对T不变。事实证明，这完全解决了这个问题！由于不变性，`Cat`是动物亚型的事实并不重要; `＆mut Cat`仍然不会是`＆mut Animal`的子类型。然后，静态类型检查器将正确阻止我们将`Cat`传递给`evil_feeder`。
 
-The soundness of subtyping is based on the idea that it's ok to forget unnecessary
-details. But with references, there's always someone that remembers those details:
-the value being referenced. That value expects those details to keep being true,
-and may behave incorrectly if its expectations are violated.
+子类型的健全性基于这样的想法，即忘记不必要的细节是可以的。但是通过引用，总会有人记住这些细节：被引用的值。该值预计这些细节将保持正确，并且如果违反预期，则可能表现不正确。
 
-The problem with making `&mut T` covariant over `T` is that it gives us the power
-to modify the original value *when we don't remember all of its constraints*.
-And so, we can make someone have a Dog when they're certain they still have a Cat.
+在`T`上进行`＆mut T`协变的问题在于，当我们不记得所有约束时，它赋予我们修改原始值的能力。因此，当他们确定他们还有一只猫时，我们可以让某人拥有一只狗。
 
-With that established, we can easily see why `&T` being covariant over `T` *is*
-sound: it doesn't let you modify the value, only look at it. Without any way to
-mutate, there's no way for us to mess with any details. We can also see why
-`UnsafeCell` and all the other interior mutability types must be invariant: they
-make `&T` work like `&mut T`!
+有了这个，我们可以很容易地看出为什么`＆T`对`T`的协变是合理的：它不会让你修改价值，只看它。没有任何改变的方法，我们没有办法搞砸任何细节。我们还可以看到为什么`UnsafeCell`和所有其他内部可变性类型必须是不变的：它们使`＆T`的工作类似于`＆mut T`！
 
-Now what about the lifetime on references? Why is it ok for both kinds of references
-to be covariant over their lifetimes? Well, here's a two-pronged argument:
+那么引用的生命周期呢？为什么这两种引用在其生命周期内都是协变的呢？嗯，这是一个双管齐下的论点：
 
-First and foremost, subtyping references based on their lifetimes is *the entire point
-of subtyping in Rust*. The only reason we have subtyping is so we can pass
-long-lived things where short-lived things are expected. So it better work!
+首先，基于生命周期的子类型引用是Rust中子类型的全部要点。我们进行子类型化的唯一原因是我们可以通过长期存在的事物来预期短期事物。所以它更好用！
 
-Second, and more seriously, lifetimes are only a part of the reference itself. The
-type of the referent is shared knowledge, which is why adjusting that type in only
-one place (the reference) can lead to issues. But if you shrink down a reference's
-lifetime when you hand it to someone, that lifetime information isn't shared in
-anyway. There are now two independent references with independent lifetimes.
-There's no way to mess with original reference's lifetime using the other one.
+其次，更严重的是，生命周期只是引用本身的一部分。指示物的类型是共享知识，这就是为什么仅在一个地方（引用）调整该类型可能导致问题。但是，如果您在将引用信息交给某人时减少了引用信息的生命周期，那么无论如何都不会共享该生命周期信息。现在有两个具有独立生命周期的独立引用。使用另一个没有办法混淆原始引用的生命周期。
 
-Or rather, the only way to mess with someone's lifetime is to build a meowing dog.
-But as soon as you try to build a meowing dog, the lifetime should be wrapped up
-in an invariant type, preventing the lifetime from being shrunk. To understand this
-better, let's port the meowing dog problem over to real Rust.
+或者更确切地说，弄乱一个生命周期的唯一方法就是构造一条喵喵叫的狗。但是一旦你试图构造一条喵喵叫的狗，它的生命周期就应该以不变的形式包裹起来，防止它的生命周期缩短。为了更好地理解这一点，让我们将喵喵叫的狗问题转移到真正的Rust身上。
 
-In the meowing dog problem we take a subtype (Cat), convert it into a supertype
-(Animal), and then use that fact to overwrite the subtype with a value that satisfies
-the constraints of the supertype but not the subtype (Dog).
+在喵喵狗问题中，我们采用子类型（Cat），将其转换为超类型（Animal），然后使用该事实用满足超类型但不满足子类型（Dog）的约束来覆盖子类型。
 
-So with lifetimes, we want to take a long-lived thing, convert it into a
-short-lived thing, and then use that to write something that doesn't live long
-enough into the place expecting something long-lived.
+因此，在生命周期，我们想要一个长期存活的东西，把它转换成一个短期存活的东西，然后在期待长期存活的地方用它来写一些不能长期存活的东西。
 
-Here it is:
-
-```rust
+``` rust
 fn evil_feeder<T>(input: &mut T, val: T) {
     *input = val;
 }
@@ -279,7 +188,7 @@ fn main() {
 }
 ```
 
-And what do we get when we run this?
+当我们运行它时我们会得到什么？
 
 ```text
 error[E0597]: `spike` does not live long enough
@@ -294,54 +203,32 @@ error[E0597]: `spike` does not live long enough
    = note: borrowed value must be valid for the static lifetime...
 ```
 
-Good, it doesn't compile! Let's break down what's happening here in detail.
+好，它不编译！ 让我们详细分解这里发生的事情。
 
-First let's look at the new `evil_feeder` function:
+首先让我们看看新的`evil_feeder`函数：
 
-```rust
-fn evil_feeder<T>(input: &mut T, val: T) {
-    *input = val;
-}
-```
+所有这一切都需要一个可变的引用和一个值，并用它覆盖指示对象。这个函数的重要之处在于它创建了一个类型相等约束。它在其签名中清楚地表明指示物和价值必须是完全相同的类型。
 
-All it does it take a mutable reference and a value and overwrite the referent with it.
-What's important about this function is that it creates a type equality constraint. It
-clearly says in its signature the referent and the value must be the *exact same* type.
+同时，在调用者中我们传入`＆mut＆'static str`和`＆'spike_str str`。
 
-Meanwhile, in the caller we pass in `&mut &'static str` and `&'spike_str str`.
+因为`＆mut T`在T上是不变的，所以编译器得出结论它不能对第一个参数应用任何子类型，因此`T`必须是`&'static str`。
 
-Because `&mut T` is invariant over `T`, the compiler concludes it can't apply any subtyping
-to the first argument, and so `T` must be exactly `&'static str`.
+另一个争论只是一个`＆'a str`，它对`'a`是协变的。因此编译器采用约束：`＆'spike_str str`必须是`＆'static str`（包括）的子类型，这反过来暗示`'spike_str`必须是`'static`（包含）的子类型。也就是说`'spike_str`必须包含`'static`。但只有一个能包含`'static` : `'static`本身！
 
-The other argument is only an `&'a str`, which *is* covariant over `'a`. So the compiler
-adopts a constraint: `&'spike_str str` must be a subtype of `&'static str` (inclusive),
-which in turn implies `'spike_str` must be a subtype of `'static` (inclusive). Which is to say,
-`'spike_str` must contain `'static`. But only one thing contains `'static` -- `'static` itself!
+这就是我们在尝试为`spike_str`分配`＆spike`时出错的原因。编译器已经向后工作以得出结论`spike_str`必须永远存在，并且`＆spike`根本不能活得那么久。
 
-This is why we get an error when we try to assign `&spike` to `spike_str`. The
-compiler has worked backwards to conclude `spike_str` must live forever, and `&spike`
-simply can't live that long.
+因此，即使引用在其生命周期中是协变的，但只要它们被置于可能对此做坏事的上下文中，它们就“继承”不变性。在这种情况下，只要我们将引用放在`＆mut T`中，我们就会继承不变性。
 
-So even though references are covariant over their lifetimes, they "inherit" invariance
-whenever they're put into a context that could do something bad with that. In this case,
-we inherited invariance as soon as we put our reference inside an `&mut T`.
+事实证明，为什么`Box`（以及`Vec`，`Hashmap`等）可以协变的论证非常类似于为什么生命周期都可以协变的论证：只要你试着填充它们类似于可变引用的东西，它们继承了不变性并且你被阻止做任何坏事。
 
-As it turns out, the argument for why it's ok for Box (and Vec, Hashmap, etc.) to
-be covariant is pretty similar to the argument for why it's ok for
-lifetimes to be covariant: as soon as you try to stuff them in something like a
-mutable reference, they inherit invariance and you're prevented from doing anything
-bad.
+然而`Box`更容易关注我们部分掩盖的引用的价值方面。
 
-However Box makes it easier to focus on by-value aspect of references that we
-partially glossed over.
+与许多允许值始终自由别名的语言不同，Rust有一个非常严格的规则：如果允许变异或移动值，则保证您是唯一可以访问它的人。
 
-Unlike a lot of languages which allow values to be freely aliased at all times,
-Rust has a very strict rule: if you're allowed to mutate or move a value, you
-are guaranteed to be the only one with access to it.
+请考虑以下代码：
 
-Consider the following code:
 
-```rust
+``` rust
 let mr_snuggles: Box<Cat> = ..;
 let spike: Box<Dog> = ..;
 
@@ -350,93 +237,66 @@ pet = mr_snuggles;
 pet = spike;
 ```
 
-There is no problem at all with the fact that we have forgotten that `mr_snuggles` was a Cat,
-or that we overwrote him with a Dog, because as soon as we moved mr_snuggles to a variable
-that only knew he was an Animal, **we destroyed the only thing in the universe that
-remembered he was a Cat**!
+因为我们忘记了`mr_snuggles`是一只猫，或者我们用狗覆盖了他，所以我们没有任何问题，因为只要我们将`mr_snuggles`移动到一个只知道他是动物的变量，我们就摧毁了唯一的 在宇宙中记得他是猫的东西！
 
-In contrast to the argument about immutable references being soundly covariant because they
-don't let you change anything, owned values can be covariant because they make you
-change *everything*. There is no connection between old locations and new locations.
-Applying by-value subtyping is an irreversible act of knowledge destruction, and
-without any memory of how things used to be, no one can be tricked into acting on
-that old information!
+与不可变引用完全协变的论点相反，因为它们不允许你改变任何东西，所拥有的值可以是协变的，因为它们会让你改变一切。 旧位置和新位置之间没有连接。 应用按值的子类型是一种不可逆转的知识破坏行为，如果没有任何记忆，那么就不会有任何人被这些旧信息欺骗！
 
-Only one thing left to explain: function pointers.
+只剩下一件事要解释：函数指针。
 
-To see why `fn(T) -> U` should be covariant over `U`, consider the following signature:
+要了解为什么`fn（T） - > U`应该在`U`上是协变的，请考虑以下签名：
 
-```rust
+``` rust
 fn get_animal() -> Animal;
 ```
 
-This function claims to produce an Animal. As such, it is perfectly valid to
-provide a function with the following signature instead:
+该函数声称生产`Animal`。 因此，提供具有以下签名的函数是完全有效的：
 
 ```rust
 fn get_animal() -> Cat;
 ```
 
-After all, Cats are Animals, so always producing a Cat is a perfectly valid way
-to produce Animals. Or to relate it back to real Rust: if we need a function
-that is supposed to produce something that lives for `'short`, it's perfectly
-fine for it to produce something that lives for `'long`. We don't care, we can
-just forget that fact.
+毕竟，猫是动物，因此生产猫是一种完全有效的生产动物的方法。 或者将它与真正的Rust联系起来：如果我们需要一个能够产生“短暂”生命的功能，那么生产能够长期存在的东西就完全没问题了。 我们不在乎，我们可以忘记这一事实。
 
-However, the same logic does not apply to *arguments*. Consider trying to satisfy:
+但是，相同的逻辑不适用于参数。 考虑尝试满足：
 
 ```rust
 fn handle_animal(Animal);
-```
 
-with
-
-```rust
 fn handle_animal(Cat);
 ```
 
-The first function can accept Dogs, but the second function absolutely can't.
-Covariance doesn't work here. But if we flip it around, it actually *does*
-work! If we need a function that can handle Cats, a function that can handle *any*
-Animal will surely work fine. Or to relate it back to real Rust: if we need a
-function that can handle anything that lives for at least `'long`, it's perfectly
-fine for it to be able to handle anything that lives for at least `'short`.
+第一个函数可以接受`Dogs`，但第二个函数绝对不能。 协变在这里不起作用。 但是，如果我们翻转它，它确实有效！ 如果我们需要一个可以处理`Cats`的函数，可以处理任何`Animal`的函数肯定会正常工作。 或者将它与真正的Rust联系起来：如果我们需要一个能够处理任何至少长寿命的函数，那么它能够处理任何至少短暂存在的东西都是完美的。
 
-And that's why function types, unlike anything else in the language, are
-**contra**variant over their arguments.
+这就是为什么函数类型与语言中的其他任何东西不同，它们的参数都是逆变的。
 
-Now, this is all well and good for the types the standard library provides, but
-how is variance determined for type that *you* define? A struct, informally
-speaking, inherits the variance of its fields. If a struct `MyType`
-has a generic argument `A` that is used in a field `a`, then MyType's variance
-over `A` is exactly `a`'s variance over `A`.
+现在，这对于标准库提供的类型来说都很好，但是如何确定您定义的类型的变异？ 非正式地说，结构继承了其字段的变异。 如果结构`MyType`具有在字段`a`中使用的泛型参数`A`，那么`MyType`在`A`上的变异恰好是A的变异。
 
-However if `A` is used in multiple fields:
+但是，如果在多个字段中使用`A`：
 
-* If all uses of `A` are covariant, then MyType is covariant over `A`
-* If all uses of `A` are contravariant, then MyType is contravariant over `A`
-* Otherwise, MyType is invariant over `A`
+- 如果所有用到A的成员都是协变的，那么Foo对于A就是协变的
+- 如果所有用到A的成员都是逆变的，那么Foo对于A也是逆变的
+- 其他的情况，Foo对于A是不变的
 
-```rust
+``` rust
 use std::cell::Cell;
 
-struct MyType<'a, 'b, A: 'a, B: 'b, C, D, E, F, G, H, In, Out, Mixed> {
-    a: &'a A,     // covariant over 'a and A
-    b: &'b mut B, // covariant over 'b and invariant over B
+struct Foo<'a, 'b, A: 'a, B: 'b, C, D, E, F, G, H, In, Out, Mixed> {
+    a: &'a A,     // 对于'a和A协变
+    b: &'b mut B, // 对于'b协变，对于B不变
 
-    c: *const C,  // covariant over C
-    d: *mut D,    // invariant over D
+    c: *const C,  // 对于C协变
+    d: *mut D,    // 对于D不变
 
-    e: E,         // covariant over E
-    f: Vec<F>,    // covariant over F
-    g: Cell<G>,   // invariant over G
+    e: E,         // 对于E协变
+    f: Vec<F>,    // 对于F协变
+    g: Cell<G>,   // 对于G不变
 
-    h1: H,        // would also be variant over H except...
-    h2: Cell<H>,  // invariant over H, because invariance wins all conflicts
+    h1: H,        // 对于H本该是可变的，但是……
+    h2: Cell<H>,  // 其实对H是不变的，发生变性冲突的都是不变的
 
-    i: fn(In) -> Out,       // contravariant over In, covariant over Out
+    i: fn(In) -> Out,       // 对于In逆变，对于Out协变
 
-    k1: fn(Mixed) -> usize, // would be contravariant over Mixed except..
-    k2: Mixed,              // invariant over Mixed, because invariance wins all conflicts
+    k1: fn(Mixed) -> usize, // 对于Mix本该是逆变的，但是……
+    k2: Mixed,              // 其实对Mixed是不变的，发生变性冲突的都是不变的
 }
 ```
