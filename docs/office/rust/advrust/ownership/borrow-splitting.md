@@ -1,14 +1,10 @@
-# Splitting Borrows
+# 分解借用
 
-> 原文跟踪[borrow-splitting.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/borrow-splitting.md) &emsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
+> 源：[borrow-splitting.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/borrow-splitting.md) &nbsp; Commit: d870b6788ba078ba398f020305ef9210f7cbd740
 
-The mutual exclusion property of mutable references can be very limiting when
-working with a composite structure. The borrow checker understands some basic
-stuff, but will fall over pretty easily. It does understand structs
-sufficiently to know that it's possible to borrow disjoint fields of a struct
-simultaneously. So this works today:
+可变引用的Mutex属性在处理复合类型时能力非常有限。借用检查器只能理解一些简单的东西，而且极易失败。他对结构体还算是充分了解，知道结构体的成员可能被分别借用。所以这段代码现在可以正常工作：
 
-```rust
+``` Rust
 struct Foo {
     a: i32,
     b: i32,
@@ -25,17 +21,16 @@ let c2 = &x.c;
 println!("{} {} {} {}", a, b, c, c2);
 ```
 
-However borrowck doesn't understand arrays or slices in any way, so this doesn't
-work:
+但是，借用检查器对于数组和slice的理解却是一团浆糊，所以这段代码无法通过检查：
 
-```rust
+``` Rust
 let mut x = [1, 2, 3];
 let a = &mut x[0];
 let b = &mut x[1];
 println!("{} {}", a, b);
 ```
 
-```text
+```
 error[E0499]: cannot borrow `x[..]` as mutable more than once at a time
  --> src/lib.rs:4:18
   |
@@ -46,70 +41,48 @@ error[E0499]: cannot borrow `x[..]` as mutable more than once at a time
 5 |     println!("{} {}", a, b);
 6 | }
   | - first borrow ends here
-
 error: aborting due to previous error
 ```
 
-While it was plausible that borrowck could understand this simple case, it's
-pretty clearly hopeless for borrowck to understand disjointness in general
-container types like a tree, especially if distinct keys actually *do* map
-to the same value.
+借用检查器连这个简单的场景都理解不了，那它更不可能理解一些通用容器类型了，比如说树，尤其是出现不同的键对应相同的值的时候。
 
-In order to "teach" borrowck that what we're doing is ok, we need to drop down
-to unsafe code. For instance, mutable slices expose a `split_at_mut` function
-that consumes the slice and returns two mutable slices. One for everything to
-the left of the index, and one for everything to the right. Intuitively we know
-this is safe because the slices don't overlap, and therefore alias. However
-the implementation requires some unsafety:
+为了能“教育”借用检查器我们的所作所为是正确的，我们还是要使用非安全代码。比如，可变slice暴露了一个`split_at_mut`的方法，它接收一个slice然后返回两个可变slice。一个包括索引值左边所有的值，另一个包含右边所有的值。我们知道这个方法是安全的，因为两个slice没有重叠部分，也就不会出现别名问题。但是它的实现还是要涉及到非安全的内容：
 
-```rust
+``` Rust
 fn split_at_mut(&mut self, mid: usize) -> (&mut [T], &mut [T]) {
     let len = self.len();
     let ptr = self.as_mut_ptr();
     assert!(mid <= len);
     unsafe {
-        (from_raw_parts_mut(ptr, mid),
+        (from_raw_parts_mut(ptr, mid)),
          from_raw_parts_mut(ptr.offset(mid as isize), len - mid))
     }
 }
 ```
 
-This is actually a bit subtle. So as to avoid ever making two `&mut`'s to the
-same value, we explicitly construct brand-new slices through raw pointers.
+这有一点难懂。为了避免两个`&mut`指向相同的值，我们通过裸指针显式创建了两个全新的slice。
 
-However more subtle is how iterators that yield mutable references work.
-The iterator trait is defined as follows:
+不过迭代器产生可变引用的方法更加难懂。迭代器trait的定义如下：
 
-```rust
+``` Rust
 trait Iterator {
-    type Item;
+    typr Item;
 
     fn next(&mut self) -> Option<Self::Item>;
 }
 ```
 
-Given this definition, Self::Item has *no* connection to `self`. This means that
-we can call `next` several times in a row, and hold onto all the results
-*concurrently*. This is perfectly fine for by-value iterators, which have
-exactly these semantics. It's also actually fine for shared references, as they
-admit arbitrarily many references to the same thing (although the iterator needs
-to be a separate object from the thing being shared).
+这份定义里，`Self::Item`与`slef`没有直接关系。也就是说我们可以连续调用`next`很多次，并且同时保存着所有的结果。对于值的迭代器这么做完全可以，完全符合语义。对于共享引用这么做也没什么问题，因为允许任意过个共享引用指向同一个值（当然迭代器本身需要是独立于被共享内容的对象）。
 
-But mutable references make this a mess. At first glance, they might seem
-completely incompatible with this API, as it would produce multiple mutable
-references to the same object!
+但是可变引用就麻烦了。乍一看，可变引用完全不适用这个API，因为那会产生多个指向相同对象的可变引用。
 
-However it actually *does* work, exactly because iterators are one-shot objects.
-Everything an IterMut yields will be yielded at most once, so we don't
-actually ever yield multiple mutable references to the same piece of data.
+可实际上它能够正常工作，这是因为迭代器是一个一次性对象。`IterMut`生成的东西最多只会生成一次，所以实际上我们没有生成多个指向相同数据的可变指针。
 
-Perhaps surprisingly, mutable iterators don't require unsafe code to be
-implemented for many types!
+更不可思议的是，可变迭代器对于许多类型的实现甚至不需要非安全代码！
 
-For instance here's a singly linked list:
+例如，下面是单向列表的代码：
 
-```rust
-# fn main() {}
+``` Rust
 type Link<T> = Option<Box<Node<T>>>;
 
 struct Node<T> {
@@ -141,10 +114,9 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 }
 ```
 
-Here's a mutable slice:
+这是可变slice：
 
-```rust
-fn main() {}
+``` Rust
 use std::mem;
 
 pub struct IterMut<'a, T: 'a>(&'a mut[T]);
@@ -175,10 +147,9 @@ impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
 }
 ```
 
-And here's a binary tree:
+还有二叉树：
 
-```rust
-fn main() {}
+``` Rust
 use std::collections::VecDeque;
 
 type Link<T> = Option<Box<Node<T>>>;
@@ -283,8 +254,4 @@ impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
 }
 ```
 
-All of these are completely safe and work on stable Rust! This ultimately
-falls out of the simple struct case we saw before: Rust understands that you
-can safely split a mutable reference into subfields. We can then encode
-permanently consuming a reference via Options (or in the case of slices,
-replacing with an empty slice).
+所有这些都是完全安全而且能稳定运行的！这已经超出了我们之前看过的简单结构体的例子：Rust能够理解你把一个可变引用安全地分解为多个部分。接下来我们可以通过Option永久地访问这个引用（或者像对于slice那样，替换为一个空的slice）。
