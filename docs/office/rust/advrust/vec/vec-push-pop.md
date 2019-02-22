@@ -1,25 +1,16 @@
-# Push and Pop
+# Push与Pop
 
-> 原文跟踪[vec-push-pop.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-push-pop.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源-[vec-push-pop.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-push-pop.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Alright. We can initialize. We can allocate. Let's actually implement some
-functionality! Let's start with `push`. All it needs to do is check if we're
-full to grow, unconditionally write to the next index, and then increment our
-length.
+很好。我们可以初始化，我们也可以分配内存。现在我们开始实现一些真正的功能！我们就从`push`开始吧。它要做的事情就是检查空间是否已满，满了就扩容，然后写数据到下一个索引位置，最后增加长度。
 
-To do the write we have to be careful not to evaluate the memory we want to write
-to. At worst, it's truly uninitialized memory from the allocator. At best it's the
-bits of some old value we popped off. Either way, we can't just index to the memory
-and dereference it, because that will evaluate the memory as a valid instance of
-T. Worse, `foo[idx] = x` will try to call `drop` on the old value of `foo[idx]`!
+写数据时，我们一定要小心，不要计算我们要写入的内存位置的值。最坏的情况，那块内存是一块未初始化的内存。最好的情况是那里存着我们已经pop出去的值。不管哪种情况，我们都不能直接索引这块内存然后解引用它，因为这样其实是把内存中的值当做了一个合法的T的实例。更糟糕的是，`foo[idx] = x`会调用`foo[idx]`处旧有值的`drop`方法！
 
-The correct way to do this is with `ptr::write`, which just blindly overwrites the
-target address with the bits of the value we provide. No evaluation involved.
+正确的方法是使用`ptr::write`，它直接用值的二进制覆盖目标地址，不会计算任何的值。
 
-For `push`, if the old len (before push was called) is 0, then we want to write
-to the 0th index. So we should offset by the old len.
+对于`push`，如果原有的长度（调用push之前的长度）为0，那么我们就要写到第0个索引位置。所以我们应该用原有的长度做offset。
 
-```rust,ignore
+``` Rust
 pub fn push(&mut self, elem: T) {
     if self.len == self.cap { self.grow(); }
 
@@ -27,23 +18,16 @@ pub fn push(&mut self, elem: T) {
         ptr::write(self.ptr.offset(self.len as isize), elem);
     }
 
-    // Can't fail, we'll OOM first.
+    // 这一句不会失败，而会首先OOM
     self.len += 1;
 }
 ```
 
-Easy! How about `pop`? Although this time the index we want to access is
-initialized, Rust won't just let us dereference the location of memory to move
-the value out, because that would leave the memory uninitialized! For this we
-need `ptr::read`, which just copies out the bits from the target address and
-interprets it as a value of type T. This will leave the memory at this address
-logically uninitialized, even though there is in fact a perfectly good instance
-of T there.
+小菜一碟！那么`pop`是什么样的呢？尽管现在我们要访问的索引位置已经初始化了，Rust不允许我们用解引用的方式将值移出，因为那样的话整个内存都会回到未初始化状态！这时我们需要用`ptr:read`，它从目标位置拷贝出二进制值，然后解析成类型T的值。这时原有位置处的内存逻辑上是未初始化的，可实际上那里还是存在这一个正常的T的实例。
 
-For `pop`, if the old len is 1, we want to read out of the 0th index. So we
-should offset by the new len.
+对于`pop`，如果原有长度是1，我们要读的是第0个索引位置。所以我们应该是按新的长度做offset。
 
-```rust,ignore
+``` Rust
 pub fn pop(&mut self) -> Option<T> {
     if self.len == 0 {
         None
