@@ -1,16 +1,12 @@
 # RawVec
 
-> 原文跟踪[vec-raw.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-raw.md) &emsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
+> 源-[vec-raw.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-raw.md) &nbsp; Commit: e9335c82a2a73ad68f0516ff241c973dfa31ee16
 
-We've actually reached an interesting situation here: we've duplicated the logic
-for specifying a buffer and freeing its memory in Vec and IntoIter. Now that
-we've implemented it and identified *actual* logic duplication, this is a good
-time to perform some logic compression.
+我们遇到了一个很有意思的情况：我们把初始化缓存和释放内存的逻辑在Vec和IntoIter里面一模一样地写了两次。现在我们已经实现了功能，而且发现了逻辑的重复，是时候对代码做一些压缩了。
 
-We're going to abstract out the `(ptr, cap)` pair and give them the logic for
-allocating, growing, and freeing:
+我们要抽象出`(ptr, cap)`，并赋予它们分配、扩容和释放的逻辑：
 
-```rust,ignore
+``` Rust
 struct RawVec<T> {
     ptr: Unique<T>,
     cap: usize,
@@ -18,11 +14,11 @@ struct RawVec<T> {
 
 impl<T> RawVec<T> {
     fn new() -> Self {
-        assert!(mem::size_of::<T>() != 0, "TODO: implement ZST support");
+        assert!(mem::size_of::<T>() != 0, "TODO:实现零尺寸类型的支持");
         RawVec { ptr: Unique::empty(), cap: 0 }
     }
 
-    // unchanged from Vec
+    // 与Vec一样
     fn grow(&mut self) {
         unsafe {
             let align = mem::align_of::<T>();
@@ -40,7 +36,7 @@ impl<T> RawVec<T> {
                 (new_cap, ptr)
             };
 
-            // If allocate or reallocate fail, we'll get `null` back
+            // 如果分配或再分配失败，我们会得到null
             if ptr.is_null() { oom() }
 
             self.ptr = Unique::new(ptr as *mut _);
@@ -64,9 +60,9 @@ impl<T> Drop for RawVec<T> {
 }
 ```
 
-And change Vec as follows:
+然后像下面这样改写Vec：
 
-```rust,ignore
+``` Rust
 pub struct Vec<T> {
     buf: RawVec<T>,
     len: usize,
@@ -81,35 +77,35 @@ impl<T> Vec<T> {
         Vec { buf: RawVec::new(), len: 0 }
     }
 
-    // push/pop/insert/remove largely unchanged:
-    // * `self.ptr -> self.ptr()`
-    // * `self.cap -> self.cap()`
-    // * `self.grow -> self.buf.grow()`
+    // push/pop/insert/remove基本没变，只改变了:
+    // self.ptr -> self.ptr()
+    // self.cap -> self.cap()
+    // self.grow -> self.buf.grow()
 }
 
 impl<T> Drop for Vec<T> {
     fn drop(&mut self) {
         while let Some(_) = self.pop() {}
-        // deallocation is handled by RawVec
+        // 释放空间由RawVec负责
     }
 }
 ```
 
-And finally we can really simplify IntoIter:
+最后我们可以简化IntoIter：
 
-```rust,ignore
+``` Rust
 struct IntoIter<T> {
-    _buf: RawVec<T>, // we don't actually care about this. Just need it to live.
+    _buf: RawVec<T>, // 我们并不关心这个，只是需要它们保持分配空间不被销毁
     start: *const T,
     end: *const T,
 }
 
-// next and next_back literally unchanged since they never referred to the buf
+// next和next_back保持不变，因为它们并没有用到buf
 
 impl<T> Drop for IntoIter<T> {
     fn drop(&mut self) {
-        // only need to ensure all our elements are read;
-        // buffer will clean itself up afterwards.
+        // 只需要保证所有的元素都被读到了
+        // 缓存会在随后自己清理自己
         for _ in &mut *self {}
     }
 }
@@ -117,8 +113,8 @@ impl<T> Drop for IntoIter<T> {
 impl<T> Vec<T> {
     pub fn into_iter(self) -> IntoIter<T> {
         unsafe {
-            // need to use ptr::read to unsafely move the buf out since it's
-            // not Copy, and Vec implements Drop (so we can't destructure it).
+            // 需要使用ptr::read非安全地把buf移出，因为它不是Copy，
+            // 而且Vec实现了Drop（所以我们不能销毁它）
             let buf = ptr::read(&self.buf);
             let len = self.len;
             mem::forget(self);
@@ -133,4 +129,4 @@ impl<T> Vec<T> {
 }
 ```
 
-Much better.
+现在看起来好多了。
