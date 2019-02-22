@@ -1,79 +1,58 @@
 # 生命周期
 
-> 原文跟踪[lifetimes.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetimes.md) &emsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
+> 源：[lifetimes.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/lifetimes.md) &nbsp; Commit: 0e6c680ebd72f1860e46b2bd40e2a387ad8084ad
 
-Rust enforces these rules through *lifetimes*. Lifetimes are effectively
-just names for scopes somewhere in the program. Each reference,
-and anything that contains a reference, is tagged with a lifetime specifying
-the scope it's valid for.
+Rust在整个生命周期里强制执行生命周期的规则。生命周期说白了就是作用域的名字。每一个引用以及包含引用的数据结构，都要有一个生命周期来指定它保持有效的作用域。
 
-Within a function body, Rust generally doesn't let you explicitly name the
-lifetimes involved. This is because it's generally not really necessary
-to talk about lifetimes in a local context; Rust has all the information and
-can work out everything as optimally as possible. Many anonymous scopes and
-temporaries that you would otherwise have to write are often introduced to
-make your code Just Work.
+在函数体内，Rust通常不需要你显式地给生命周期起名字。这是因为在本地上下文里，一般没有必要关注生命周期。Rust知道程序的全部信息，从而可以完美地执行各种操作。它可能会引入许多匿名或者临时的作用域让程序顺利执行。
 
-However once you cross the function boundary, you need to start talking about
-lifetimes. Lifetimes are denoted with an apostrophe: `'a`, `'static`. To dip
-our toes with lifetimes, we're going to pretend that we're actually allowed
-to label scopes with lifetimes, and desugar the examples from the start of
-this chapter.
+但是如果你要跨出函数的边界，就需要关心生命周期了。生命周期用这样的符号表示：`'a`,`'static`。为了更清晰地了解生命周期，我们假设我们可以为生命周期打标签，去掉本章所有例子的语法糖。
 
-Originally, our examples made use of *aggressive* sugar -- high fructose corn
-syrup even -- around scopes and lifetimes, because writing everything out
-explicitly is *extremely noisy*. All Rust code relies on aggressive inference
-and elision of "obvious" things.
+最开始，我们的示例代码对作用域和生命周期使用了很激进的语法糖特性——甜得像玉米糖浆一样，因为把所有的东西都显式地写出来实在很讨厌。所有的Rust代码都采用比较激进的理论以省略“显而易见”的东西。
 
-One particularly interesting piece of sugar is that each `let` statement implicitly
-introduces a scope. For the most part, this doesn't really matter. However it
-does matter for variables that refer to each other. As a simple example, let's
-completely desugar this simple piece of Rust code:
+一个特别有意思的语法糖是，每一个`let`表达式都隐式引入了一个作用域。大多数情况下，这一点并不重要。但是当变量之间互相引用的时候，这就很重要了。举个简单的例子，我们彻底去掉下面这段代码的语法糖：
 
-```rust
+``` Rust
 let x = 0;
 let y = &x;
-let z = &y;
+let z= &y;
 ```
 
-The borrow checker always tries to minimize the extent of a lifetime, so it will
-likely desugar to the following:
+借用检查器通常会尽可能减少生命周期的范围，所以去掉语法糖后的代码大概像这样：
 
-```rust
-// NOTE: `'a: {` and `&'b x` is not valid syntax!
+``` Rust
+// 注意：'a: { 和 &'b x 不是合法的语法
 'a: {
     let x: i32 = 0;
     'b: {
-        // lifetime used is 'b because that's good enough.
+        // 生命周期是'b，因为这就足够了
         let y: &'b i32 = &'b x;
         'c: {
-            // ditto on 'c
+            // 'c也一样
             let z: &'c &'b i32 = &'c y;
         }
     }
 }
 ```
 
-Wow. That's... awful. Let's all take a moment to thank Rust for making this easier.
+哇！这样的写法……太可怕了。我们先停下来感谢Rust把这一切都简化掉了。
 
-Actually passing references to outer scopes will cause Rust to infer
-a larger lifetime:
+将引用传递到作用域以外会导致生命周期扩大：
 
-```rust
+``` Rust
 let x = 0;
 let z;
 let y = &x;
 z = y;
 ```
 
-```rust
+``` Rust
 'a: {
     let x: i32 = 0;
     'b: {
         let z: &'b i32;
         'c: {
-            // Must use 'b here because this reference is
-            // being passed to that scope.
+            // 必须使用'b，因为引用被传递到了'b的作用域
             let y: &'b i32 = &'b x;
             z = y;
         }
@@ -81,20 +60,20 @@ z = y;
 }
 ```
 
-## Example: references that outlive referents
+## 示例：引用超出被引用内容生命周期
 
-Alright, let's look at some of those examples from before:
+好了，让我们再看一遍曾经举过的一个例子：
 
-```rust,ignore
+``` Rust
 fn as_str(data: &u32) -> &str {
     let s = format!("{}", data);
     &s
 }
 ```
 
-desugars to:
+去掉语法糖：
 
-```rust
+``` Rust
 fn as_str<'a>(data: &'a u32) -> &'a str {
     'b: {
         let s = format!("{}", data);
@@ -103,29 +82,17 @@ fn as_str<'a>(data: &'a u32) -> &'a str {
 }
 ```
 
-This signature of `as_str` takes a reference to a u32 with *some* lifetime, and
-promises that it can produce a reference to a str that can live *just as long*.
-Already we can see why this signature might be trouble. That basically implies
-that we're going to find a str somewhere in the scope the reference
-to the u32 originated in, or somewhere *even earlier*. That's a bit of a tall
-order.
+函数`as_str`的签名里接受了一个带有生命周期的u32类型的引用，并且保证会返回一个生命周期一样长的str类型的引用。从这个签名我们就已经可以看出问题了。它表示我们必须到那个u32引用的作用域，或者比它还要早的作用域里去找一个str。这就有点不合理了。
 
-We then proceed to compute the string `s`, and return a reference to it. Since
-the contract of our function says the reference must outlive `'a`, that's the
-lifetime we infer for the reference. Unfortunately, `s` was defined in the
-scope `'b`, so the only way this is sound is if `'b` contains `'a` -- which is
-clearly false since `'a` must contain the function call itself. We have therefore
-created a reference whose lifetime outlives its referent, which is *literally*
-the first thing we said that references can't do. The compiler rightfully blows
-up in our face.
+接下来我们生成一个字符串`s`，然后返回它的引用。我们的函数要求这个引用的有效期不能小于`'a`，那是我们给引用指定的生命周期。不幸的是，`s`是在作用域'b里面定义的。除非'b包含'a这个函数才可能是正确的——而这显然不可能，因为'a必须包含它所调用的函数。这样我们创建了一个生命周期超出被引用内容的引用，这明显违背了之前提到的引用的第一条规则。编译器十分感动然后拒绝了我们。
 
-To make this more clear, we can expand the example:
+我们扩展一下这个例子，一边看得更清楚：
 
-```rust
+``` Rust
 fn as_str<'a>(data: &'a u32) -> &'a str {
     'b: {
         let s = format!("{}", data);
-        return &'a s
+        return &'a s;
     }
 }
 
@@ -133,79 +100,58 @@ fn main() {
     'c: {
         let x: u32 = 0;
         'd: {
-            // An anonymous scope is introduced because the borrow does not
-            // need to last for the whole scope x is valid for. The return
-            // of as_str must find a str somewhere before this function
-            // call. Obviously not happening.
+            // 这里引入了一个匿名作用域，因为借用不需要在整个x的作用域内生效
+            // as_str的返回值必须引用一个在函数调用前就存在的str
+            // 显然事实不是这样的。
             println!("{}", as_str::<'d>(&'d x));
         }
     }
 }
 ```
 
-Shoot!
+完蛋了！
 
-Of course, the right way to write this function is as follows:
+当然，这个函数的正确写法应该是这样的。
 
-```rust
+``` Rust
 fn to_string(data: &u32) -> String {
     format!("{}", data)
 }
 ```
 
-We must produce an owned value inside the function to return it! The only way
-we could have returned an `&'a str` would have been if it was in a field of the
-`&'a u32`, which is obviously not the case.
+我们必须创建一个值然后连同它的所有权一起返回。除非一个字符串是`&'a u32`的成员，我们才能返回`&'a str`，显然事情并不是这样的。
 
-(Actually we could have also just returned a string literal, which as a global
-can be considered to reside at the bottom of the stack; though this limits
-our implementation *just a bit*.)
+（其实我们也可以返回一个字符串的字面量，它是一个全局的变量，可以认为是处于栈的底部。尽管这样极大限制了函数的使用场合。）
 
-## Example: aliasing a mutable reference
+## 示例：存在可变引用的别名
 
-How about the other example:
+在看另一个老的例子：
 
-```rust
-let mut data = vec![1, 2, 3];
+``` Rust
+let mut data = vec![1, 2,3];
 let x = &data[0];
 data.push(4);
 println!("{}", x);
 ```
 
-```rust
+``` Rust
 'a: {
     let mut data: Vec<i32> = vec![1, 2, 3];
     'b: {
-        // 'b is as big as we need this borrow to be
-        // (just need to get to `println!`)
+        // 对于这个借用来说，'b已经足够大了
+        // （借用只需要在println!中生效即可）
         let x: &'b i32 = Index::index::<'b>(&'b data, 0);
         'c: {
-            // Temporary scope because we don't need the
-            // &mut to last any longer.
-            Vec::push(&'c mut data, 4);
+            // 引入一个临时作用域，因为&mut不需要存在更长时间
+            Vec::push(&'c mut data, e);
         }
         println!("{}", x);
     }
 }
 ```
 
-The problem here is a bit more subtle and interesting. We want Rust to
-reject this program for the following reason: We have a live shared reference `x`
-to a descendant of `data` when we try to take a mutable reference to `data`
-to `push`. This would create an aliased mutable reference, which would
-violate the *second* rule of references.
+这里的问题更加微妙也更有趣。我们希望Rust出于如下的原因拒绝编译这段代码：我们有一个有效的指向`data`的内部数据的引用`x`，而同时又创建了一个`data`的可变引用用于执行`push`。也就是说出现了可变引用的别名，这违背了引用的第二条规则。
 
-However this is *not at all* how Rust reasons that this program is bad. Rust
-doesn't understand that `x` is a reference to a subpath of `data`. It doesn't
-understand Vec at all. What it *does* see is that `x` has to live for `'b` to
-be printed. The signature of `Index::index` subsequently demands that the
-reference we take to `data` has to survive for `'b`. When we try to call `push`,
-it then sees us try to make an `&'c mut data`. Rust knows that `'c` is contained
-within `'b`, and rejects our program because the `&'b data` must still be live!
+但是Rust其实并非因为这个原因判断这段代码有问题。Rust不知道`x`是`data`的子内容的引用，它其实完全不知道Vec的内部是什么样子的。它只知道`x`必须在`'b`范围内有效，这样才能打印其中的内容。函数`Index::index`的签名因此要求传递的`data`的引用也必须在`'b`的范围内有效。当我们调用`push`的时候，Rust发现我们要创建一个`&'c mut data`。它知道`'c`是包含在`'b`以内的，因为`&'b data`还存活着，所以它拒绝了这段程序。
 
-Here we see that the lifetime system is much more coarse than the reference
-semantics we're actually interested in preserving. For the most part, *that's
-totally ok*, because it keeps us from spending all day explaining our program
-to the compiler. However it does mean that several programs that are totally
-correct with respect to Rust's *true* semantics are rejected because lifetimes
-are too dumb.
+我们看到了生命周期系统要比引用的保护措施更加简单粗暴。大多数情况下这也没什么，它让我们不用没完没了地向编译器解释我们的程序。但是这也意味着许多语义上正确的程序会被编译器拒绝，因为生命周期的规则太死板了。
