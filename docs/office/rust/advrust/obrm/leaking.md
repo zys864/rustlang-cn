@@ -1,129 +1,69 @@
-# Leaking
+# 泄露
 
-> 原文跟踪[leaking.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/leaking.md) &emsp; Commit: 148a9625a3abb80d53ba23bd111a3a949638a92e
+> 源：[leaking.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/leaking.md) &nbsp; Commit: 148a9625a3abb80d53ba23bd111a3a949638a92e
 
-Ownership-based resource management is intended to simplify composition. You
-acquire resources when you create the object, and you release the resources when
-it gets destroyed. Since destruction is handled for you, it means you can't
-forget to release the resources, and it happens as soon as possible! Surely this
-is perfect and all of our problems are solved.
+基于所有权的资源管理是为了简化复合类型而存在的。你在创建对象的时候获取资源，在销毁对象的时候释放资源。由于析构过程做了处理，你不可能忘记释放资源，而且是尽可能早地释放资源！这简直是一个完美的方案，解决了我们所有的问题。
 
-Everything is terrible and we have new and exotic problems to try to solve.
+可实际上可怕的事情遍地都是，我们还有新的奇怪的问题需要解决。
 
-Many people like to believe that Rust eliminates resource leaks. In practice,
-this is basically true. You would be surprised to see a Safe Rust program
-leak resources in an uncontrolled way.
+许多人觉得Rust已经消除了资源泄露的可能性。实际应用中也差不多是这样。你不太可能看到安全Rust出现不可控制的资源泄露。
 
-However from a theoretical perspective this is absolutely not the case, no
-matter how you look at it. In the strictest sense, "leaking" is so abstract as
-to be unpreventable. It's quite trivial to initialize a collection at the start
-of a program, fill it with tons of objects with destructors, and then enter an
-infinite event loop that never refers to it. The collection will sit around
-uselessly, holding on to its precious resources until the program terminates (at
-which point all those resources would have been reclaimed by the OS anyway).
+但是，从理论的角度来说，情况却完全不同。在科学家看来，“泄露”太过于抽象，根本无法避免。很可能就会有人在程序的开头初始化一个集合，塞进去一大堆带析构函数的对象，接下来就进入一个死循环，再也不理开始的那个集合。那个集合就只能坐在那里无所事事，死死地抱着宝贵的资源等着程序结束（这时操作系统会强制回收资源）。
 
-We may consider a more restricted form of leak: failing to drop a value that is
-unreachable. Rust also doesn't prevent this. In fact Rust *has a function for
-doing this*: `mem::forget`. This function consumes the value it is passed *and
-then doesn't run its destructor*.
+我们可能要给泄露一个更严格的定义：无法销毁不可达(unreachable)的值。Rust也不能避免这种泄露。事实上Rust还有一个制造泄露的函数：`mem::forget`。这个函数获取传给它的值，但是不调用它的析构函数。
 
-In the past `mem::forget` was marked as unsafe as a sort of lint against using
-it, since failing to call a destructor is generally not a well-behaved thing to
-do (though useful for some special unsafe code). However this was generally
-determined to be an untenable stance to take: there are many ways to fail to
-call a destructor in safe code. The most famous example is creating a cycle of
-reference-counted pointers using interior mutability.
+`mem::forget`曾经被标为unsafe，作为不要滥用它的一种警告。毕竟不调用析构函数一般来说不是一个好习惯（尽管在某些特殊情况下很有用）。但其实这个判断比较不靠谱，因为在安全代码中不调用析构函数的情况很多。最经典的例子是一个循环引用的计数引用。
 
-It is reasonable for safe code to assume that destructor leaks do not happen, as
-any program that leaks destructors is probably wrong. However *unsafe* code
-cannot rely on destructors to be run in order to be safe. For most types this
-doesn't matter: if you leak the destructor then the type is by definition
-inaccessible, so it doesn't matter, right? For instance, if you leak a `Box<u8>`
-then you waste some memory but that's hardly going to violate memory-safety.
+安全代码可以合理假设析构函数泄露是不存在的，因为任何有这一问题的程序都可能是错误的。但是，非安全代码不能依赖于运行析构函数来保证程序安全。对于大多数类型而言，这一点不成问题：如果不能调用析构函数，那其实类型本身也是不可访问的，所以这就不是个问题了，对吧？比如，你没有释放`Box<u8>`，那么你会浪费一点内存，但是这并不会违反内存安全性。
 
-However where we must be careful with destructor leaks are *proxy* types. These
-are types which manage access to a distinct object, but don't actually own it.
-Proxy objects are quite rare. Proxy objects you'll need to care about are even
-rarer. However we'll focus on three interesting examples in the standard
-library:
+但是对于代理类型，我们就要十分小心它的析构函数了。有几个类型可以访问一个对象，却不拥有对象的所有权。代理类型很少见，而需要你特别小心的类型就更稀少了。但是，我们要仔细研究一下标准库中的三个有意思的例子
 
-* `vec::Drain`
-* `Rc`
-* `thread::scoped::JoinGuard`
-
-
+- `Vec::Drain`
+- `Rc`
+- `thread::scoped::JoinGuard`
 
 ## Drain
 
-`drain` is a collections API that moves data out of the container without
-consuming the container. This enables us to reuse the allocation of a `Vec`
-after claiming ownership over all of its contents. It produces an iterator
-(Drain) that returns the contents of the Vec by-value.
+`drain`是一个集合API，它将容器内的数据所有权移出，却不占有容器本身。我们可以声明一个`Vec`所有内容的所有权，然后复用分配给它的空间。它产生一个迭代器（Drain），以返回Vec的所有值。
 
-Now, consider Drain in the middle of iteration: some values have been moved out,
-and others haven't. This means that part of the Vec is now full of logically
-uninitialized data! We could backshift all the elements in the Vec every time we
-remove a value, but this would have pretty catastrophic performance
-consequences.
+现在，假设Drain正迭代到一半：有一些值被移出，还有一些没移出。这表明Vec里有一堆逻辑上未初始化的数据！我们可以在删除值的时候在Vec里再备份一份，但这种方法的性能是不可忍受的。
 
-Instead, we would like Drain to fix the Vec's backing storage when it is
-dropped. It should run itself to completion, backshift any elements that weren't
-removed (drain supports subranges), and then fix Vec's `len`. It's even
-unwinding-safe! Easy!
+实际上，我们希望Drain在销毁的时候能够修复Vec的后台存储。他要备份那些没有被移除的元素（drain支持子范围），然后修改Vec的`len`。这种方法甚至还是unwinding安全的！完美！
 
-Now consider the following:
+看看下面这段代码
 
-```rust,ignore
-let mut vec = vec![Box::new(0); 4];
+``` Rust
+let mut vec = vec![Box::new(0); e];
 
 {
-    // start draining, vec can no longer be accessed
+    // 开始drain，vec无法再被访问
     let mut drainer = vec.drain(..);
 
-    // pull out two elements and immediately drop them
+    // 移除两个元素，然后立刻销毁他们
     drainer.next();
     drainer.next();
 
-    // get rid of drainer, but don't call its destructor
+    // 销毁drainer，但是不调用它的析构函数
     mem::forget(drainer);
 }
 
-// Oops, vec[0] was dropped, we're reading a pointer into free'd memory!
+// 不好，vec[0]已经被销毁了，我们在读一块释放后的内存
 println!("{}", vec[0]);
 ```
 
-This is pretty clearly Not Good. Unfortunately, we're kind of stuck between a
-rock and a hard place: maintaining consistent state at every step has an
-enormous cost (and would negate any benefits of the API). Failing to maintain
-consistent state gives us Undefined Behavior in safe code (making the API
-unsound).
+这个显然很不好。我们现在陷入了两难的境地：保证每一步产生一致的状态，需要付出巨大的性能代价（抵消掉了API带来的所有好处）；而不保证一致状态则会在安全代码中产生未定义行为（使API失去稳定性）。
 
-So what can we do? Well, we can pick a trivially consistent state: set the Vec's
-len to be 0 when we start the iteration, and fix it up if necessary in the
-destructor. That way, if everything executes like normal we get the desired
-behavior with minimal overhead. But if someone has the *audacity* to
-mem::forget us in the middle of the iteration, all that does is *leak even more*
-(and possibly leave the Vec in an unexpected but otherwise consistent state).
-Since we've accepted that mem::forget is safe, this is definitely safe. We call
-leaks causing more leaks a *leak amplification*.
+那我们能做什么呢？我们采用一种简单粗暴的方式保证状态一致性：开始迭代的时候就设置Vec的长度为0，然后在析构函数里根据需要再恢复。这样做，在一切正常的情况下，我们可以用最小的代价获得正确的行为。但是，如果有人就是不管不顾地在迭代中间`mem::forget`，那么结果就是泄露或者更坏（还可能让Vec处于一种虽然一致但实际上不正确的状态）。由于我们认为`mem::forget`是安全地，那么这种行为也是安全地。我们把造成更多泄露的泄露叫做泄露扩大化(leak amplification)。
 
+# Rc
 
+`Rc 的情况很有意思，第一眼看上去它根本不像是一个代理类型。毕竟，它自己管理着它指向的数据，并且在销毁`Rc`的时候也会同时销毁数据的值。泄露`Rc`的数据好像并不怎么危险。那会让引用计数持续增长，而数据不会被释放或销毁。这和`Box`的行为是一项的，对吧？
 
+并不是。
 
-## Rc
+我们看一下这个`Rc`的简单实现：
 
-Rc is an interesting case because at first glance it doesn't appear to be a
-proxy value at all. After all, it manages the data it points to, and dropping
-all the Rcs for a value will drop that value. Leaking an Rc doesn't seem like it
-would be particularly dangerous. It will leave the refcount permanently
-incremented and prevent the data from being freed or dropped, but that seems
-just like Box, right?
-
-Nope.
-
-Let's consider a simplified implementation of Rc:
-
-```rust,ignore
+``` Rust
 struct Rc<T> {
     ptr: *mut RcBox<T>,
 }
@@ -136,7 +76,7 @@ struct RcBox<T> {
 impl<T> Rc<T> {
     fn new(data: T) -> Self {
         unsafe {
-            // Wouldn't it be nice if heap::allocate worked like this?
+            // 如果heap::allocate是这样的不是很好嘛？
             let ptr = heap::allocate::<RcBox<T>>();
             ptr::write(ptr, RcBox {
                 data: data,
@@ -149,8 +89,8 @@ impl<T> Rc<T> {
     fn clone(&self) -> Self {
         unsafe {
             (*self.ptr).ref_count += 1;
+            Rc { ptr: self.ptr }
         }
-        Rc { ptr: self.ptr }
     }
 }
 
@@ -159,7 +99,7 @@ impl<T> Drop for Rc<T> {
         unsafe {
             (*self.ptr).ref_count -= 1;
             if (*self.ptr).ref_count == 0 {
-                // drop the data and then free it
+                // 销毁数据然后释放空间
                 ptr::read(self.ptr);
                 heap::deallocate(self.ptr);
             }
@@ -168,86 +108,59 @@ impl<T> Drop for Rc<T> {
 }
 ```
 
-This code contains an implicit and subtle assumption: `ref_count` can fit in a
-`usize`, because there can't be more than `usize::MAX` Rcs in memory. However
-this itself assumes that the `ref_count` accurately reflects the number of Rcs
-in memory, which we know is false with `mem::forget`. Using `mem::forget` we can
-overflow the `ref_count`, and then get it down to 0 with outstanding Rcs. Then
-we can happily use-after-free the inner data. Bad Bad Not Good.
 
-This can be solved by just checking the `ref_count` and doing *something*. The
-standard library's stance is to just abort, because your program has become
-horribly degenerate. Also *oh my gosh* it's such a ridiculous corner case.
+要解决这个问题，我们可以检查`ref_count`并根据情况做一些处理。标准库的做法是直接废弃对象，因为这种情况下你的程序进入了一种非常危险的状态。当然，这是一个十分诡异的边界场景。
 
+# thread::scoped::JoinGuard
 
+`thread::scoped`可以保证父线程在共享数据离开作用域之前join子线程，通过这种方式子线程可以引用父线程栈中的数据而不需要做什么同步操作。
 
-
-## thread::scoped::JoinGuard
-
-The thread::scoped API intended to allow threads to be spawned that reference
-data on their parent's stack without any synchronization over that data by
-ensuring the parent joins the thread before any of the shared data goes out
-of scope.
-
-```rust,ignore
+``` Rust
 pub fn scoped<'a, F>(f: F) -> JoinGuard<'a>
     where F: FnOnce() + Send + 'a
 ```
 
-Here `f` is some closure for the other thread to execute. Saying that
-`F: Send +'a` is saying that it closes over data that lives for `'a`, and it
-either owns that data or the data was Sync (implying `&data` is Send).
+这里`f`是供其他线程执行的闭包。`F: Send + 'a`表示闭包引用数据的生命周期是`'a`，而且它可能拥有这个数据或者数据是一个`Sync`(说明`&data`是`Send`)。
 
-Because JoinGuard has a lifetime, it keeps all the data it closes over
-borrowed in the parent thread. This means the JoinGuard can't outlive
-the data that the other thread is working on. When the JoinGuard *does* get
-dropped it blocks the parent thread, ensuring the child terminates before any
-of the closed-over data goes out of scope in the parent.
+因为`JoinGuard`有生命周期，它所用到的数据都是从父线程里借用的。这意味着`JoinGuard`不能比线程使用的数据存活更长。当`JoinGuard`被销毁的时候它会阻塞父线程，保在父线程中被引用的数据离开作用域之前子线程都已经终止了。
 
-Usage looked like:
+用法是这样的：
 
-```rust,ignore
+``` Rust
 let mut data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 {
     let guards = vec![];
     for x in &mut data {
-        // Move the mutable reference into the closure, and execute
-        // it on a different thread. The closure has a lifetime bound
-        // by the lifetime of the mutable reference `x` we store in it.
-        // The guard that is returned is in turn assigned the lifetime
-        // of the closure, so it also mutably borrows `data` as `x` did.
-        // This means we cannot access `data` until the guard goes away.
+        // 将可变引用移入闭包，然后再另外一个线程里执行它
+        // 闭包有生命周期，其界限由可变引用x的生命周期决定
+        // 返回的guard也和闭包有相同的生命周期，所以它也和x一样可变借用了data
+        // 这意味着在guard销毁前我们不能访问data
         let guard = thread::scoped(move || {
             *x *= 2;
         });
-        // store the thread's guard for later
+        // 储存线程的guard供后面使用
         guards.push(guard);
     }
-    // All guards are dropped here, forcing the threads to join
-    // (this thread blocks here until the others terminate).
-    // Once the threads join, the borrow expires and the data becomes
-    // accessible again in this thread.
+    // 所有的guard在这里被销毁，强制线程join（主线程阻塞在这里等待其他线程终止）。
+    // 等到线程join后，数据的借用就过期了，数据又可以在主线程中被访问了
 }
-// data is definitely mutated here.
+// 数据在这里已经完全改变了。
 ```
 
-In principle, this totally works! Rust's ownership system perfectly ensures it!
-...except it relies on a destructor being called to be safe.
+这个似乎完全能够正常工作！Rust的所有权系统完美地保证了这一点！……不过这一切的前提是析构函数必须被调用。
 
-```rust,ignore
+``` Rust
 let mut data = Box::new(0);
 {
     let guard = thread::scoped(|| {
-        // This is at best a data race. At worst, it's also a use-after-free.
+        // 好一点的情况是这里会有数据竞争
+        // 最坏的情况是这里会有释放后应用(use-after-free)
         *data += 1;
     });
-    // Because the guard is forgotten, expiring the loan without blocking this
-    // thread.
+    // 因为guard被forget了，线程不会阻塞
     mem::forget(guard);
 }
-// So the Box is dropped here while the scoped thread may or may not be trying
-// to access it.
+// Box在这里被销毁，而子线程可能会也可能不会在这里访问数据。
 ```
 
-Dang. Here the destructor running was pretty fundamental to the API, and it had
-to be scrapped in favor of a completely different design.
+Duang！保证析构函数能运行是这个api的基础，上面这段代码需要一个全新的设计才行。
