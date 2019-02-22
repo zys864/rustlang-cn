@@ -1,6 +1,6 @@
-# The Final Code
+# 最终代码
 
-> 原文跟踪[vec-final.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-final.md) &emsp; Commit: f3fb7c9a8f73998aaaab8177562f0c58ff082e37
+> 源：[vec-final.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-final.md) &nbsp; Commit: f3fb7c9a8f73998aaaab8177562f0c58ff082e37
 
 ```rust
 #![feature(ptr_internals)]
