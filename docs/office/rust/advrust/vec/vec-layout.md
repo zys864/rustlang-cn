@@ -1,6 +1,6 @@
-# Layout
+# 布局
 
-> 源-[vec-layout.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-layout.md) &nbsp; Commit: 94964dee31224cf1a22c72400a12cb966f5a12bc
+> 源：[vec-layout.md](https://github.com/rust-lang-nursery/nomicon/blob/master/src/vec-layout.md) &nbsp; Commit: 94964dee31224cf1a22c72400a12cb966f5a12bc
 
 我们先来看看结构体的布局。Vec由三部分组成：一个指向分配空间的指针、空间的大小、以及已经初始化的元素的数量。
 
