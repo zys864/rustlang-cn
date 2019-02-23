@@ -4,7 +4,7 @@ heroImage: /imgs/rust.png
 pageClass: front
 actionText: 学习Rust语言
 actionLink: /office/rust/book/
-footer: MIT Licensed | Copyright © 2018-present | Rust中文社区
+footer: MIT Licensed | Copyright © 2018-present | Rust中文
 ---
 
 <div class="features">
