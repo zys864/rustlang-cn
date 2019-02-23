@@ -81,15 +81,3 @@ footer: MIT Licensed | Copyright © 2018-present | Rust中文
     <div><a href="/office/game/">阅读更多</a></div>
   </div>
 </div>
-
-<hr><br>
-<div>
-    <a href="https://github.com/rustlang-cn" target="_black">GitHub</a>&emsp;
-    <a href="https://zhuanlan.zhihu.com/rustlang-cn" target="_black">知乎</a>&emsp;
-    <a href="https://weibo.com/kriry" target="_black">微博</a>&emsp;
-    <a href="https://segmentfault.com/blog/rust-lang" target="_black">思否</a>&emsp;
-    <a href="https://www.jianshu.com/c/2efae7198ea3" target="_black">简书</a>&emsp;
-    <a href="#">QQ群:570065685</a>
-</div>
-
-<br>
