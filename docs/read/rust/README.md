@@ -1,5 +1,5 @@
 <div id="lanmu">
-    <div id="word">Rust中文社区专栏</div>
+    <div id="word">Rust中文专栏</div>
 </div>
 <br>
 <div id="join" style="font-size: 1.5rem;">欢迎 <a href="https://github.com/rustlang-cn/rustlang-cn" target="_black">投稿</a> 共建Rust语言中文网络！</div>
