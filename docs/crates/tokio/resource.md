@@ -4,6 +4,6 @@
 
 [StableAPI](https://docs.rs/tokio/0.1.15/tokio/)
 
-[MasterAPI](https://tokio-rs.github.io/tokio/tokio/index.html)
+[MasterAPI](https://tokio-rs.github.io/tokio/doc/tokio/index.html)
 
 [Github](https://github.com/tokio-rs)
