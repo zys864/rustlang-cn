@@ -32,8 +32,8 @@
 - [actix-redis-cluster](https://github.com/Idein/actix-redis-cluster) - actix-redis-cluster
 - [actix-mq-network](https://github.com/irony-rust/actix-mq-network) - Message queue distributed network based on Actix
 - [actix-rate-limit](https://github.com/Idein/actix-rate-limit) - actix-rate-limit
-- [amqp-transport](https://github.com/fafhrd91/amqp-transport) - AMQP 1.0 Transport
-- [amqp-codec](https://github.com/fafhrd91/amqp-codec) - AMQP 1.0 Protocol Codec
+- [actix-amqp](https://github.com/fafhrd91/amqp-ampq) - Actix AMQP 1.0 Server framework
+- [actix-mqtt](https://github.com/actix/actix-mqtt) - Actix MQTT v3.1 Server framework
 - [actix-nats](https://github.com/YellowInnovation/actix-nats) : Actix的NATS Message Broker(异步消息队列客户端)
 - [actix-lua](https://github.com/poga/actix-lua) : Actix的安全Lua脚本环境
 - [torchbear](https://github.com/foundpatterns/torchbear) : Rust中的应用程序框架，具有Lua脚本环境
