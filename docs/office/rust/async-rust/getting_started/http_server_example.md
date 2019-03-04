@@ -11,7 +11,7 @@
 // The latest version of the "futures" library, which has lots of utilities
 // for writing async code. Enable the "tokio-compat" feature to include the
 // functions for using futures 0.3 and async/await with the Tokio library.
-futures-preview = { version = "0.3.0-alpha.9", features = "tokio-compat"] }
+futures-preview = { version = "0.3.0-alpha.9", features = ["tokio-compat"] }
 // Hyper is an asynchronous HTTP library. We'll use it to power our HTTP
 // server and to make HTTP requests.
 hyper = "0.12.9"
