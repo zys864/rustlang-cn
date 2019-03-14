@@ -1,4 +1,4 @@
-## Cargo的一小步
+## Cargo的第一步
 
 使用Cargo创建一个新的项目，使用`cargo new`:
 
@@ -8,7 +8,7 @@ $ cargo new hello_world
 
 Cargo默认使用`--bin`参数创建二进制程序。如果你需要创建库，我们应该传入'--lib'参数
 
-我门来看一下Cargo为我们生成了哪些文件：
+我们来看一下Cargo为我们生成了哪些文件：
 
 ```console
 $ cd hello_world
