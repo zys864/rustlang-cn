@@ -1,15 +1,14 @@
-## First Steps with Cargo
+## Cargo的第一步
 
-To start a new package with Cargo, use `cargo new`:
+使用Cargo创建一个新的项目，使用`cargo new`:
 
 ```console
 $ cargo new hello_world
 ```
 
-Cargo defaults to `--bin` to make a binary program. To make a library, we'd
-pass `--lib`.
+Cargo默认使用`--bin`参数创建二进制程序。如果你需要创建库，我们应该传入'--lib'参数
 
-Let’s check out what Cargo has generated for us:
+我们来看一下Cargo为我们生成了哪些文件：
 
 ```console
 $ cd hello_world
@@ -22,7 +21,7 @@ $ tree .
 1 directory, 2 files
 ```
 
-This is all we need to get started. First, let’s check out `Cargo.toml`:
+这是我们开始一个项目所必须的文件。首先，我们看一下'Cargo.toml':
 
 ```toml
 [package]
@@ -34,10 +33,10 @@ edition = "2018"
 [dependencies]
 ```
 
-This is called a **manifest**, and it contains all of the metadata that Cargo
-needs to compile your package.
+这个文件称之为**依赖清单**，它包括了Cargo编译项目所需要的所有信息。
 
-Here’s what’s in `src/main.rs`:
+
+下面是`src/main.rs`文件的内容:
 
 ```rust
 fn main() {
@@ -45,21 +44,21 @@ fn main() {
 }
 ```
 
-Cargo generated a “hello world” for us. Let’s compile it:
+Cargo为我们创建了一个“hello world”项目。让我们编译它：
 
 ```console
 $ cargo build
    Compiling hello_world v0.1.0 (file:///path/to/package/hello_world)
 ```
 
-And then run it:
+然后运行它：
 
 ```console
 $ ./target/debug/hello_world
 Hello, world!
 ```
 
-We can also use `cargo run` to compile and then run it, all in one step:
+当然，我们也可以使用`cargo run`这一条命令来编译并运行项目：
 
 ```console
 $ cargo run
@@ -68,6 +67,6 @@ $ cargo run
 Hello, world!
 ```
 
-### Going further
+### 更近一步
 
-For more details on using Cargo, check out the [Cargo Guide](guide/index.html)
+更多的Cargo使用细节，请查阅[Cargo Guide](guide/index.html)
