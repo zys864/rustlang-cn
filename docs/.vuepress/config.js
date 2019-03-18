@@ -4,6 +4,7 @@ let { asyncrust } = require ('./category/asyncrust.js')
 let { reference } = require ('./category/reference.js')
 let { cargo } = require ('./category/cargo.js')
 let { tokio } = require ('./category/tokio.js')
+let { actix } = require ('./category/actix.js')
 let { actixweb } = require ('./category/actixweb.js')
 let { diesel } = require ('./category/diesel.js')
 let { riker } = require ('./category/riker.js')
@@ -60,6 +61,7 @@ module.exports = {
           },
           { text: '生态', items: [ 
             { text: 'Rust生态库-中文版', link: '/crates/' },
+            { text: 'Actix', link: '/crates/actix/' },
             { text: 'Actix-web', link: '/crates/actix-web/' },
             { text: 'Diesel', link: '/crates/diesel/' },
             { text: 'Riker', link: '/crates/riker/' },
@@ -82,6 +84,7 @@ module.exports = {
           '/office/rust/cargo/': cargo('Cargo'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
+          '/crates/actix/': actix('Actix'),
           '/crates/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),
