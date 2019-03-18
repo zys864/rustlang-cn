@@ -7,9 +7,9 @@ actionLink: /office/rust/book/
 footer: MIT Licensed | Copyright © 2019-present | Rust中文
 ---
 
-<br>
-
+<div class="features">
 <div id="join"><a href="https://leetcode-cn.com/contest/college/2019-spring" target="_black">2019 力扣杯 - 全国高校春季编程大赛</a></div>
+ </div>
 
 <div class="features">
   <div class="feature">
