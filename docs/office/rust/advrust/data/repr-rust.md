@@ -10,10 +10,10 @@
 
 Rust为您提供了以下布置复合数据的方法：
 
-* structs（命名产品类型）
-* tuples（匿名产品类型）
-* arrays（同类产品类型）
-* enums （命名总和类型 - 标记的`unions`）
+* structs（命名积类型）
+* tuples（匿名积类型）
+* arrays（同类积类型）
+* enums （命名和类型 - 标记的`unions`）
 * unions（未标记的`unions`）
 
 如果枚举的成员变量没有任何关联数据，则称枚举是**field-less**。
