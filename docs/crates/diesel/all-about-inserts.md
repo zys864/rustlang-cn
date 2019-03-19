@@ -22,7 +22,7 @@ table! {
 }
 ```
 
-由于我们的函数只能在`users`表上运行，我们可以使用`schema :: users :: dsl :: *; `在我们函数的顶部，这将让我们写`insert_into（users）`而不是`insert_into（users :: table）`。 如果要导入`table :: dsl :: *`，请确保它始终位于函数内部，而不是模块的顶部。
+由于我们的函数只能在`users`表上运行，我们可以使用`schema :: users :: dsl :: *;`在我们函数的顶部，这将让我们写`insert_into（users）`而不是`insert_into（users :: table）`。 如果要导入`table :: dsl :: *`，请确保它始终位于函数内部，而不是模块的顶部。
 
 如果表上的所有列都有默认值，我们可以做的最简单的事情就是调用[.default_values](http://docs.diesel.rs/diesel/query_builder/struct.IncompleteInsertStatement.html#method.default_values)。 我们可以编写一个运行该查询的函数，如下所示：
 
@@ -80,11 +80,11 @@ INSERT INTO "users" ("name", "hair_color")
 VALUES ($1, $2) -- binds: ["Tess", "Brown"]
 ```
 
-## 插入
+## 插入操作
 
 如果您只想在数据库中添加一些值，则使用元组是执行插入的典型方法。 但是，如果您的数据来自其他来源，例如Serde反序列化的网络表单，该怎么办？ 必须写`（name.eq（user.name），hair_color.eq（user.hair_color））`会很烦人。
 
-Diesel为此案例提供了可[Insertable ](http://docs.diesel.rs/diesel/prelude/trait.Insertable.html) trait。 Insertable将结构映射到数据库中的列。 我们可以通过在我们的类型中添加`＃[derive（Insertable）]`来自动推导出这个。
+Diesel为此案例提供了可[Insertable](http://docs.diesel.rs/diesel/prelude/trait.Insertable.html) trait。 Insertable将结构映射到数据库中的列。 我们可以通过在我们的类型中添加`＃[derive（Insertable）]`来自动推导出这个。
 
 src/lib.rs
 
@@ -191,7 +191,7 @@ insert_into(users)
     .execute(conn)
 ```
 
-请注意，此处的类型是`Option <Eq <Column，Value >> `not `Eq <Column，Option <Value >>`。 执行`column.eq（None）`会插入`NULL`而不是`DEFAULT`。 这会生成以下SQL：
+请注意，此处的类型是`Option <Eq <Column，Value >>`not `Eq <Column，Option <Value >>`。 执行`column.eq（None）`会插入`NULL`而不是`DEFAULT`。 这会生成以下SQL：
 
 src/lib.rs
 

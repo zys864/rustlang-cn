@@ -2,7 +2,7 @@
 
 我们来编写第一个actix web应用程序！
 
-## Hello, world!
+## Hello, world
 
 首先创建一个新的基于二进制的Cargo项目并进入新目录：
 
@@ -17,8 +17,8 @@ cd hello-world
 [dependencies]
 actix-web = "0.7"
 ```
-为了实现一个Web服务器，我们首先需要创建一个请求处理程序。请求处理函数接受一个HttpRequest实例作为其唯一参数，并返回一个可转换为HttpResponse的类型：
 
+为了实现一个Web服务器，我们首先需要创建一个请求处理程序。请求处理函数接受一个HttpRequest实例作为其唯一参数，并返回一个可转换为HttpResponse的类型：
 
 文件名: `src/main.rs`
 
@@ -42,7 +42,6 @@ fn main() {
 }
 ```
 
-
-仅此而已！现在编译并运行该程序cargo run。去http://localhost:8088 看结果。
+仅此而已！现在编译并运行该程序cargo run。去`http://localhost:8088` 看结果。
 
 如果你想要在开发过程中重新编译后自动重新加载服务器。请查看[自动重新加载模式](../theme/autoreload)。

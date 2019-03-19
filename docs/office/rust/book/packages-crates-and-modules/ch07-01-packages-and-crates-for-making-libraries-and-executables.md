@@ -1,8 +1,6 @@
 # 包和 crate 用来创建库和二进制项目
 
-> [ch07-01-mod-and-the-filesystem.md](https://github.com/rust-lang/book/blob/master/src/ch07-01-packages-and-crates-for-making-libraries-and-executables.md)
-> <br>
-> commit 1fedfc4b96c2017f64ecfcf41a0a07e2e815f24f
+> [ch07-01-mod-and-the-filesystem.md](https://github.com/rust-lang/book/blob/master/src/ch07-01-packages-and-crates-for-making-libraries-and-executables.md) &nbsp; commit 1fedfc4b96c2017f64ecfcf41a0a07e2e815f24f
 
 让我们聊聊 **模块** 与 *crate*。下面是一个总结：
 

@@ -34,7 +34,7 @@ users::table.load(&connection)
 SELECT * FROM users;
 ```
 
-2. 加载用户的所有帖子：
+2 加载用户的所有帖子：
 
 rust代码：
 
@@ -96,6 +96,7 @@ pub struct Download {
     date: SystemTime,
 }
 ```
+
 而不用这样写
 
 ```rust
@@ -152,7 +153,7 @@ INSERT INTO users (name, hair_color) VALUES
   ('Gordon', DEFAULT)
 ```
 
-2. 如果您需要你插入行的数据，只需将`execute`更改为`get_result`或`get_results`。 diesel将负责其余的工作。
+2 如果您需要你插入行的数据，只需将`execute`更改为`get_result`或`get_results`。 diesel将负责其余的工作。
 
 rust代码：
 

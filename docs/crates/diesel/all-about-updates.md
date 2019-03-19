@@ -114,7 +114,8 @@ diesel::update(posts)
 UPDATE `posts` SET `title` = ?, `body` = ?
 ```
 
-### AsChangeset
+## AsChangeset
+
 虽然能够像这样直接更新列是很好的，但在处理具有多个字段的表单时，它很快就会变得很麻烦。 如果我们查看`.set`的签名，您会注意到约束是针对称为`AsChangeset`的特征。 这是diesel可以为我们提供的另一个特性。 我们可以将`＃[derive（AsChangeset）]`添加到我们的Post结构中，这将让我们传递一个`＆Post`来设`set`。
 
 ```rust
@@ -162,6 +163,7 @@ UPDATE `posts` SET `body` = ?
 如果您正在使用PostgreSQL，所有这些选项也适用于`INSERT ON CONFLICT DO UPDATE`。 有关更多详细信息，请参阅[upsert文档](http://docs.diesel.rs/diesel/pg/upsert/index.html)。
 
 ## 执行您的查询
+
 构建查询后，我们需要实际执行它。有几种不同的方法可以做到这一点，具体取决于你想要的类型。
 
 运行查询的最简单方法是[execute](http://docs.diesel.rs/diesel/query_dsl/trait.RunQueryDsl.html#tymethod.execute)。此方法将运行您的查询，并返回受影响的行数。如果您只是想确保查询成功执行，并且不关心从数据库中获取任何内容，则应使用此方法。
