@@ -13,6 +13,7 @@ let { serde } = require ('./category/serde.js')
 let { awesome } = require ('./category/awesome.js')
 
 module.exports = {
+    extend: '@vuepress/theme-default',
     title: 'Rust 中文',
     description: '致力于Rust编程语言中文网络-QQ群:570065685',
     head: [
@@ -25,8 +26,13 @@ module.exports = {
       ['meta', { name: 'msapplication-TileImage', content: '/icons/msapplication-icon-144x144.png' }],
       ['meta', { name: 'msapplication-TileColor', content: '#000000' }]
     ],
-    serviceWorker: true,
-    theme: 'vue',
+    plugins: ['@vuepress/back-to-top','@vuepress/pwa'],
+    plugins: {
+        '@vuepress/pwa': {
+            serviceWorker: true,
+            updatePopup: true
+        }
+    },
     themeConfig: {
         repo: 'rustlang-cn/rustlang-cn',
         docsDir: 'docs',
@@ -36,6 +42,9 @@ module.exports = {
         editLinkText: '在 GitHub 上编辑此页',
         lastUpdated: '上次更新', 
         sidebarDepth: 0,
+        serviceWorker: {
+            updatePopup: true
+        },
         search: true,
         searchMaxSuggestions: 11,
         nav: [
@@ -93,4 +102,3 @@ module.exports = {
         }
     }
 }
-
