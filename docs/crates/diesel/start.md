@@ -26,7 +26,9 @@ Diesel提供了一个单独的CLI工具来帮助管理您的项目。 由于它�
 ```rust
 cargo install diesel_cli
 ```
+
 如果您遇到如下错误：
+
 ```bash
 note: ld: library not found for -lmysqlclient
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
@@ -72,6 +74,7 @@ Creating migrations/20160815133237_create_posts/down.sql
 接下来，我们将编写用于迁移的SQL：
 
 up.sql
+
 ```sql
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
@@ -82,11 +85,13 @@ CREATE TABLE posts (
 ```
 
 down.sql
+
 ```sql
 DROP TABLE posts
 ```
 
 我们可以应用新的迁移：
+
 ```rust
 diesel migration run
 ```
@@ -102,6 +107,7 @@ diesel migration redo
 好的，让我们写一些Rust。 我们首先编写一些代码来显示最近发布的五篇帖子。 我们需要做的第一件事是建立数据库连接。
 
 `src/lib.rs`
+
 ```rust
 #[macro_use]
 extern crate diesel;
@@ -153,7 +159,7 @@ pub struct Post {
 
 `src/schema.rs`
 
-```
+```rust
 table! {
     posts (id) {
         id -> Integer,
@@ -242,7 +248,6 @@ pub fn create_post<'a>(conn: &PgConnection, title: &'a str, body: &'a str) -> Po
         .expect("Error saving new post")
 }
 ```
-
 
 当我们在插入或更新语句上调用`.get_result`时，它会自动将`RETURNING *`添加到查询的末尾，并允许我们将其加载到为正确类型实现`Queryable`的任何结构中。 整齐！
 

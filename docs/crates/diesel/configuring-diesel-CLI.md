@@ -16,7 +16,7 @@ Diesel CLI是Diesel提供的可选工具，用于管理数据库模式。 它的
 
 ## The `with_docs` field
 
-当此字段设置为`true`时，` diesel print-schema`将表现为默认情况下传递`--with-docs`标志。 这会对所有表和列放置doc注释。
+当此字段设置为`true`时，`diesel print-schema`将表现为默认情况下传递`--with-docs`标志。 这会对所有表和列放置doc注释。
 
 ## The `filter` field
 

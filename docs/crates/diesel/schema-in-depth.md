@@ -1,6 +1,6 @@
 # 深入Schema
 
-在本指南中，我们将看看究竟`diesel print-schema`和[table! ](http://docs.diesel.rs/diesel/macro.table.html)。对于`table！`，我们将展示生成的实际代码的简化版本，并解释每个部分与您的相关性。如果您曾经对生成的内容或者`use schema :: posts :: dsl :: *`的含义感到困惑，那么这是正确的选择。
+在本指南中，我们将看看究竟`diesel print-schema`和[table!](http://docs.diesel.rs/diesel/macro.table.html)。对于`table！`，我们将展示生成的实际代码的简化版本，并解释每个部分与您的相关性。如果您曾经对生成的内容或者`use schema :: posts :: dsl :: *`的含义感到困惑，那么这是正确的选择。
 
 `diesel print-schema`是Diesel CLI提供的命令。此命令将建立数据库连接，查询所有表及其列的列表，并生`table！`每个的调用。 `diesel print-schema`将跳过任何以`__`（双下划线）开头的表名。可以将Diesel配置为在运行迁移时自动重新运行`diesel print-schema`。有关详细信息，请参阅配置`Configuring Diesel CLI`
 
@@ -112,7 +112,7 @@ impl table {
 }
 ```
 
-接下来，为`table`实现了几个特性。 您通常永远不会直接与这些进行交互，但它们可以启用[query_dsl](https://docs.diesel.rs/diesel/query_dsl/index.html)中的大多数查询构建器函数，以及与`insert`,` update`和`delete`一起使用。
+接下来，为`table`实现了几个特性。 您通常永远不会直接与这些进行交互，但它们可以启用[query_dsl](https://docs.diesel.rs/diesel/query_dsl/index.html)中的大多数查询构建器函数，以及与`insert`,`update`和`delete`一起使用。
 
 ```rust
 impl AsQuery for table {
