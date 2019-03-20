@@ -74,7 +74,7 @@ module.exports = {
             { text: '资源', link: '/resourse/resourse/' }
           ] },
           { text: '论坛', link: 'http://47.104.146.58' },
-          { text: 'Matrix', link: 'https://riot.im/app/#/room/#rustlang-cn:matrix.org' }
+          { text: '聊天室', link: 'https://riot.im/app/#/room/#rustlang-cn:matrix.org' }
           
         ],
         sidebar: {
