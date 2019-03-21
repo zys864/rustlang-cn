@@ -39,10 +39,7 @@ module.exports = {
         search: true,
         searchMaxSuggestions: 11,
         nav: [
-          { text: '阅读', items: [ 
-            { text: '文章', link: '/read/rust/' },
-            { text: '社刊', link: '/read/rustlang-cn/' }
-          ] },
+          { text: '阅读', link: '/read/' },
           { text: '文档', items: [
               { text: '官方Rust书-中文版', link: '/office/rust/' },
               { text: 'Rustlang', items: [
