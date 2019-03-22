@@ -1,17 +1,10 @@
-![img](https://images.wallpaperscraft.com/image/clouds_mountains_art_127406_1366x768.jpg)
+![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553245344821&di=593a44d5ceebc44b4d08fb5988fa97ef&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201310%2F18%2F20131018214911_cLyMX.jpeg)
 
 # Rust: Dedicated GC thread
 
-> 本文出自[Rust: Dedicated GC thread](https://zhuanlan.zhihu.com/p/54085497)，同步于[Rust中文社区专栏：Rust: Dedicated GC thread](https://rustlang-cn.org/read/rust/2019/rust-dedicated-gc-thread.html) ,本文时间：2019-01-07, 作者：[Pslydhh](https://www.zhihu.com/people/Pslydhh/activities)，简介：Pslydhh
+> 本文出自[Rust: Dedicated GC thread](https://zhuanlan.zhihu.com/p/54085497)，同步于[Rust中文阅读：Rust: Dedicated GC thread](https://rustlang-cn.org/read/01/rust-dedicated-gc-thread.html) ,本文时间：2019-01-07, 作者：[Pslydhh](https://www.zhihu.com/people/Pslydhh/activities)，简介：Pslydhh
 
-[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文社区,共建Rust语言中文网络！欢迎向Rust中文社区专栏投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn) ,好文在以下展示, 欢迎访问[Rust中文论坛](https://github.com/rustlang-cn/forum/issues)，QQ群：570065685
-
-1. [Rust中文社区首页](https://rustlang-cn.org)
-2. Rust中文社区[专栏文章](https://rustlang-cn.org/read/rust/)
-3. 知乎专栏[Rust中文社区](https://zhuanlan.zhihu.com/rustlang-cn)
-4. 思否专栏[Rust中文社区](https://segmentfault.com/blog/rust-lang)
-5. 简书专题[Rust中文社区](https://www.jianshu.com/c/2efae7198ea3)
-6. 微博[Rustlang-cn](https://weibo.com/kriry)
+[Rust中文首页](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向Rust中文阅读投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn)
 
 [crossbeam-epoch](https://zhuanlan.zhihu.com/p/44169722)是一个并发环境下内存回收的框架，它作为crossbeam中多种并发数据结构的基础。所以必须足够高效。
 
