@@ -1,4 +1,4 @@
-![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553245344821&di=593a44d5ceebc44b4d08fb5988fa97ef&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201310%2F18%2F20131018214911_cLyMX.jpeg)
+![img](https://images.wallpaperscraft.com/image/clouds_mountains_art_127406_1366x768.jpg)
 
 # Rust: Dedicated GC thread
 
