@@ -4,24 +4,14 @@
 
 > 源 [introduction](https://github.com/rust-lang-nursery/reference/blob/master/src/introduction.md) &nbsp; Commit: a2405b970b7c8222a483b82213adcb17d646c75d
 
+# 介绍
+本书是Rust编程语言的主要参考。它提供三种材料：
 
-# Introduction
+- 非正式描述每种语言结构及其用法的章节。
+- 非正式描述内存模型，并发模型，运行时服务，链接模型和调试工具的章节。
+- 附录章节提供了影响设计的语言的基本原理和参考。
 
-This book is the primary reference for the Rust programming language. It
-provides three kinds of material:
-
-  - Chapters that informally describe each language construct and their use.
-  - Chapters that informally describe the memory model, concurrency model,
-    runtime services, linkage model and debugging facilities.
-  - Appendix chapters providing rationale and references to languages that
-    influenced the design.
-
-<div class="warning">
-
-Warning: This book is incomplete. Documenting everything takes a while. See
-the [undocumented] page for what is not documented in this book.
-
-</div>
+警告：本书不完整。记录所有内容需要一段时间。有关本书中未记录的内容，请参阅[GitHub问题](https://github.com/rust-lang-nursery/reference/issues)。
 
 ## What *The Reference* is Not
 
