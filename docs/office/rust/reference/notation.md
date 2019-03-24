@@ -1,18 +1,20 @@
 # 符号
 
-## Grammar
+> 源 [notation](https://github.com/rust-lang-nursery/reference/blob/master/src/notation.md) Commit: a2405b970b7c8222a483b82213adcb17d646c75d
 
-The following notations are used by the *Lexer* and *Syntax* grammar snippets:
+## 语法
 
-| Notation          | Examples                      | Meaning                                   |
+Lexer和Syntax语法片段使用以下符号表示法：
+
+| 符号               |     示例                      |     意义                                   |
 |-------------------|-------------------------------|-------------------------------------------|
-| CAPITAL           | KW_IF, INTEGER_LITERAL        | A token produced by the lexer             |
-| _ItalicCamelCase_ | _LetStatement_, _Item_        | A syntactical production                  |
-| `string`          | `x`, `while`, `*`             | The exact character(s)                    |
-| \\x               | \\n, \\r, \\t, \\0            | The character represented by this escape  |
-| x<sup>?</sup>     | `pub`<sup>?</sup>             | An optional item                          |
-| x<sup>\*</sup>    | _OuterAttribute_<sup>\*</sup> | 0 or more of x                            |
-| x<sup>+</sup>     |  _MacroMatch_<sup>+</sup>     | 1 or more of x                            |
+| CAPITAL           | KW_IF, INTEGER_LITERAL        | 词法分析器生成的标记                         |
+| _ItalicCamelCase_ | _LetStatement_, _Item_        | 语法产生                                   |
+| `string`          | `x`, `while`, `*`             | 确切的字符                                 |
+| \\x               | \\n, \\r, \\t, \\0            | 此字符的转义表示                            |
+| x<sup>?</sup>     | `pub`<sup>?</sup>             | 可选项                                     |
+| x<sup>\*</sup>    | _OuterAttribute_<sup>\*</sup> | 0或多个                                    |
+| x<sup>+</sup>     |  _MacroMatch_<sup>+</sup>     | 1或多个                                    |
 | x<sup>a..b</sup>  | HEX_DIGIT<sup>1..6</sup>      | a to b repetitions of x                   |
 | \|                | `u8` \| `u16`, Block \| Item  | Either one or another                     |
 | [ ]               | [`b` `B`]                     | Any of the characters listed              |
@@ -23,18 +25,11 @@ The following notations are used by the *Lexer* and *Syntax* grammar snippets:
 
 ## String table productions
 
-Some rules in the grammar &mdash; notably [unary operators], [binary
-operators], and [keywords] &mdash; are given in a simplified form: as a listing
-of printable strings. These cases form a subset of the rules regarding the
-[token][tokens] rule, and are assumed to be the result of a lexical-analysis
-phase feeding the parser, driven by a DFA, operating over the disjunction of all such string table
-entries.
+语法中的一些规则 - 特别是[一元运算符]，[二元运算符]和[关键字] - 以简化形式给出：作为可打印字符串的列表。这些情况构成了关于`token`规则的规则的子集 ，并且被假定为由DFA驱动的解析器的词法分析阶段的结果，其在所有这样的字符串表条目的分离上操作。
 
-When such a string in `monospace` font occurs inside the grammar,
-it is an implicit reference to a single member of such a string table
-production. See [tokens] for more information.
+当等宽字体中的这种字符串出现在语法内部时，它是对这种字符串表生成的单个成员的隐式引用。 有关更多信息，请参阅[tokens]。
 
-[binary operators]: expressions/operator-expr.html#arithmetic-and-logical-binary-operators
-[keywords]: keywords.html
-[tokens]: tokens.html
-[unary operators]: expressions/operator-expr.html#borrow-operators
+[一元运算符]: https://rustlang-cn.org/office/rust/reference/statements-and-expressions/expressions/operator-expr.html#borrow-operators
+[二元运算符]: https://rustlang-cn.org/office/rust/reference/statements-and-expressions/expressions/operator-expr.html#arithmetic-and-logical-binary-operators
+[关键字]: https://rustlang-cn.org/office/rust/reference/lexical-structure/keywords.html
+[tokens]: https://rustlang-cn.org/office/rust/reference/lexical-structure/tokens.html
