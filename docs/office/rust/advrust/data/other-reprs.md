@@ -2,7 +2,7 @@
 
 > 源-[other-reprs](https://github.com/rust-lang-nursery/nomicon/blob/master/src/other-reprs.md) &nbsp; Commit: 7f019ec5c87da39fe0b9b5149e413d914528e945
 
-Rust允许您从默认中指定替代数据布局策略。 这里有[reference].
+Rust允许您指定自定义内存布局策略以替代默认的策略。 这里有[reference].
 
 ## repr(C)
 
@@ -16,17 +16,11 @@ Rust允许您从默认中指定替代数据布局策略。 这里有[reference].
 
 * DST的指针（胖指针），元组都是C中没有的，因此也不是FFI安全的。
 
-* Enums with fields also aren't a concept in C or C++, but a valid bridging
-  of the types [is defined][really-tagged].
+* 携带变量的Enum成员这种概念也时C/C++中所没有的，但有一个定义好的合法的bridge类型[really-tagged]。
 
-* If `T` is an [FFI-safe non-nullable pointer
-  type](ffi.html#the-nullable-pointer-optimization),
-  `Option<T>` is guaranteed to have the same layout and ABI as `T` and is
-  therefore also FFI-safe. As of this writing, this covers `&`, `&mut`,
-  and function pointers, all of which can never be null.
+* 如果`T`是 [FFI安全的不可空指针](ffi.html#the-nullable-pointer-optimization)的，就能保证`Option<T>`和`T`有着同样的内存布局和ABI，因此`Option<T>`也是FFI安全的。如前言所写，`T`如果被转换为`&`、`&mut`或者函数指针，也永远都不会是空指针。
 
-* Tuple structs are like structs with regards to `repr(C)`, as the only
-  difference from a struct is that the fields aren’t named.
+* Tuple结构体会像普通结构体一样对待`repr(C)`，与普通结构体的唯一的区别就是Tuple结构体的成员是匿名的。
 
 * `repr(C)` is equivalent to one of `repr(u*)` (see the next section) for
 fieldless enums. The chosen size is the default enum size for the target platform's C
