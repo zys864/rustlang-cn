@@ -82,7 +82,7 @@ Rust将关键字分为三类：
 > KW_VIRTUAL        : `virtual`\
 > KW_YIELD          : `yield`
 
-The following keywords are reserved beginning in the 2018 edition.
+从2018年版开始保留以下关键字
 
 > **<sup>Lexer 2018+</sup>**\
 > KW_ASYNC : `async`\
