@@ -2,11 +2,11 @@
 
 > 源-[other-reprs](https://github.com/rust-lang-nursery/nomicon/blob/master/src/other-reprs.md) &nbsp; Commit: 7f019ec5c87da39fe0b9b5149e413d914528e945
 
-Rust允许您指定自定义内存布局策略以替代默认的策略。 这里有[reference].
+Rust允许您使用特定的内存布局策略以替代默认的策略。 这里有[reference].
 
 ## repr(C)
 
-这是最重要的一种`repr`。它的目的很简单，就是和C保持一致。数据的顺序、大小、对齐方式都和你在C或C++中见到的一摸一样。所有你需要通过FFI交互的类型都应该有`repr(C)`，因为C是程序设计领域的世界语。而且如果我们要在数据布局方面玩一些花活的话，比如把数据重新解析成另一种类型，`repr(C)`也是很有必要的。
+这是最重要的一种`repr`。它的目的很简单，就是和C保持一致。数据的顺序、大小、对齐方式都和你在C或C++中见到的一模一样。所有你需要通过FFI交互的类型都应该指定`repr(C)`，因为C是程序设计领域的世界语。而且如果我们要在数据布局方面玩一些花样的话，比如把数据重新解析成另一种类型，`repr(C)`也是很有必要的。
 
 我们强烈建议您使用[rust-bindgen]和/或[cbdingen]来管理您的FFI边界。 Rust团队与这些项目密切合作，以确保它们运行稳健，并与当前和未来有关类型布局和`reprs`保证兼容。
 
@@ -22,6 +22,7 @@ Rust允许您指定自定义内存布局策略以替代默认的策略。 这里
 
 * Tuple结构体会像普通结构体一样对待`repr(C)`，与普通结构体的唯一的区别就是Tuple结构体的成员是匿名的。
 
+* Fieldless的Enum，`repr(C)`等价于`repr(u*)`（见下一部分）之一。目标平台上的C语言的ABI决定了会使用等价于C的Enum的默认大小作为Rust侧Enum的大小。要注意，在C语言中，Enum的内存布局是由实现定义（Implementation defined）的，所以这确实需要全力猜测（笑。特别地，C代码的某些编译选项也会影响到猜测结果。
 * `repr(C)` is equivalent to one of `repr(u*)` (see the next section) for
 fieldless enums. The chosen size is the default enum size for the target platform's C
 application binary interface (ABI). Note that enum representation in C is implementation
