@@ -15,7 +15,7 @@ footer: MIT Licensed | Copyright © 2019-present | Rust中文
 
 <div class="features">
   <div class="feature">
-    <button class="new"><a href="/read/" >Rust中文阅读</a>文章专栏</a></button>
+    <button class="new"><a href="/read/" >Rust中文阅读</a></button>
     <p><a href="/read/03/rust-bacise-add-trait.html" ><strong>最新文章：Rust基础：`Add Trait`</strong></a></p>
   </div>
   <div class="feature">
@@ -23,8 +23,8 @@ footer: MIT Licensed | Copyright © 2019-present | Rust中文
     <p><a href="http://47.104.146.58/a/signup" target="_black"><strong>现在就加入中文论坛</strong></a></p>
   </div>
   <div class="feature">
-    <button class="new"><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" >Rust聊天室</a></button>
-    <p><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" ><strong >Rust中文在线聊天室畅聊</strong></a></p>
+    <button class="new"><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" target="_black">Rust聊天室</a></button>
+    <p><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" target="_black"><strong>Rust中文在线聊天室畅聊</strong></a></p>
   </div>
 </div>
 
