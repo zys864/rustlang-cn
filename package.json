@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "rustlang-cn.org",
   "repository": "https://github.com/rustlang-cn/rustlang-cn.git",
-  "license": "GPL-3",
+  "license": "GPLv3",
   "scripts": {
-    "dev": "node --max_old_space_size=8192 ./node_modules/vuepress/index.js dev docs",
-    "build": "node --max_old_space_size=8192 ./node_modules/vuepress/index.js build docs"
+    "dev": "vuepress dev docs",
+    "build": "node --max_old_space_size=98192 ./node_modules/vuepress/index.js build docs"
   },
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.0.0-alpha.44",

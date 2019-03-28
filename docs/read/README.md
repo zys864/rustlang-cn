@@ -4,13 +4,13 @@
 <br>
 <div id="join" style="font-size: 1.5rem;">欢迎 <a href="https://github.com/rustlang-cn/rustlang-cn" target="_black">投稿</a> 共建Rust语言中文网络！</div>
 
-<h4><img src="/imgs/rust.png"/>
-<a href="/read/03/rust-bacise-add-trait.html">Rust基础：`Add Trait`</a></h4>
+<h4><img src="/imgs/rust.png"/><span style="color: #7B463D;font-size: 0.8rem;"> 2019-03</span>
+<a href="/read/03/rust-bacise-add-trait.html">Rust基础：Add Trait</a></h4>
 
-<h4><img src="/imgs/rust.png"/>
+<h4><img src="/imgs/rust.png"/><span style="color: #7B463D;font-size: 0.8rem;"> 2019-01</span>
 <a href="/read/01/rust-dedicated-gc-thread.html">Rust: Dedicated GC thread</a></h4>
 
-<h4><img src="/imgs/rust.png"/>
+<h4><img src="/imgs/rust.png"/><span style="color: #7B463D;font-size: 0.8rem;"> 2019-01</span>
 <a href="/read/01/rust-memory-allocator.html">Rust内存分配器的不同行为</a></h4>
 
 <br>
