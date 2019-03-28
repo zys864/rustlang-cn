@@ -18,5 +18,8 @@ steps:
 - script: |
     npm install
     npm run build
-    ./.deploy.sh
   displayName: 'npm install and build'
+  
+- bash: |
+    ./.deploy.sh
+  displayName: 'deploy rustlang-cn.org'
