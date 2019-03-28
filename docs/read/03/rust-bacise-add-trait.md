@@ -34,7 +34,7 @@ pub struct Fixed {
 
 所以我们要做的第一件事是打印我们的数据类型。请记住这是关于基础的，所以我暂时不尝试使用宏，而是根据特质实现它。
 
-查看：[Display](doc.rust-lang.org/std/fmt/trait.Display.html)
+查看：[Display](https://doc.rust-lang.org/std/fmt/trait.Display.html)
 
 ```rust
 use std::fmt;
