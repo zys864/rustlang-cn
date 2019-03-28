@@ -1,4 +1,4 @@
-# Rustlang-cn [![Build Status](https://travis-ci.org/rustlang-cn/rustlang-cn.svg?branch=master)](https://travis-ci.org/rustlang-cn/rustlang-cn)
+# Rustlang-cn [![Build Status](https://travis-ci.org/rustlang-cn/rustlang-cn.svg?branch=master)](https://travis-ci.org/rustlang-cn/rustlang-cn) [![matrix](https://about.riot.im/images/favicon-32.png)](https://riot.im/app/#/room/#rustlang-cn:matrix.org)
 
 ## 一、参与 Rust 中文专栏投稿
 

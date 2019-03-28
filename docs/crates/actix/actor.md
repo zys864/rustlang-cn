@@ -45,7 +45,7 @@ Actor通过交换消息进行通信。分派Actor可以可选择等待响应。A
 
 ## Message
 
-Actor通过发送消息与其他actor通信。在actix中所有消息是typed。消息可以是实现[Message](https://actix/trait.Message.html) trait的任何rust类型。 `Message :: Result`定义返回类型。让我们定义一个简单的`Ping`消息 - 接受此消息的actor需要返回`io::Result<bool>`。
+Actor通过发送消息与其他actor通信。在actix中所有消息是typed。消息可以是实现[Message](https://actix.rs/actix/actix/trait.Message.html) trait的任何rust类型。 `Message :: Result`定义返回类型。让我们定义一个简单的`Ping`消息 - 接受此消息的actor需要返回`io::Result<bool>`。
 
 ```rust
 extern crate actix;

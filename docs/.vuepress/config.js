@@ -13,9 +13,8 @@ let { serde } = require ('./category/serde.js')
 let { awesome } = require ('./category/awesome.js')
 
 module.exports = {
-    extend: '@vuepress/theme-default',
     title: 'Rust 中文',
-    description: '致力于Rust编程语言中文网络-QQ群:570065685',
+    description: '致力于Rust编程语言中文网络',
     head: [
       ['link', { rel: 'icon', href: `/favicon.ico` }],
       ['link', { rel: 'manifest', href: '/manifest.json' }],
@@ -26,13 +25,8 @@ module.exports = {
       ['meta', { name: 'msapplication-TileImage', content: '/icons/msapplication-icon-144x144.png' }],
       ['meta', { name: 'msapplication-TileColor', content: '#000000' }]
     ],
-    plugins: ['@vuepress/back-to-top','@vuepress/pwa'],
-    plugins: {
-        '@vuepress/pwa': {
-            serviceWorker: true,
-            updatePopup: true
-        }
-    },
+    serviceWorker: true,
+    theme: 'vue',
     themeConfig: {
         repo: 'rustlang-cn/rustlang-cn',
         docsDir: 'docs',
@@ -42,16 +36,10 @@ module.exports = {
         editLinkText: '在 GitHub 上编辑此页',
         lastUpdated: '上次更新', 
         sidebarDepth: 0,
-        serviceWorker: {
-            updatePopup: true
-        },
         search: true,
         searchMaxSuggestions: 11,
         nav: [
-          { text: '阅读', items: [ 
-            { text: '文章', link: '/read/rust/' },
-            { text: '社刊', link: '/read/rustlang-cn/' }
-          ] },
+          { text: '阅读', link: '/read/' },
           { text: '文档', items: [
               { text: '官方Rust书-中文版', link: '/office/rust/' },
               { text: 'Rustlang', items: [
@@ -82,7 +70,8 @@ module.exports = {
             { text: 'Crates', link: '/resourse/crates/' },
             { text: '资源', link: '/resourse/resourse/' }
           ] },
-          { text: '论坛', link: 'http://47.104.146.58' }
+          { text: '论坛', link: 'http://47.104.146.58' },
+          { text: '聊天室', link: 'https://riot.im/app/#/room/#rustlang-cn:matrix.org' }
           
         ],
         sidebar: {
@@ -102,3 +91,4 @@ module.exports = {
         }
     }
 }
+

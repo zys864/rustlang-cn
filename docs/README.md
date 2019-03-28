@@ -7,26 +7,28 @@ actionLink: /office/rust/book/
 footer: MIT Licensed | Copyright © 2019-present | Rust中文
 ---
 
-<div class="features">
-<div id="join"><a href="https://leetcode-cn.com/contest/college/2019-spring" target="_black">2019 力扣杯 - 全国高校春季编程大赛</a></div>
- </div>
-
-<div class="features">
-  <div class="feature">
-    <button class="new"><a href="/read/rust/" >文章专栏</a></button>
-    <p><a href="/read/rust/2019/rust-dedicated-gc-thread.html" ><strong>最新文章：Rust: Dedicated GC thread</strong></a></p>
-  </div>
-  <div class="feature">
-    <button class="new"><a href="/read/rustlang-cn/" >社刊专栏</a></button>
-    <p><a href="/read/rustlang-cn/2019/01.html" ><strong >最新社刊：Rust中文社刊2019-01月</strong></a></p>
-  </div>
-  <div class="feature">
-    <button class="new"><a href="http://47.104.146.58/" target="_black">中文论坛</a></button>
-    <p><a href="http://47.104.146.58/a/signup" target="_black"><strong>现在就加入交流</strong></a></p>
-  </div>
-</div>
+<br>
 
 <div id="join">欢迎 <a href="https://github.com/rustlang-cn/Important/issues/1" target="_black">加入</a> 共建Rust语言中文网络！</div>
+
+<br>
+
+<div id="join"><a href="https://leetcode-cn.com/contest/college/2019-spring" target="_black">2019 力扣杯 - 全国高校春季编程大赛</a></div>
+
+<div class="features">
+  <div class="feature">
+    <button class="new"><a href="/read/" >Rust中文阅读</a></button>
+    <p><a href="/read/03/rust-bacise-add-trait.html" ><strong>最新文章：Rust基础：`Add Trait`</strong></a></p>
+  </div>
+  <div class="feature">
+    <button class="new"><a href="http://47.104.146.58/" target="_black">Rust中文论坛</a></button>
+    <p><a href="http://47.104.146.58/a/signup" target="_black"><strong>现在就加入中文论坛</strong></a></p>
+  </div>
+  <div class="feature">
+    <button class="new"><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" target="_black">Rust聊天室</a></button>
+    <p><a href="https://riot.im/app/#/room/#rustlang-cn:matrix.org" target="_black"><strong>Rust中文在线聊天室畅聊</strong></a></p>
+  </div>
+</div>
 
 # Why Rust
 

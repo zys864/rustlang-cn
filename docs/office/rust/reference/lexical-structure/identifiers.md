@@ -12,23 +12,21 @@
 > IDENTIFIER :\
 > NON_KEYWORD_IDENTIFIER | RAW_IDENTIFIER
 
-An identifier is any nonempty ASCII string of the following form:
 
-Either
+标识符是以下形式的任何非空ASCII字符串：
 
-* The first character is a letter.
-* The remaining characters are alphanumeric or `_`.
+要么
 
-Or
+- 第一个字符是一个字母。
+- 其余字符是字母数字或_。
 
-* The first character is `_`.
-* The identifier is more than one character. `_` alone is not an identifier.
-* The remaining characters are alphanumeric or `_`.
+或者
 
-A raw identifier is like a normal identifier, but prefixed by `r#`. (Note that
-the `r#` prefix is not included as part of the actual identifier.)
-Unlike a normal identifier, a raw identifier may be any strict or reserved
-keyword except the ones listed above for `RAW_IDENTIFIER`.
+- 第一个字符是_。
+- 标识符不止一个字符。 单独`_`不是标识符。
+- 其余字符是字母数字或_。
 
-[strict]: keywords.html#strict-keywords
-[reserved]: keywords.html#reserved-keywords
+原始标识符类似于普通标识符，但以`r＃`为前缀。（请注意，`r＃`前缀不包含在实际标识符的一部分中。）与普通标识符不同，原始标识符可以是除上面列出的`RAW_IDENTIFIER`之外的任何严格或保留关键字。
+
+[strict]: https://rustlang-cn.org/office/rust/reference/lexical-structure/keywords.html#%E4%B8%A5%E6%A0%BC%E5%85%B3%E9%94%AE%E5%AD%97
+[reserved]: https://rustlang-cn.org/office/rust/reference/lexical-structure/keywords.html#%E4%BF%9D%E7%95%99%E5%85%B3%E9%94%AE%E5%AD%97

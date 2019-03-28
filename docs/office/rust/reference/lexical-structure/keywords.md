@@ -1,18 +1,19 @@
 # 关键词
 
-Rust divides keywords into three categories:
-- [关键词](#%E5%85%B3%E9%94%AE%E8%AF%8D)
-  - [Strict keywords](#strict-keywords)
-  - [Reserved keywords](#reserved-keywords)
-  - [Weak keywords](#weak-keywords)
+>源 [keywords](https://github.com/rust-lang-nursery/reference/blob/master/src/keywords.md) Commit: eb02dd5194a747277bfa46b0185d1f5c248f177b
 
-## Strict keywords
+Rust将关键字分为三类：
 
-These keywords can only be used in their correct contexts. They cannot
-be used as the names of:
+- [严格关键字](#严格关键字)
+- [保留关键字](#保留关键字)
+- [弱关键字](#弱关键字)
+
+## 严格关键字
+
+这些关键字只能在正确的上下文中使用。 它们不能用作以下名称：
 
 - [Items]
-- [Variables] and function parameters
+- Variables and function parameters
 - Fields and [variants]
 - [Type parameters]
 - Lifetime parameters or [loop labels]
@@ -57,17 +58,15 @@ be used as the names of:
 > KW_WHERE          : `where`\
 > KW_WHILE          : `while`
 
-The following keywords were added beginning in the 2018 edition.
+从2018年版开始添加了以下关键字。
 
 > **<sup>Lexer 2018+</sup>**\
 > KW_DYN            : `dyn`
 
-## Reserved keywords
+## 保留关键字
 
-These keywords aren't used yet, but they are reserved for future use. They have
-the same restrictions as strict keywords. The reasoning behind this is to make
-current programs forward compatible with future versions of Rust by forbidding
-them to use these keywords.
+这些关键字尚未使用，但保留供将来使用。 他们有与严格关键字相同的限制。 这背后的原因是要当前程序通过禁止向前兼容Rust的未来版本
+他们使用这些关键字。
 
 > **<sup>Lexer</sup>**\
 > KW_ABSTRACT       : `abstract`\
@@ -83,32 +82,28 @@ them to use these keywords.
 > KW_VIRTUAL        : `virtual`\
 > KW_YIELD          : `yield`
 
-The following keywords are reserved beginning in the 2018 edition.
+从2018年版开始保留以下关键字
 
 > **<sup>Lexer 2018+</sup>**\
 > KW_ASYNC : `async`\
 > KW_AWAIT : `await`\
 > KW_TRY   : `try`
 
-## Weak keywords
+## 弱关键字
 
-These keywords have special meaning only in certain contexts. For example, it
-is possible to declare a variable or method with the name `union`.
+这些关键字仅在某些情况下具有特殊含义。 例如，它可以声明一个名为`union`的变量或方法。
 
-- `union` is used to declare a [union] and is only a keyword when used in a
-  union declaration.
-- `'static` is used for the static lifetime and cannot be used as a generic
-  lifetime parameter
+- `union`用于声明[union]，只在`union`声明使用时是一个关键字
+- `'static`用于静态生命周期，不能用作泛型生命周期参数
 
     ```compile_fail
     // error[E0262]: invalid lifetime parameter name: 'static
     fn invalid_lifetime_parameter<'static>(s: &'static str) -> &'static str { s }
     ```
 
-- In the 2015 edition, [`dyn`] is a keyword when used in a type position
-  followed by a path that does not start with `::`.
+- 在2015版中，[`dyn`]是在类型位置后跟一个不以`::`开头的路径使用时为关键字。
 
-  Beginning in the 2018 edition, `dyn` has been promoted to a strict keyword.
+   从2018年版开始，`dyn`已被提升为严格关键字。
 
 > **<sup>Lexer</sup>**\
 > KW_UNION          : `union`\
@@ -117,14 +112,13 @@ is possible to declare a variable or method with the name `union`.
 > **<sup>Lexer 2015</sup>**\
 > KW_DYN            : `dyn`
 
-[items]: items.html
-[Variables]: variables.html
-[Type parameters]: types/parameters.html
-[loop labels]: expressions/loop-expr.html#loop-labels
-[Macros]: macros.html
-[attributes]: attributes.html
-[Macro placeholders]: macros-by-example.html
-[Crates]: crates-and-source-files.html
-[union]: items/unions.html
-[variants]: items/enumerations.html
-[`dyn`]: types/trait-object.html
+[items]: https://rustlang-cn.org/office/rust/reference/items-and-attributes/items.html
+[Type parameters]: https://rustlang-cn.org/office/rust/reference/type-system/types/parameters.html
+[loop labels]: https://rustlang-cn.org/office/rust/reference/statements-and-expressions/expressions/loop-expr.html#loop-labels
+[Macros]: https://rustlang-cn.org/office/rust/reference/macros/macros.html
+[attributes]: https://rustlang-cn.org/office/rust/reference/items-and-attributes/attributes.html
+[Macro placeholders]: https://rustlang-cn.org/office/rust/reference/macros/macros-by-example.html
+[Crates]: https://rustlang-cn.org/office/rust/reference/crates-and-source-files.html
+[union]: https://rustlang-cn.org/office/rust/reference/items-and-attributes/items/unions.html
+[variants]: https://rustlang-cn.org/office/rust/reference/items-and-attributes/items/enumerations.html
+[`dyn`]: https://rustlang-cn.org/office/rust/reference/type-system/types/trait-object.html
