@@ -30,7 +30,7 @@ pub struct Fixed {
 
 所以我们要做的第一件事是打印我们的数据类型。请记住这是关于基础的，所以我暂时不尝试使用宏，而是根据特质实现它。
 
-查看：doc.rust-lang.org/std/fmt/trait.Display.html
+查看：[Display](doc.rust-lang.org/std/fmt/trait.Display.html)
 
 ```rust
 use std::fmt;
@@ -77,7 +77,7 @@ rust [playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=
 println!("{} + {} = {}", fixed1, fixed2, fixed1 + fixed2)
 ```
 
-我不知道所有操作，但至少对于生锈中的'+'符号，`Add trait`是解析操作。
+我不知道所有操作，但至少对于Rust中的'+'符号，`Add trait`是解析操作。
 
 因为我们很懒，至少我是;），我不想写：
 
@@ -88,7 +88,7 @@ Fixed {
 }
 ```
 
-每时每刻。相反，让我们使用一个常见的rust模式。
+相反，让我们使用一个常见的rust模式。
 
 ```rust
 impl Fixed {
@@ -197,9 +197,9 @@ impl Clone for Fixed {
 }
 ```
 
-我们需要[Clone](https://doc.rust-lang.org/std/clone/trait.Clone.html)对`copy trait`。
+我们同样需要[Clone](https://doc.rust-lang.org/std/clone/trait.Clone.html)及`Copy` Trait`。
 
-所以通过这个到[操场的链接](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c52d755de09fd89e0011a4d4fd579aa2)，你有完整功能正数，非溢出的例子。
+所以通过这个到[操场的链接](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=c52d755de09fd89e0011a4d4fd579aa2)，你有完整工作的正数，非溢出例子。
 
 我们完了吗？ ... 不 ....
 
@@ -248,13 +248,13 @@ impl Add for Fixed {
 }
 ```
 
-但正如我们应该知道的那样，只有在没有携带的情况下才有效。 但既然它是负数并且加上负数，我们就不必关心哪一个是负面的，谢谢你的交换法。
+但正如我们应该知道的那样，只有在没有进位的情况下才有效。 但既然它是负数并且加上负数，我们就不必关心哪一个是负的，谢谢交换法。
 
 ```rust
 -1.5 + 1.5  = 0
 ```
 
-唯一的问题是......如果两者都是否定的呢？
+唯一的问题是......如果两者都是否的呢？
 
 ```rust
 -1.1 + -1.1 = -2.2
@@ -266,7 +266,7 @@ impl Add for Fixed {
 -1.1 + -1.1 = 2.0
 ```
 
-所以我们只有当其中一个是负数时我们才需要具体，我们相互减去小数。
+所以我们只有当其中一个是负数时我们才需要具体对待，我们相互减去小数。
 
 ```rust
 if (rhs.integer < 0 && self.integer > 0) || (self.integer < 0 && rhs.integer > 0) {
@@ -277,7 +277,7 @@ if (rhs.integer < 0 && self.integer > 0) || (self.integer < 0 && rhs.integer > 0
 }
 ```
 
-好吧，到目前为止这可行，但也许你们中的一些人已经发现了下一个问题？
+好吧，到目前为止这可行，但你们中的一些人也许已经发现了下一个问题？
 
 关于什么
 
@@ -286,7 +286,7 @@ if (rhs.integer < 0 && self.integer > 0) || (self.integer < 0 && rhs.integer > 0
 - 1.16
 ```
 
-这个案例？ 这将无法减去14  -  16的无符号整数导致溢出异常。
+这个案例？ `14 - 16`这将无法减去的无符号整数导致溢出异常。
 
 ```rust
 fn main() {
@@ -329,13 +329,13 @@ impl Add for Fixed {
 }
 ```
 
-好吧，这个问题少了，但远没有结束。 让我们来解决问题。 领域的互动。 如果需要，我们希望我们的小数携带到我们的整数域
+好吧，这个问题少了，但远没有结束。 让我们来解决问题。 领域的互动。 如果需要，我们希望我们的小数进位到我们的整数域
 
 ```rust
 1.9 + 0.1 = 2
 ```
 
-如果我们需要携带东西我们怎么意识到？ 也许有更好的方法，但我们使用了指数的大小。
+如果我们需要进位我们怎么意识到？ 也许有更好的方法，但我们使用了指数的大小。
 
 ```rust
 1.9 -> exp 10^-1
@@ -350,7 +350,7 @@ in our datastructure
 -------------------------
 ```
 
-另一种方式是假设最左边的数字的总和不允许小于较低的数字的值。
+另一种方式是假设最左边的数字的总和不允许小于较低的数字值。
 
 在我们的例子中
 
@@ -365,7 +365,7 @@ in our datastructure
 7 + 7 = 1 [4] smaller than 7
 7 + 3 = 1 [0] smaller than 7
 
-which can be seen as binary value 
+这可以看作二进制值
 
 00010001
 00000001
@@ -382,7 +382,7 @@ which can be seen as binary value
 
 在我们的系统中不被视为`0.1 + 0.1`，因此我们需要均衡幅度。 要做到这一点，我们需要得到数字的`log10`
 
-所以首先我们需要计算我们的幅度。 我把这段代码转换成：
+所以首先我们需要计算我们的幅度。 我把这段[代码](https://helloacm.com/fast-integer-log10/)转换成：
 
 ```rust
 fn magnitude(decimal: u32) -> u32 {
@@ -437,11 +437,11 @@ impl Add for Fixed {
 
 [工作的例子](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=f54fa103b4183373b51df60e3275952d)
 
-所以现在我们可以添加和减去正确，只要我们没有...一个进位;）
+所以现在我们可以正确`加`和`减`，只要我们没有...一个进位;）
 
-现在为进行:)如果结果的pow10指数大于原始`lhs_decimal`的pow10指数，我们有一个`+1`到此整数:)
+现在如果结果的pow10指数大于原始`lhs_decimal`的pow10指数，我们有一个`+1`进位到此整数:)
 
-我们还需要保持`lhs_decimal` pow10指数，所以我们需要再次从结果中减去额外的`pow10`，因为这个`power`是携带的`+ 1-`
+我们还需要保持`lhs_decimal` pow10指数，所以我们需要再次从结果中减去额外的`pow10`，因为这个`power`是进位的`+ 1-`
 
 ```rust
  let mut decimal_result: u32;
@@ -635,4 +635,6 @@ mod tests {
 }
 ```
 
-现在我们可以添加我们的自定义固定浮点或多或少在数学上正确。 我想所有这些都可以进行优化，但并不是很实用。
+现在我们可以`加`我们的自定义固定浮点或多或少在数学上正确。 我想所有这些都可以进行优化。
+
+[英文原文](https://chilimatic.hashnode.dev/rust-basics-the-add-trait-cjtoke4yh002t8hs1c61p82mz)
