@@ -4,7 +4,7 @@
 
 > 本文同步于[Rust中文阅读：Rust基础：`Add Trait`](https://rustlang-cn.org/read/03/rust-bacise-add-trait.html) ,本文时间：2019-03-28, 作者：krircc，简介：天青色
 
-[Rust中文首页](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向Rust中文阅读投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn)
+[Rust中文](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn),好文将展示在：
 
 - [Rust中文首页](https://rustlang-cn.org/)与[Rust中文阅读](https://rustlang-cn.org/read/)
 - [Rust中文论坛](http://47.104.146.58/)
