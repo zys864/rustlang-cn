@@ -6,6 +6,7 @@ git:
 
 install:
   - npm install
+  - chmod -R 775 ./node_modules/vuepress/
   - git clone https://github.com/davisp/ghp-import.git /tmp/ghp-import
 
 script:
