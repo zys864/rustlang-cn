@@ -6,6 +6,10 @@
 
 [Rust中文首页](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向Rust中文阅读投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn)
 
+- [Rust中文首页](https://rustlang-cn.org/)与[Rust中文阅读](https://rustlang-cn.org/read/)
+- [Rust中文论坛](http://47.104.146.58/)
+- [Rust中文](https://zhuanlan.zhihu.com/rustlang-cn)知乎专栏
+
 在我更好地理解任何事物的旅程中，我总是回归基础。通常我们将我们的假设建立在盲目的“猜测”上，我们不明白为什么会发生某些事情，但我们观察到某些模式会导致成功。这对初学者来说可能很棒，但是你做事的时间越长，你就越不愿意依赖盲目的运气。
 
 因此，对于我们最后几周在[metalab](https://metalab.at/) vienna的Rust黑客会议，我们选择了一些简单的东西。为自定义定点数据类型实现自己的`Add Trait`
