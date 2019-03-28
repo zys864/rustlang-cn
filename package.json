@@ -6,7 +6,7 @@
   "license": "GPLv3",
   "scripts": {
     "dev": "vuepress dev docs",
-    "build": "node --max_old_space_size=8192 ./node_modules/vuepress/index.js build docs"
+    "build": "vuepress build docs"
   },
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.0.0-alpha.44",
