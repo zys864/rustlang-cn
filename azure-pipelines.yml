@@ -17,6 +17,7 @@ steps:
 
 - script: |
     npm install
+    git clone https://github.com/davisp/ghp-import.git /tmp/ghp-import
     npm run build
   displayName: 'npm install and build'
   
