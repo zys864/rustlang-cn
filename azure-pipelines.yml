@@ -23,5 +23,5 @@ steps:
   displayName: 'npm install and build'
   
 - bash: |
-    ./.deploy.sh
+    sh ./.deploy.sh
   displayName: 'deploy rustlang-cn.org'
