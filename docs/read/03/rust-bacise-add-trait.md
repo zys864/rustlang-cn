@@ -4,7 +4,11 @@
 
 > 本文同步于[Rust中文阅读：Rust基础：`Add Trait`](https://rustlang-cn.org/read/03/rust-bacise-add-trait.html) ,本文时间：2019-03-28, 作者：krircc，简介：天青色
 
-[Rust中文首页](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向Rust中文阅读投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn)
+[Rust中文](https://rustlang-cn.org),[欢迎加入](https://github.com/rustlang-cn/Important/issues/1)Rust中文,共建Rust语言中文网络！欢迎向Rust中文投稿,[投稿地址](https://github.com/rustlang-cn/rustlang-cn),好文将展示在：
+
+- [Rust中文首页](https://rustlang-cn.org/)与[Rust中文阅读](https://rustlang-cn.org/read/)
+- [Rust中文论坛](http://47.104.146.58/)
+- [Rust中文](https://zhuanlan.zhihu.com/rustlang-cn)知乎专栏
 
 在我更好地理解任何事物的旅程中，我总是回归基础。通常我们将我们的假设建立在盲目的“猜测”上，我们不明白为什么会发生某些事情，但我们观察到某些模式会导致成功。这对初学者来说可能很棒，但是你做事的时间越长，你就越不愿意依赖盲目的运气。
 
