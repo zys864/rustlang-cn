@@ -17,8 +17,6 @@ steps:
 
 - script: |
     npm install
-    chmod -R 777 ./node_modules/vuepress/
-    git clone https://github.com/davisp/ghp-import.git /tmp/ghp-import
     npm run build
   displayName: 'npm install and build'
   
