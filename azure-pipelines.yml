@@ -25,16 +25,10 @@ steps:
       
       cp CNAME docs/.vuepress/dist
       
-      echo 0
-      echo $rustlangcn
-      echo 1
       echo $(rustlangcn)
       echo 2
       echo "$(rustlangcn)"
-      echo 3
-      echo "$rustlangcn"
-      echo 4
 
       git clone https://github.com/davisp/ghp-import.git &&
-      ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -b master -r https://$rustlangcn@github.com/rustlang-cn/rustlang-cn.github.io.git docs/.vuepress/dist &&
+      ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -b master -r https://$(rustlangcn)@github.com/rustlang-cn/rustlang-cn.github.io.git docs/.vuepress/dist &&
       echo "Uploaded documentation"
