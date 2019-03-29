@@ -10,15 +10,21 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-  
-- script: ./.deploy.sh
-  displayName: 'deploy rustlang-cn.org'
+  - script: |
+      npm install
+      npm run build
+    displayName: 'npm install and build'
+
+  - bash: |
+      set -ex
+      
+      cp CNAME docs/.vuepress/dist
+
+      git clone https://github.com/davisp/ghp-import.git &&
+      ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -b master -r https://$(rustlangcn)@github.com/rustlang-cn/rustlang-cn.github.io.git docs/.vuepress/dist &&
+      echo "Uploaded documentation"
