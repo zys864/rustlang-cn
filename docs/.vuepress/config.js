@@ -27,12 +27,6 @@ module.exports = {
       ['meta', { name: 'msapplication-TileColor', content: '#000000' }]
     ],
     plugins: ['@vuepress/back-to-top','@vuepress/pwa'],
-    plugins: {
-        '@vuepress/pwa': {
-            serviceWorker: true,
-            updatePopup: true
-        }
-    },
     themeConfig: {
         repo: 'rustlang-cn/rustlang-cn',
         docsDir: 'docs',
