@@ -1,6 +1,6 @@
-# Rustlang-cn [![Build Status](https://dev.azure.com/kriry/rustlang-cn/_apis/build/status/rustlang-cn.rustlang-cn?branchName=master)](https://dev.azure.com/kriry/rustlang-cn/_build/latest?definitionId=1&branchName=master) [![matrix](https://about.riot.im/images/favicon-32.png)](https://riot.im/app/#/room/#rustlang-cn:matrix.org)
+# Rustlang-cn [![Build Status](https://dev.azure.com/rustlang-cn/rustlang-cn/_apis/build/status/rustlang-cn.rustlang-cn?branchName=master)](https://dev.azure.com/rustlang-cn/rustlang-cn/_build/latest?definitionId=1&branchName=master) [![matrix](https://about.riot.im/images/favicon-32.png)](https://riot.im/app/#/room/#rustlang-cn:matrix.org)
 
-## 一、参与 Rust 中文专栏投稿
+## 一、参与 Rust 中文阅读投稿
 
 > Rust 中文致力于 Rust 编程语言中文网络建设，期待你的参与向 Rust 中文阅读投稿.
 
