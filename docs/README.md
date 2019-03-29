@@ -68,7 +68,7 @@ footer: MIT Licensed | Copyright © 2019-present | Rust中文
   </div>
   <div class="feature">
     <h2>网络</h2>
-    <p>可预测的表现。微小的资源足迹。坚如磐石的可靠性。Rust非常适合网络服务</p>
+    <p>可预测的表现。微小的资源限制。坚如磐石的可靠性。Rust非常适合网络服务</p>
     <div><a href="/office/server/">阅读更多</a></div>
   </div>
   <div class="feature">
