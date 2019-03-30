@@ -1,4 +1,4 @@
-<div id="lanmu">
+<div id="lanmu" style="text-align: center;">
     <div id="word">Rust中文阅读</div>
 </div>
 <br>
