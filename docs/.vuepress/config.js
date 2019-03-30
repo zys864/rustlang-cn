@@ -62,7 +62,6 @@ module.exports = {
           { text: '生态', items: [ 
             { text: 'Rust生态库-中文版', link: '/crates/' },
             { text: 'Actix', link: '/crates/actix/' },
-            { text: 'Actix-web', link: '/crates/actix-web/' },
             { text: 'Diesel', link: '/crates/diesel/' },
             { text: 'Riker', link: '/crates/riker/' },
             { text: 'Serde', link: '/crates/serde/' },
@@ -85,8 +84,8 @@ module.exports = {
           '/office/rust/cargo/': cargo('Cargo'),
           '/office/iot/discovery/': discovery('Discovery'),
           '/crates/tokio/': tokio('Tokio'),
-          '/crates/actix/': actix('Actix'),
-          '/crates/actix-web/': actixweb('Actix-Web'),
+          '/crates/actix/actix/': actix('Actix'),
+          '/crates/actix/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),
           '/crates/serde/': serde('Serde'),
