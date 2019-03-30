@@ -7,7 +7,7 @@ actionLink: /office/rust/book/
 footer: MIT Licensed | Copyright © 2019-present | Rust中文
 ---
 
-<div style="margin-top: 4rem;"></div>
+<div style="margin-top: 3rem;"></div>
 
 <div id="join">欢迎 <a href="https://github.com/rustlang-cn/Important/issues/1" target="_black">加入</a> 共建Rust语言中文网络！</div>
 
