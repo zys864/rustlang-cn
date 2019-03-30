@@ -2,7 +2,7 @@
 
 <div id="actix-nav">
     <div class="logo">
-        <a href="http://localhost:8083/crates/actix/"><img src="https://avatars2.githubusercontent.com/u/32776943?s=200&v=4"></a>
+        <a href="/crates/actix/"><img src="https://avatars2.githubusercontent.com/u/32776943?s=200&v=4"></a>
     </div>
     <div class="title">
         <li class="nav"><a href="/crates/actix/">首页</a></li>
