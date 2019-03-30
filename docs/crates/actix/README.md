@@ -5,11 +5,11 @@
         <a href="http://localhost:8083/crates/actix/"><img src="https://avatars2.githubusercontent.com/u/32776943?s=200&v=4"></a>
     </div>
     <div class="title">
-        <li class="nav"><a href="https://rustlang-cn.org/crates/actix/">首页</a></li>
-        <li class="nav"><a href="https://rustlang-cn.org/crates/actix/actix/">Actix</a></li>
-        <li class="nav"><a href="https://rustlang-cn.org/crates/actix/actix-web/">Actix-web</a></li>
-        <li class="nav"><a href="https://rustlang-cn.org/crates/actix/community.html">社区</a></li>
-        <li class="nav"><a href="https://rustlang-cn.org/crates/actix/code.html">源码</a></li>
+        <li class="nav"><a href="/crates/actix/">首页</a></li>
+        <li class="nav"><a href="/crates/actix/actix/">Actix</a></li>
+        <li class="nav"><a href="/crates/actix/actix-web/">Actix-web</a></li>
+        <li class="nav"><a href="/crates/actix/community.html">社区</a></li>
+        <li class="nav"><a href="/crates/actix/code.html">源码</a></li>
     </div>
     
 </div>
