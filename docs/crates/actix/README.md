@@ -16,7 +16,7 @@
 
 <div id="show">
     <img src="https://actix.rs/img/logo-large.png" >
-    <p id="word">Rust的强大演员系统和最有趣的Web框架</p>
+    <p id="word">Rust的强大Actor系统和最有趣的Web框架</p>
 </div>
 
 <div id="actix-features">

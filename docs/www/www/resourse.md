@@ -1,10 +1,16 @@
 # 资源
 
-> [Rustlang-cn资源仓库](https://github.com/rustlang-cn/resourses)
+## Rust中文
 
-## 书签
-
+* [Rust中文](https://rustlang-cn.org/)
 * [Rust中文阅读](https://rustlang-cn.org/read/)
+* [Rust中文论坛](http://47.104.146.58/)
+* [Rust中文聊天室](https://riot.im/app/#/room/#rustlang-cn:matrix.org)
+* [Rust中文知乎专栏](https://zhuanlan.zhihu.com/rustlang-cn)
+* [Rust中文资源仓库](https://github.com/rustlang-cn/resourses)
+
+## Rust语言
+
 * [rust-cheats](https://cheats.rs/)
 * [Rust阅读](https://readrust.net/) - Rust阅读
 * [Rust-too-many-lists](http://cglab.ca/~abeinges/blah/too-many-lists/book/) - Learning Rust With Entirely Too Many Linked Lists

@@ -4,9 +4,9 @@
 
 ## Server-Net
 
-- [Actix](https://github.com/actix) - [中文文档](https://rustlang-cn.org/crates/actix/) - [Awesome-Actix](https://rustlang-cn.org/resourse/awesome/actix.html)
+- [Actix](https://github.com/actix/actix/) - [中文文档](https://rustlang-cn.org/crates/actix/actix) - [Awesome-Actix](https://rustlang-cn.org/resourse/awesome/actix.html)
 - [Actix-net](https://github.com/actix/actix-net) - [中文文档](https://rustlang-cn.org/crates/actix-net/)
-- [Actix-Web](https://github.com/actix/actix-web/) - [中文文档](https://rustlang-cn.org/crates/actix-web/)
+- [Actix-Web](https://github.com/actix/actix-web/) - [中文文档](https://rustlang-cn.org/crates/actix/actix-web/)
 - [Riker](https://github.com/riker-rs/riker) - [中文文档](https://rustlang-cn.org/crates/riker/)
 - [Tokio](https://github.com/tokio-rs/tokio) - [中文文档](https://rustlang-cn.org/crates/tokio/)
 

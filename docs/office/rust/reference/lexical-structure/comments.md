@@ -1,5 +1,7 @@
 # 注释
 
+>源 [comments](https://github.com/rust-lang-nursery/reference/blob/master/src/comments.md) Commit: 993393d362cae51584d580f86c4f38d43ae76efc
+
 > **<sup>Lexer</sup>**\
 > LINE_COMMENT :\
 > &nbsp;&nbsp; &nbsp;&nbsp; `//` (~[`/` `!`] | `//`) ~`\n`<sup>\*</sup>\
@@ -32,31 +34,21 @@
 > _IsolatedCR_ :\
 > &nbsp;&nbsp; _A `\r` not followed by a `\n`_
 
-## Non-doc comments
+## 非文档评论
 
-Comments in Rust code follow the general C++ style of line (`//`) and
-block (`/* ... */`) comment forms. Nested block comments are supported.
+Rust代码中的注释遵循C ++的line（//）和block（/ * ... * /）注释表现样式。 支持块嵌套注释。
 
-Non-doc comments are interpreted as a form of whitespace.
+非文档注释被解释为空格的一种形式。
 
-## Doc comments
+## 文档注释
 
-Line doc comments beginning with exactly _three_ slashes (`///`), and block
-doc comments (`/** ... */`), both inner doc comments, are interpreted as a
-special syntax for `doc` [attributes]. That is, they are equivalent to writing
-`#[doc="..."]` around the body of the comment, i.e., `/// Foo` turns into
-`#[doc="Foo"]` and `/** Bar */` turns into `#[doc="Bar"]`.
+完全以三个斜杠（///）开头的行文档注释和块文档注释（/ ** ... * /）两个内部文档注释都被解释为 doc属性的特殊语法。 也就是说，它们相当于围绕注释的主体编写＃[doc =“...”]，即/// Foo变成＃[doc ="Foo"]和/ ** Bar * /变成＃[DOC= "Bar"]。
 
-Line comments beginning with `//!` and block comments `/*! ... */` are
-doc comments that apply to the parent of the comment, rather than the item
-that follows.  That is, they are equivalent to writing `#![doc="..."]` around
-the body of the comment. `//!` comments are usually used to document
-modules that occupy a source file.
+以//!开头的行注释 和块注释/ *！ ... * /都是适用于注释的父级的文档注释，而不是紧接着的项。 也就是说，它们相当于在注释正文周围写＃！[doc ="..."]。 //！ 注释通常用于记录占用源文件的模块。
 
-Isolated CRs (`\r`), i.e. not followed by LF (`\n`), are not allowed in doc
-comments.
+在文档注释中不允许使用隔离的CR（\ r），即不跟随LF（\ n）。
 
-## Examples
+## 示例
 
 ```rust
 //! A doc comment that applies to the implicit anonymous module of this crate
