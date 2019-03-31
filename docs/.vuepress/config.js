@@ -10,7 +10,7 @@ let { diesel } = require ('./category/diesel.js')
 let { riker } = require ('./category/riker.js')
 let { discovery } = require ('./category/discovery.js')
 let { serde } = require ('./category/serde.js')
-let { awesome } = require ('./category/awesome.js')
+let { www } = require ('./category/www.js')
 
 module.exports = {
     extend: '@vuepress/theme-default',
@@ -67,11 +67,7 @@ module.exports = {
             { text: 'Serde', link: '/crates/serde/' },
             { text: 'Tokio', link: '/crates/tokio/' }
           ] },
-          { text: '网络', items: [ 
-            { text: 'Awesome', link: '/resourse/awesome/' },
-            { text: 'Crates', link: '/resourse/crates/' },
-            { text: '资源', link: '/resourse/resourse/' }
-          ] },
+          { text: '网络', link: '/www/www/' },
           { text: '论坛', link: 'http://47.104.146.58' },
           { text: '聊天室', link: 'https://riot.im/app/#/room/#rustlang-cn:matrix.org' }
           
@@ -89,7 +85,7 @@ module.exports = {
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),
           '/crates/serde/': serde('Serde'),
-          '/resourse/awesome/': awesome('Awesome')
+          '/www/www/': www('Www')
         }
     }
 }

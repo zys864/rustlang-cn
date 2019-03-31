@@ -1,4 +1,4 @@
-# Rust资源
+# 资源
 
 > [Rustlang-cn资源仓库](https://github.com/rustlang-cn/resourses)
 
