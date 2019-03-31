@@ -1,5 +1,7 @@
 # 标识符
 
+>源 [identifiers](https://github.com/rust-lang-nursery/reference/blob/master/src/identifiers.md) Commit: e942743f739a191abca1b0bf8b6497f2195cbbf8
+
 > **<sup>Lexer:<sup>**\
 > IDENTIFIER_OR_KEYWORD :\
 > &nbsp;&nbsp; &nbsp;&nbsp; [`a`-`z` `A`-`Z`]&nbsp;[`a`-`z` `A`-`Z` `0`-`9` `_`]<sup>\*</sup>\
