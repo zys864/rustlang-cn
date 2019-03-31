@@ -25,7 +25,8 @@
 
 - [gitter](https://gitter.im/actix/actix)频道
 - [reddit](https://www.reddit.com/r/actix/)社区
-- QQ群：570065685
+- [Rust中文论坛](http://47.104.146.58/)
+- [Rust中文聊天室](https://riot.im/app/#/room/#rustlang-cn:matrix.org)
 
 如果你发现了一个bug，最好直接去
 [github](https://github.com/actix) . 有2个主要仓库:
