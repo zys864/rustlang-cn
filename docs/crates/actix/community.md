@@ -15,7 +15,7 @@
 </div>
 </div>
 
-<div id="lanmu" style="margin: 0 -10%;padding-left: 10%;">
+<div id="lanmu" style="text-align: center;">
     <div id="word">生活中最美好的事情是分享</div>
 </div>
 

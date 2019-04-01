@@ -15,7 +15,7 @@
 </div>
 </div>
 
-<div id="lanmu" style="margin: 0 -10%;padding-left: 10%;">
+<div id="lanmu" style="text-align: center;">
     <div id="word">浏览并下载资源</div>
 </div>
 

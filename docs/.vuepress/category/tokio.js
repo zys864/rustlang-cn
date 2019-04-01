@@ -1,6 +1,5 @@
 exports.tokio = (title) => {
     return [
-        '',
         {
           title: '起步',
           collapsable: true,
@@ -61,7 +60,6 @@ exports.tokio = (title) => {
             'internals/runtime-model',
             'internals/net'
           ]
-        },
-        'resource'
+        }
     ]
 }

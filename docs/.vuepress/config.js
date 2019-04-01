@@ -11,6 +11,7 @@ let { riker } = require ('./category/riker.js')
 let { discovery } = require ('./category/discovery.js')
 let { serde } = require ('./category/serde.js')
 let { www } = require ('./category/www.js')
+let { tokio_blog } = require ('./category/tokio_blog.js')
 
 module.exports = {
     extend: '@vuepress/theme-default',
@@ -79,13 +80,14 @@ module.exports = {
           '/office/rust/reference/': reference('Reference'),
           '/office/rust/cargo/': cargo('Cargo'),
           '/office/iot/discovery/': discovery('Discovery'),
-          '/crates/tokio/': tokio('Tokio'),
+          '/crates/tokio/docs/': tokio('Tokio'),
           '/crates/actix/actix/': actix('Actix'),
           '/crates/actix/actix-web/': actixweb('Actix-Web'),
           '/crates/diesel/': diesel('Diesel'),
           '/crates/riker/': riker('Riker'),
           '/crates/serde/': serde('Serde'),
-          '/www/': www('Www')
+          '/www/': www('www'),
+          '/crates/tokio/blog/': tokio_blog('tokio_blog')
         }
     }
 }
