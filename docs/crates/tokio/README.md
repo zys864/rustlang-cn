@@ -18,7 +18,7 @@
     <div class="left">
         <h1>Tokio</h1>
         <p>Rust编程语言的异步运行时,提供异步事件驱动平台，构建快速，可靠和轻量级网络应用。利用Rust的所有权和并发模型确保线程安全</p>
-        <a href="/crates/tokio/docs/getting-started/overview.html">开始</a>
+        <a href="/crates/tokio/docs/overview.html">开始</a>
     </div>
     <div class="right">
         <img src="https://tokio.rs/img/Tokio_Mark_Large.png" >
@@ -37,7 +37,7 @@
         <h4>非阻塞I/O</h4>
         <p>Tokio由操作系统提供的非阻塞，事件，I / O堆栈支持。</p>
     </div>
-    <div><a href="https://tokio-zh.github.io/document/#%E5%BF%AB%E9%80%9F">更多</a></div>
+    <div><a href="/crates/tokio/docs/overview.html/#%E5%BF%AB%E9%80%9F">更多</a></div>
   </div>
   <div class="center">
     <h2>可靠</h2>
@@ -50,7 +50,7 @@
         <h4>取消</h4>
         <p>Rust的所有权模型允许Tokio自动检测何时不再需要计算。 Tokio将自动取消它而无需用户调用取消功能。</p>
     </div>
-    <div><a href="https://tokio-zh.github.io/document/#%E5%8F%AF%E9%9D%A0">更多</a></div>
+    <div><a href="/crates/tokio/docs/overview.html/#%E5%8F%AF%E9%9D%A0">更多</a></div>
   </div>
   <div class="right">
     <h2>轻量级</h2>
@@ -61,7 +61,7 @@
         <h4>模块化</h4>
         <p>Tokio是一个小组件的集合。 用户可以选择最适合手头应用的部件，而无需支付未使用功能的成本。</p>
     </div>
-    <div><a href="https://tokio-zh.github.io/document/#%E8%BD%BB%E9%87%8F%E7%BA%A7">更多</a></div>
+    <div><a href="/crates/tokio/docs/overview.html/#%E8%BD%BB%E9%87%8F%E7%BA%A7">更多</a></div>
   </div>
 </div>
 
