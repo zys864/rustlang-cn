@@ -18,7 +18,7 @@
     <div class="left">
         <h1>Tokio</h1>
         <p>Rust编程语言的异步运行时,提供异步事件驱动平台，构建快速，可靠和轻量级网络应用。利用Rust的所有权和并发模型确保线程安全</p>
-        <a>开始</a>
+        <a href="/crates/tokio/docs/getting-started/overview.html">开始</a>
     </div>
     <div class="right">
         <img src="https://tokio.rs/img/Tokio_Mark_Large.png" >
@@ -70,7 +70,7 @@
     <a href="https://github.com/tokio-rs/tokio" target="_black">GitHub</a>&emsp;
     <a href="https://twitter.com/tokio_rs" target="_black">Twitter</a>&emsp;
     <a href="https://github.com/tokio-rs/tokio/tree/master/examples" target="_black">示例</a>&emsp;
-    <a href="https://tokio-zh.github.io/document" target="_black">概括</a>&emsp;
+    <a href="/crates/tokio/docs/getting-started/overview.html" target="_black">概括</a>&emsp;
     <a href="https://tokio.rs/gsoc/" target="_black">GSOC</a>&emsp;
     <a href="https://github.com/rustlang-cn/rustlang-cn" target="_black">Rust中文</a>&emsp;
 </div>
