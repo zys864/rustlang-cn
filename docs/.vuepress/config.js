@@ -16,7 +16,7 @@ let { tokio_blog } = require ('./category/tokio_blog.js')
 module.exports = {
     extend: '@vuepress/theme-default',
     title: 'Rust 中文',
-    description: '致力于Rust编程语言中文网络',
+    description: '互助Rust爱好者,致力于Rust编程语言中文网络',
     head: [
       ['link', { rel: 'icon', href: `/favicon.ico` }],
       ['link', { rel: 'manifest', href: '/manifest.json' }],
