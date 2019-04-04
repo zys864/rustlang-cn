@@ -36,4 +36,4 @@
 
 我们是一个热情的社区，所以不要害怕参与. [我们遵守的行为准则](https://actix.rs/community/coc/).
 
-## [Awesome-Actix](https://rustlang-cn.org/resourse/awesome/actix.html)
+## [Awesome-Actix](https://rustlang-cn.org/www/actix.html)
