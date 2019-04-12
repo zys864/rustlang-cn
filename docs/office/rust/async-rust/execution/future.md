@@ -13,9 +13,9 @@ trait SimpleFuture {
 }
 ```
 
-通过调用该`poll`函数可以推进`Futures`，这将推动未来尽可能地完成。如果`Future`完成，它将返回`Poll::Ready(result)`。如果`Future`尚未完成，它将返回`Poll::Pending`并安排在`Future`准备好进行更多进展时调用`wake()`函数。当`wake()`被调用时，`executor`(执行者)驱动`Future`将再次调用`poll`，以便`Future`能够取得更多进展。
+通过调用该`poll`函数可以推进`Futures`，这将推动`future`尽可能地完成。如果`Future`完成，它将返回`Poll::Ready(result)`。如果`Future`尚未完成，它将返回`Poll::Pending`并安排在`Future`准备好进行更多进展时调用`wake()`函数。当`wake()`被调用时，`executor`(执行者)驱动`Future`将再次调用`poll`，以便`Future`能够取得更多进展。
 
-如果没有`wake()`，`executor`(执行者)将无法知道特定的`Futures`何时可以取得进展，并且必须不断地对每个`Futures`进行轮询。有了`wake()`，执行者确切地知道哪些期货准备好`poll`。
+如果没有`wake()`，`executor`(执行者)将无法知道特定的`Futures`何时可以取得进展，并且必须不断地对每个`Futures`进行轮询。有了`wake()`，执行者确切地知道哪些`future`准备好`poll`。
 
 例如，考虑我们想要从可能已经或可能没有数据的套接字读取的情况。如果有数据，我们可以读取并返回`Poll::Ready(data)`，但如果没有数据准备就绪，我们的`Futures`将被阻止，无法再进展。当没有数据可用时，我们必须注册`wake`在套接字上在准备好数据时进行调用，这将告诉执行者我们的`Futures`已准备好取得进展。
 
